@@ -33,7 +33,7 @@ SOFTWARE.
 
 ## Synopsis
 
-   sh dot
+    sh dot
 
 ## Description
 
