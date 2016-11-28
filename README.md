@@ -13,16 +13,15 @@ ______
 <table border=0 align=center>
 <tr>
 <td align=center><b>News
-<img width=200 src="img/200x1.png"></b>
+<img width=300 src="img/200x1.png"></b>
 </td>
 <td align=center><b>Tutorials
-<img width=65 src="img/200x1.png"></b>
+<img width=100 src="img/200x1.png"></b>
 </td>
-<td><img width=65 src="img/200x1.png"/></b>
-</td><td align=center><b>Workshops
-<img width=65 src="img/200x1.png"></b>
-</td><td align=center><b>Cool stuff
-<img width=65 src="img/200x1.png"></b>
+<td><b>Workshops></b><img width=100 src="img/200x1.png"/></b>
+</td>
+<td align=center><b>Cool stuff
+<img width=100 src="img/200x1.png"></b>
 </td>
 
 </tr>
@@ -32,7 +31,6 @@ ______
 
      <td align=center><img src="img/lectures.gif">
      </td><td align=center><img src="img/review.gif">
-     </td><td align=center><img width=64 src="img/workshop.png">
      </td><td align=center><img width=64 src="img/books.png">
      </td> </tr>
      <tr>
@@ -41,7 +39,6 @@ ______
      </td>
      <td valign=top  xwidth="100px">
    </td><td valign=top xwidth="100px">
-     </td><td valign=top xwidth="100px">
      </td><td valign=top>
 
      </td>
