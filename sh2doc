@@ -1,10 +1,19 @@
 # -*- awk -*- 
     stem="${1%.*}"
-    cat $1 |
-     
-    awk  ' /^#[<>]/ { In = 1 - In }
-           In       { sub(/^#[<> ]?/,"");
-                      print $0
-                    }
-         ' 
+    header="etc/head.md"
+   
+    if [ "$1" -nt "${stem}.md" ]
+    then
+      echo "# $1 to ${stem}.md ... "
+      ( if [ -f "$header" ]; then
+          cat $header
+       fi
+       cat $1 |  
+        awk  ' /^#[<>]/ { In = 1 - In }
+               In       { sub(/^#[<> ]?/,"");
+                         print $0
+                       }
+       ' )> ${stem}.md
+       git add ${stem}.md
+    fi
            
