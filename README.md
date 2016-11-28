@@ -18,7 +18,7 @@ ______
 <td align=center><b>Tutorials
 <img width=100 src="img/200x1.png"></b>
 </td>
-<td><b>Workshops></b><img width=100 src="img/200x1.png"/></b>
+<td><b>Workshops</b><img width=100 src="img/200x1.png"/></b>
 </td>
 <td align=center><b>Cool stuff
 <img width=100 src="img/200x1.png"></b>
