@@ -27,7 +27,7 @@
 # ## Synopsis
 
 #    sh dot
- 
+
 # ## Description
 
 # When working on multiple machines, it is tedious to reconfigure each new
@@ -110,16 +110,23 @@ ok() {
 
 reload() { . "$Dot"/dotbashrc ; }
 
-
-sh2doc() {
+sh2md() {
     stem="${1%.*}"
-    cat $1 |
-    awk  ' In    { sub(/^# /,""); print $0; next}
-           /^#[<>] / { In = 1 - In }
-           /^#< / { print "```sh"; next }
-           /^#> / { print "```"  ; next }
-         ' 
-           
+    header="etc/head.md"
+    if [ "$1" -nt "${stem}.md" ]
+    then
+      echo "# $1 to ${stem}.md ... "
+      ( if [ -f "$header" ]; then
+          cat $header
+       fi
+       cat $1 |  
+        awk  ' /^#[<>]/ { In = 1 - In }
+               In       { sub(/^#[<> ]?/,"");
+                         print $0
+                       }
+       ' )> ${stem}.md
+       git add ${stem}.md
+    fi
 }
 
 Seed=0

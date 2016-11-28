@@ -34,7 +34,7 @@ SOFTWARE.
 ## Synopsis
 
    sh dot
- 
+
 ## Description
 
 When working on multiple machines, it is tedious to reconfigure each new
