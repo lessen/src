@@ -101,6 +101,7 @@ sh2md() {
       ( if [ -f "$header" ]; then
           cat $header
        fi
+       echo "_(This file is auto-generated from [$1]($1).)_  "
        cat $1 |  
         awk  ' /^#[<>]/ { In = 1 - In }
                In       { sub(/^#[<> ]?/,"");
