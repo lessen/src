@@ -1,7 +1,7 @@
-<img align=right src="https://i.redditmedia.com/X0NEfHd3PgQXZytcHrIZOT9D_86Bdt5KJsuqii1DTV0.jpg?w=216&s=ef0bbb408e3d60b4b95fe935d62f3b4f" >
 
 # License
 
+<img align=right src="https://i.redditmedia.com/X0NEfHd3PgQXZytcHrIZOT9D_86Bdt5KJsuqii1DTV0.jpg?w=216&s=ef0bbb408e3d60b4b95fe935d62f3b4f" >
 This software is part of 
 [Science of Software toolkit](http://github.com/lessen/src/master/README.md).   
 Copyright (c) 2016, Tim Menzies tim@menzies.us, MIT
