@@ -35,7 +35,7 @@
 # you undo it all when you leave.
 
 # Enter `dot`. This is a bash init file that sets up an new shell and writes
-# your preferred config files to `/tmp/$USER'.  Inside the shell, certain
+# your preferred config files to `/tmp/$USER`.  Inside the shell, certain
 # standard commands are rewritten such that, when they are called, they use
 # config files written into `/tmp/$USER`.  Also, at start up, `dot` will perform
 # certain standard startup actions (initializes and/or downloads emacs packages).
