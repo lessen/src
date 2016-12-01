@@ -35,6 +35,7 @@
 #      - Line numbers enabled as is file path and title in header.
 #      - Incremebtal search enabled.
 #      - And other stuff besides
+#      - Note: don't have a good way to share the local spelling dictionary. Suggestions anyone?
 # - python 
 #      - adding sub-directories to PYTHONPATH and
 #      - disabling genration of those .pyc files.
