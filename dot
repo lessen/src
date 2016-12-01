@@ -35,8 +35,9 @@
 #      - Line numbers enabled as is file path and title in header.
 #      - Incremebtal search enabled.
 #      - And other stuff besides
-# - python (not much here, just adding sub-directories to PYTHONPATH and
-#   disabling genration of those .pyc files).
+# - python 
+#      - adding sub-directories to PYTHONPATH and
+#      - disabling genration of those .pyc files.
 
 # Inside the dot shell, certain
 # standard commands are rewritten such that, when they are called, they use
