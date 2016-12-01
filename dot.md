@@ -60,7 +60,9 @@ The point of all this is that
 
 ## Installation
 
+```sh
     wget -O dot http://bit.ly/timdot       # Code
     wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
     sh dot  # this might be a little slow, first time, while Emacs configures
     vim0    # needed to install vim plugins.  does not need to be run again
+```
