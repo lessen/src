@@ -17,11 +17,21 @@
 # you undo it all when you leave.
 
 # Enter `dot`. This is a bash init file that sets up an new shell and writes
-# your preferred config files to `/tmp/$USER`.  Inside the shell, certain
+# your preferred config files to `/tmp/$USER`.  
+# This current version of `dot` handles configs for 
+# 
+# - bash
+# - emacs
+# - vim
+# - python (not much here, just adding sub-directories to PYTHONPATH and
+#   disabling genration of those .pyc files).
+
+# Inside the dot shell, certain
 # standard commands are rewritten such that, when they are called, they use
 # config files written into `/tmp/$USER`.  Also, at start up, `dot` will perform
 # certain standard startup actions (initializes and/or downloads emacs packages).
 
+#
 # The point of all this is that
 #
 # 1. All the code for `dot` is in one file, so easy to download.
@@ -32,7 +42,8 @@
 
 #     wget -O dot http://bit.ly/timdot       # Code
 #     wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
-
+#     sh dot
+#     vim0    # needed to install vim plugins.  does not need to be run again
 #>
 
 Dot=/tmp/$USER/dot/$$
@@ -74,7 +85,13 @@ echo
 
 Edot="$Dot/dotemacs"
 
-e() { "$Emacs" -q -l "$Edot" $* &  
+vim0() {
+  vim +PluginInstall +qall
+}
+
+alias python="`which python`  -B "
+
+emacs() { "$Emacs" -q -l "$Edot" $* &  
 }
 
 em() { emacs -q -l "$Edot" $*   
@@ -94,7 +111,10 @@ ok() {
 
 reload() { . "$Dot"/dotbashrc ; }
 
-sh2md() {
+sh2md() { x2md $1 "#[<>]"; }
+py2md() { x2md $1 "^\"\"\""; }
+
+x2md() {
     stem="${1%.*}"
     pat=${2:-"#[<>]"}
     header="etc/head.md"
@@ -284,9 +304,107 @@ cat<<'EOF' > $Dot/dotemacs
 EOF
 
 #########################################################
+cat<<'EOF' > $Dot/dotvimrc
+set backupdir-=.
+EOF
+
+echo "set backupdir^=$Dot">> $Dot/dotvimrc
+
+cat<<'EOF' >> $Dot/dotvimrc
+"ascii mouse
+set mouse=a
+"place buffer name into window title
+set title
+"show line numbers
+set number
+"cycling through buffers
+map <C-n> :exe  ":buf ".((bufnr("%") % bufnr("$"))+1)<CR>
+" auto-change directory to that of the current buffer
+autocmd BufEnter * cd %:p:h
+" Shows the matching bracket when entering expressions
+" (you'll never miss one again!)
+set showmatch
+set matchtime=15
+"pretty colors
+set background=light
+set syntax=on
+syntax enable
+"" Incremental search
+" (as you type in the search query, it will show you
+" whether your query currently matches anything)
+set ignorecase
+set incsearch
+set smartcase
+" source code indenting
+set smarttab
+set smartindent
+set tabstop=2
+set shiftwidth=2
+set expandtab ts=2 sw=2 ai
+
+" Help for viminfo is at:  :he 'viminfo'
+"   '10  : marks will be remembered for up to 10 previously edited files
+"   "100 : will save up to 100 lines for each register
+"   :20  : up to 20 lines of command-line history will be remembered
+"   %    : saves and restores the buffer list
+"   n... : where to save the viminfo files
+"set viminfo='10,\"100,:20,%,n~/.viminfo
+"autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <=
+"line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
+"set t_ti= t_te=
+colors elflord
+
+set nocompatible              " be iMproved, required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+Plugin 'scrooloose/nerdtree'
+"Plugin 'altercation/vim-colors-solarized'"
+Plugin 'bling/vim-airline'
+Plugin 'tpope/vim-markdown'
+Plugin 'flazz/vim-colorschemes'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+" To ignore plugin indent changes, instead use:
+"filetype plugin on
+"
+" Brief help
+" :PluginList       - lists configured plugins
+" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
+" :PluginSearch foo - searches for foo; append `!` to refresh local cache
+" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
+"
+" see :h vundle for more details or wiki for FAQ
+" Put your non-Plugin stuff after this line
+ 
+"
+"
+
+autocmd VimEnter * NERDTree
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+colorscheme 1989
+"vim -u vimrc"
+EOF
+
+#########################################################
 
 # call the emacs package manager to load any missing packages
 emacs -script $Dot/install.el
 
-# call a shell with functions that call things with the above config
-Dot=$Dot  bash --init-file $Dot/dotbashrc  -i
+PATH1="$(find . -maxdepth 2 -type d | sed '/\/\./d' | tr '\n' ':' | sed 's/:$//') "
+
+# call a shell with functions that call things with the above config 
+   Dot=$Dot  \
+   PYTHONPATH="$PATH1:$PYTHONPATH" \
+   MYVIMRC=$Dot/dotvimrc \
+   bash --init-file $Dot/dotbashrc  -i

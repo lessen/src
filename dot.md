@@ -5,8 +5,8 @@
 [src](https://github.com/lessen/src) |
 [chat](https://lessons.slack.com/)
 
-
 ______
+
 _(This file is auto-generated from [dot](dot).)_  
 
 # Dot
@@ -25,10 +25,20 @@ machine. Also, its bad manners to reconfigure someone else's machine unless
 you undo it all when you leave.
 
 Enter `dot`. This is a bash init file that sets up an new shell and writes
-your preferred config files to `/tmp/$USER`.  Inside the shell, certain
+your preferred config files to `/tmp/$USER`.  
+This current version of `dot` handles configs for 
+
+- bash
+- emacs
+- vim
+- python (not much here, just adding sub-directories to PYTHONPATH and
+  disabling genration of those .pyc files).
+
+Inside the dot shell, certain
 standard commands are rewritten such that, when they are called, they use
 config files written into `/tmp/$USER`.  Also, at start up, `dot` will perform
 certain standard startup actions (initializes and/or downloads emacs packages).
+
 
 The point of all this is that
 
@@ -40,4 +50,5 @@ The point of all this is that
 
     wget -O dot http://bit.ly/timdot       # Code
     wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
-
+    sh dot
+    vim0    # needed to install vim plugins.  does not need to be run again
