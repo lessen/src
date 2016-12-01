@@ -11,7 +11,7 @@ _(This file is auto-generated from [dot](dot).)_
 
 # Dot
 
-Dot: ultra-portable config files    
+Dot: ultra-portable config files  (for Unix tools on Mac and Linux)
 Copyright (c) 2016, Tim Menzies tim@menzies.us, [MIT license v2](http://bit.ly/lessenlicense).
 
 ## Synopsis
@@ -28,9 +28,21 @@ Enter `dot`. This is a bash init file that sets up an new shell and writes
 your preferred config files to `/tmp/$USER`.  
 This current version of `dot` handles configs for 
 
-- bash
-- emacs
-- vim
+- bash : numerous command-line tricks;
+- github: quicker work flow 
+     - `old` pulls from master; `new` commits and pushes to master
+     - A tmp password server is enabled (so you only need to type
+      your password every hour);
+- emacs :
+     - all emacs packages auto-downloaded and installed
+     - cool packages are installed (ido, neotree, recent files, powerline)
+     - mouse enabled, syntax highlighting enabled, etc
+     - cool themes enabled
+- vim :
+     - Vim package manager installed
+     - Line numbers enabled as is file path and title in header.
+     - Incremebtal search enabled.
+     - And other stuff besides
 - python (not much here, just adding sub-directories to PYTHONPATH and
   disabling genration of those .pyc files).
 
@@ -50,5 +62,5 @@ The point of all this is that
 
     wget -O dot http://bit.ly/timdot       # Code
     wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
-    sh dot
+    sh dot  # this might be a little slow, first time, while Emacs configures
     vim0    # needed to install vim plugins.  does not need to be run again
