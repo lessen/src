@@ -38,7 +38,9 @@
 Dot=/tmp/$USER/dot/$$
 mkdir -p $Dot
 
-trap "rm -f $Dot" 1 3 4 6 9 15
+trap zap EXIT
+
+zap() { rm -rf $Dot; }
 
 #########################################################
 cat <<'EOF' > $Dot/dotbashrc
@@ -94,6 +96,7 @@ reload() { . "$Dot"/dotbashrc ; }
 
 sh2md() {
     stem="${1%.*}"
+    pat=${2:-"#[<>]"}
     header="etc/head.md"
     if [ "$1" -nt "${stem}.md" ]
     then
@@ -103,11 +106,11 @@ sh2md() {
        fi
        echo "_(This file is auto-generated from [$1]($1).)_  "
        cat $1 |  
-        awk  ' /^#[<>]/ { In = 1 - In }
+        awk  ' $0 ~ pat { In = 1 - In }
                In       { sub(/^#[<> ]?/,"");
                          print $0
                        }
-       ' )> ${stem}.md
+       ' pat=$pat  )> ${stem}.md
        git add ${stem}.md
     fi
 }
