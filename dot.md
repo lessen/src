@@ -63,10 +63,10 @@ The point of all this is that
 ## Installation
 
 ```sh
-    wget -O dot http://bit.ly/timdot       # Code
-    wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
-    sh dot  
-    dot0    # needed to install vim, emacs plugins.  only needs to be runs one
+wget -O dot http://bit.ly/timdot       # Code
+wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
+sh dot  
+dot0    # needed to install vim, emacs plugins.  only needs to be runs one
 ```
  
 Note that the above `dot0` commands sometimes prints an ignorable error message
