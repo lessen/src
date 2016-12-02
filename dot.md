@@ -43,6 +43,7 @@ This current version of `dot` handles configs for
      - Line numbers enabled as is file path and title in header.
      - Incremebtal search enabled.
      - And other stuff besides
+     - Note: don't have a good way to share the local spelling dictionary. Suggestions anyone?
 - python 
      - adding sub-directories to PYTHONPATH and
      - disabling genration of those .pyc files.
@@ -64,6 +65,9 @@ The point of all this is that
 ```sh
     wget -O dot http://bit.ly/timdot       # Code
     wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
-    sh dot  # this might be a little slow, first time, while Emacs configures
-    vim0    # needed to install vim plugins.  does not need to be run again
+    sh dot  
+    dot0    # needed to install vim, emacs plugins.  only needs to be runs one
 ```
+ 
+Note that the above `dot0` commands sometimes prints an ignorable error message
+`window too small for splitting`.

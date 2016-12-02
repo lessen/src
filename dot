@@ -54,12 +54,15 @@
 
 # ## Installation
 
-# ```sh
+#```sh
 #     wget -O dot http://bit.ly/timdot       # Code
 #     wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
-#     sh dot  # this might be a little slow, first time, while Emacs configures
-#     vim0    # needed to install vim plugins.  does not need to be run again
-# ```
+#     sh dot  
+#     dot0    # needed to install vim, emacs plugins.  only needs to be runs one
+#```
+#  
+# Note that the above `dot0` commands sometimes prints an ignorable error message
+# `window too small for splitting`.
 #>
 
 Dot=/tmp/$USER/dot/$$
@@ -97,12 +100,12 @@ Emacs=${Emacs:-"/Applications/Emacs.app/Contents/MacOS/Emacs"}
 
 echo 
 echo "$What v1.0 (c) $When ${Who}, $How"
-echo
 
 Edot="$Dot/dotemacs"
 
-vim0() {
-  vim +PluginInstall +qall
+dot0() { # start-up actions
+  vim +PluginInstall +qall      # install vim plugins
+  emacs -script $Dot/install.el # install emacs plugins
 }
 
 alias python="`which python`  -B "
@@ -414,13 +417,13 @@ EOF
 
 #########################################################
 
-# call the emacs package manager to load any missing packages
-emacs -script $Dot/install.el
+PATH1="$(find $PWD -type f -name '*py' | grep -o '\(.*\)/' | sort -u | tr '\n' ':')"
 
-PATH1="$(find . -maxdepth 2 -type d | sed '/\/\./d' | tr '\n' ':' | sed 's/:$//') "
+find . -type f  -name '*.py' | 
+awk -F\/ '{ if (++seen[$NF] >  1) print "Warning, repeated file: " $0 }'
 
 # call a shell with functions that call things with the above config 
-   Dot=$Dot  \
-   PYTHONPATH="$PATH1:$PYTHONPATH" \
-   MYVIMRC=$Dot/dotvimrc \
-   bash --init-file $Dot/dotbashrc  -i
+Dot=$Dot                       \
+PYTHONPATH="$PATH1:$PYTHONPATH" \
+MYVIMRC=$Dot/dotvimrc            \
+bash --init-file $Dot/dotbashrc  -i
