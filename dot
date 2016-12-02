@@ -55,8 +55,8 @@
 # ## Installation
 
 # ```sh
-# wget -O dot http://bit.ly/timdot       # Code
-# wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
+# wget -O dot    http://tiny.cc/srcdot    # Code
+# wget -O dot.md http://tiny.cc/srcdotdoc # Optional. Documentation.
 # sh dot  
 # dot0    # needed to install vim, emacs plugins.  only needs to be runs one
 # ```
