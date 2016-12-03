@@ -5,7 +5,7 @@ import sys,argparse
 
 ## Synopsis
 
-The following call defines a global `THE` with fields (e.g.) 
+The following call defines a variable `THE` with fields (e.g.) 
 
      THE.group1.keyword1
 
