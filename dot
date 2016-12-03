@@ -138,7 +138,7 @@ py2md() { x2md $1 "^\"\"\""; }
 x2md() {
     stem="${1%.*}"
     pat=${2:-"#[<>]"}
-    header="etc/head.md"
+    header="$Dot/etc/head.md"
     if [ "$1" -nt "${stem}.md" ]
     then
       echo "# $1 to ${stem}.md ... "
@@ -151,7 +151,7 @@ x2md() {
                In       { sub(/^#[<> ]?/,"");
                          print $0
                        }
-       ' pat=$pat  )> ${stem}.md
+             ' pat=$pat  )> ${stem}.md
        git add ${stem}.md
     fi
 }
