@@ -37,6 +37,7 @@
 #      - And other stuff besides
 #      - Note: don't have a good way to share the local spelling dictionary. Suggestions anyone?
 # - python 
+#      - calls python3
 #      - adding sub-directories to PYTHONPATH and
 #      - disabling genration of those .pyc files.
 
@@ -55,14 +56,14 @@
 # ## Installation
 
 # ```sh
-# wget -O dot    http://tiny.cc/srcdot    # Code
-# wget -O dot.md http://tiny.cc/srcdotdoc # Optional. Documentation.
+# wget -O dot    http://tiny.cc/ttv1dot    # Code
 # sh dot  
 # dot0    # needed to install vim, emacs plugins.  only needs to be runs one
 # ```
 #  
 # Note that the above `dot0` commands sometimes prints an ignorable error message
 # `window too small for splitting`.
+#
 #>
 
 Dot=/tmp/$USER/dot/$$
@@ -77,7 +78,7 @@ cat <<'EOF' > $Dot/dotbashrc
 # -*- sh -*- 
 #### begin config
 
-What="LESSONS"
+What="TTV1"
 When="2016"
 Who="Tim Menzies, George Mathew"
 How="MIT (v2) licence"
@@ -108,7 +109,8 @@ dot0() { # start-up actions
   emacs -script $Dot/install.el # install emacs plugins
 }
 
-alias python="`which python`  -B "
+alias python="`which python3`  -B "
+#alias vi="`which mvim` -u $Dot/dotvimrc "
 
 emacs() { "$Emacs" -q -l "$Edot" $* &  
 }
