@@ -13,6 +13,8 @@ _(This file is auto-generated from [options.py](options.py).)_
 
 # Easier Command-Line Options
 
+Documentation for this code is available [on-line](http://tiny.cc/ttv1optionsdoc).
+
 ## Synopsis
 
 The following call defines a variable `THE` with fields (e.g.) 
@@ -29,23 +31,25 @@ will override the defaults shown below. Further,
      
 will print help text, divided into the groups.
 
-```python
-THE = options( 
-      "1 line header",
-      "Preamble text (multi-line).",
-      "End text (multi-line).",
-      group1 = [
-         "1 line group description",
-         ,h("1 line help",keyword1 = num")       # "--keyword1 X" expects any float
-         ,h("1 line help",keyword2 = False")     # "--keyword2" will set keyword=True
-         ,h("1 line help",keyword3 = str)        # "--keyword3 X" expects any string
-         ,h("1 line help",keyword4 = [x,y,z..]") # "--keyword4 X" expects one of x,y,z...
-                                                 # where the type of "X" is set from "x"
-     ],
-     group2 = [
-         ...
-    ])
-```
+     THE = options( 
+           "1 line header",
+           "Preamble text (multi-line).",
+           "End text (multi-line).",
+           group1 = [
+              "1 line group description",
+              ,h("1 line help",keyword1 = num")       # "--keyword1 X" expects any float
+              ,h("1 line help",keyword2 = False")     # "--keyword2" will set keyword=True
+              ,h("1 line help",keyword3 = str)        # "--keyword3 X" expects any string
+              ,h("1 line help",keyword4 = [x,y,z..]") # "--keyword4 X" expects one of x,y,z...
+                                                      # where the type of "X" is set from "x"
+          ],
+          group2 = [
+              ...
+         ])
+     
+## Installation
+
+    wget -O options.py http://tiny.cc/ttv1options
 
 ## How it Works
 

@@ -3,6 +3,8 @@
 
 # Easier Command-Line Options
 
+Documentation for this code is available [on-line](http://tiny.cc/ttv1optionsdoc).
+
 ## Synopsis
 
 The following call defines a variable `THE` with fields (e.g.) 
