@@ -1,5 +1,3 @@
-import sys,argparse
-
 """
 
 # Easier Command-Line Options
@@ -10,11 +8,11 @@ The following call defines a variable `THE` with fields (e.g.)
 
      THE.group1.keyword1
 
-etc. Now, on the command line, 
+etc. Also, on the command line, 
 
      python --keyword1 X --keyword2 Y
      
-will override the defaults shown below. Finally, 
+will override the defaults shown below. Further, 
 
      python --help
      
@@ -89,6 +87,8 @@ expands into
 the first item in the when list.)
 
 """
+
+import sys,argparse
 
 def h(help,**d):
   key,val = d.items()[0]

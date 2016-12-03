@@ -9,6 +9,7 @@ ______
 
 _(This file is auto-generated from [dot](dot).)_  
 
+
 # Dot
 
 Dot: ultra-portable config files  (for Unix tools on Mac and Linux)
@@ -45,6 +46,7 @@ This current version of `dot` handles configs for
      - And other stuff besides
      - Note: don't have a good way to share the local spelling dictionary. Suggestions anyone?
 - python 
+     - calls python3
      - adding sub-directories to PYTHONPATH and
      - disabling genration of those .pyc files.
 
@@ -63,11 +65,11 @@ The point of all this is that
 ## Installation
 
 ```sh
-wget -O dot http://bit.ly/timdot       # Code
-wget -O dot.md http://bit.ly/timdotdoc # Optional. Documentation.
+wget -O dot    http://tiny.cc/ttv1dot    # Code
 sh dot  
 dot0    # needed to install vim, emacs plugins.  only needs to be runs one
 ```
  
 Note that the above `dot0` commands sometimes prints an ignorable error message
 `window too small for splitting`.
+
