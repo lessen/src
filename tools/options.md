@@ -10,6 +10,7 @@ ______
 _(This file is auto-generated from [options.py](options.py).)_  
 
 """
+
 Easier Command-Line Options
 
 # Synopsis
@@ -31,8 +32,8 @@ will print help text, divided into the groups.
 ```python
 THE = options( 
       "1 line header",
-      \"\"\"Preamble text (multi-line).\"\"\",
-      \"\"\"End text (multi-line).\"\"\",
+      "Preamble text (multi-line).",
+      "End text (multi-line).",
       group1 = [
          "1 line group description",
          ,h("1 line help",keyword1 = num")       # "--keyword1 X" expects any float
@@ -60,14 +61,14 @@ commands. For example, this call:
 
 expands into
 
-      dict(help   = "disable all test",
-           key    = "--brave",
-           default= False,
-           action = "store_true")
+      dict(help    = "disable all test",
+           key     = "--brave",
+           default = False,
+           action  = "store_true")
 
 and
 
-      h("split redos",         splitRedo  = 20)
+      h("split redos", splitRedo  = 20)
 
 exapnds into
 
