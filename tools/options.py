@@ -7,20 +7,10 @@ Documentation for this code is available [on-line](http://tiny.cc/ttv1optionsdoc
 
 ## Synopsis
 
-The following call defines a variable `THE` with fields (e.g.) 
+Install via `
 
-     THE.group1.keyword1
-
-etc. Also, on the command line, 
-
-     python --keyword1 X --keyword2 Y
+     from options import *
      
-will override the defaults shown below. Further, 
-
-     python --help
-     
-will print help text, divided into the groups.
-
      THE = options( 
            "1 line header",
            "Preamble text (multi-line).",
@@ -36,7 +26,24 @@ will print help text, divided into the groups.
           group2 = [
               ...
          ])
+
+## Description
+
+The following call defines a variable `THE` with fields (e.g.) 
+
+     THE.group1.keyword1
+
+etc. Also, on the command line, 
+
+     python --keyword1 X --keyword2 Y
      
+will override the defaults shown below. Further, 
+
+     python --help
+     
+will print help text, divided into the groups.
+
+          
 ## Installation
 
     wget -O options.py http://tiny.cc/ttv1options
