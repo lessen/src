@@ -9,11 +9,11 @@ ______
 
 _(This file is auto-generated from [options.py](options.py).)_  
 
-"""
 
-Easier Command-Line Options
 
-# Synopsis
+# Easier Command-Line Options
+
+## Synopsis
 
 The following call defines a variable `THE` with fields (e.g.) 
 
@@ -47,7 +47,7 @@ THE = options(
     ])
 ```
 
-# How it Works
+## How it Works
 
 The standard way to process options in Python is the `optparse`
 library which can be verbose, to say the least.
