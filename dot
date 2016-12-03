@@ -138,7 +138,7 @@ py2md() { x2md $1 "^\"\"\""; }
 x2md() {
     stem="${1%.*}"
     pat=${2:-"#[<>]"}
-    header="$Dot/etc/head.md"
+    header="$DotDir/etc/head.md"
     if [ "$1" -nt "${stem}.md" ]
     then
       echo "# $1 to ${stem}.md ... "
@@ -146,6 +146,7 @@ x2md() {
           cat $header
        fi
        echo "_(This file is auto-generated from [$1]($1).)_  "
+       echo 
        cat $1 |  
         awk  ' $0 ~ pat { In = 1 - In }
                In       { sub(/^#[<> ]?/,"");
@@ -426,6 +427,7 @@ awk -F\/ '{ if (++seen[$NF] >  1) print "Warning, repeated file: " $0 }'
 
 # call a shell with functions that call things with the above config 
 Dot=$Dot                       \
-PYTHONPATH="$PATH1:$PYTHONPATH" \
-MYVIMRC=$Dot/dotvimrc            \
+DotDir=$PWD                     \
+PYTHONPATH="$PATH1:$PYTHONPATH"  \
+MYVIMRC=$Dot/dotvimrc             \
 bash --init-file $Dot/dotbashrc  -i
