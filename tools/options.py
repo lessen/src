@@ -56,7 +56,16 @@ So this code
 is an expansion function that takes
 a simple declarative syntax of the optopms, then
 expands it into the optparse
-commands. For example, this call:
+commands. 
+
+There's two functions that handle this process:
+
+- `our=options(about,header,footer, groups)` writes a dictionary of options to `our`,
+  while first checking if any command-line options overrides the defaults.
+- `h(help,key=default)` is for one item. It exapnds into a whole
+  dictionary of options for optparse.
+
+Here are some examples of this expansions. For example,
 
        h("disable all tests", brave = False)
 
@@ -95,8 +104,8 @@ expands into
           default = "mon"
          )
 
-(In the above `"mon"` was used as the default since it was
-the first item in the when list.)
+In the above `"mon"` was used as the default since it was
+the first item in the when list.
 
 """
 

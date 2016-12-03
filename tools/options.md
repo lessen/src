@@ -1,9 +1,9 @@
-[home](http://bit.ly/lessons) |
-[copyright](https://github.com/lessen/src/blob/master/LICENSE.md) &copy;2016, tim&commat;menzies.us
+[home](http://tiny.cc/ttv1) |
+[copyright](https://github.com/ttv1/src/blob/master/LICENSE.md) &copy;2016, tim&commat;menzies.us
 <br>
-[<img width=900 src="https://github.com/lessen/src/blob/master/img/banner.png?raw=true">](http://bit.ly/lessons)<br>
-[src](https://github.com/lessen/src) |
-[chat](https://lessons.slack.com/)
+[<img width=900 src="https://github.com/ttv1/src/blob/master/img/banner.png?raw=true">](http://tiny.cc/ttv1)<br>
+[src](https://github.com/ttv1/src) |
+[chat](https://ttv1.slack.com/)
 
 ______
 
@@ -17,20 +17,10 @@ Documentation for this code is available [on-line](http://tiny.cc/ttv1optionsdoc
 
 ## Synopsis
 
-The following call defines a variable `THE` with fields (e.g.) 
+Install via `
 
-     THE.group1.keyword1
-
-etc. Also, on the command line, 
-
-     python --keyword1 X --keyword2 Y
+     from options import *
      
-will override the defaults shown below. Further, 
-
-     python --help
-     
-will print help text, divided into the groups.
-
      THE = options( 
            "1 line header",
            "Preamble text (multi-line).",
@@ -46,7 +36,24 @@ will print help text, divided into the groups.
           group2 = [
               ...
          ])
+
+## Description
+
+The following call defines a variable `THE` with fields (e.g.) 
+
+     THE.group1.keyword1
+
+etc. Also, on the command line, 
+
+     python --keyword1 X --keyword2 Y
      
+will override the defaults shown below. Further, 
+
+     python --help
+     
+will print help text, divided into the groups.
+
+          
 ## Installation
 
     wget -O options.py http://tiny.cc/ttv1options
@@ -59,7 +66,16 @@ So this code
 is an expansion function that takes
 a simple declarative syntax of the optopms, then
 expands it into the optparse
-commands. For example, this call:
+commands. 
+
+There's two functions that handle this process:
+
+- `our=options(about,header,footer, groups)` writes a dictionary of options to `our`,
+  while first checking if any command-line options overrides the defaults.
+- `h(help,key=default)` is for one item. It exapnds into a whole
+  dictionary of options for optparse.
+
+Here are some examples of this expansions. For example,
 
        h("disable all tests", brave = False)
 
@@ -98,6 +114,6 @@ expands into
           default = "mon"
          )
 
-(In the above `"mon"` was used as the default since it was
-the first item in the when list.)
+In the above `"mon"` was used as the default since it was
+the first item in the when list.
 
