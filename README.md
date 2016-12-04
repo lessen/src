@@ -54,8 +54,14 @@ Goals: this code is  a reference implementation of the ideas in my talk
       - Small memory footprint;
 - *Goal aware*: 
       - Mulitple goals = no problem, different goals = different models;
+- *Explicable*:
+      - Can offer a succinct human-understandable presentation of waht it has learned;
+- *Actionable*:
+      - Comments not just on _what is_ but also _what to do_ (and when we say "what" and "do", those statements understand
+        local practicalities like what is observable and what is controllable);
 - *Humble*: 
-      - Offers a <em>cerfication envelope</em> where all conclusions come with a note saying "you should (not) trust me since I have (not) seen this kind of thing before;
+      - Offers a <em>cerfication envelope</em> where all conclusions come with a note saying 
+        "you should (not) trust me since I have (not) seen this kind of thing before";
 - *Context-aware*: 
        - Knows how local parts of the data can lead to different models; knows how to find different contexts;
 - *Sharable*: 
