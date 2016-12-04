@@ -35,7 +35,21 @@ ______
      </td> </tr>
      <tr>
      <td valign=top  xwidth="100px">
-
+Goals: a reference implementation of the ideas in my talk 
+[Data Science<sup>2</sup>  = (Test * DataScience)](http://tiny.cc/timm4). This is 
+ a combined data mining/optimization tool kit that is
+<ul>
+<li> Fast: all algorithms near linear-time, not RAM hogs;
+<li> Goal aware: mulitple goals = no problem, different goals = different models;
+<li> Light: small memory footprint;
+<li> Humble: offers a <em>cerfication envelope</em> where all conclusions come with a note saying "you should (not) trust me since I have (not) seen this kind of thing before;
+<li> Context-aware: knows how local parts of the data can lead to different models; knows how to find different contexts;
+<li> Privacy-aware: can hid data from individuals while preserving trends in the whole population;
+<li>Sharable: knows how to transfer models/data between contexts;
+<li>Self-tunign: and can do so, very quickly;
+<li>Incremental: can update old models with new ideas.
+</ul>
+That's "all". Should not take more than a few Ph.D.s to finish. 
      </td>
      <td valign=top  xwidth="100px">
    </td><td valign=top xwidth="100px">
