@@ -52,13 +52,13 @@ Goals: this code is  a reference implementation of the ideas in my talk
       - All algorithms near linear-time, not RAM hogs;
 - *Light*: 
       - Small memory footprint;
-- *Goal aware*: 
-      - Mulitple goals = no problem, different goals = different models;
 - *Explicable*:
-      - Can offer a succinct human-understandable presentation of waht it has learned;
+      - Can offer a succinct human-understandable presentation of what it has learned;
 - *Actionable*:
       - Comments not just on _what is_ but also _what to do_ (and when we say "what" and "do", those statements understand
         local practicalities like what is observable and what is controllable);
+- *Goal aware*: 
+      - Mulitple goals = no problem, different goals = different models;
 - *Humble*: 
       - Offers a <em>cerfication envelope</em> where all conclusions come with a note saying 
         "you should (not) trust me since I have (not) seen this kind of thing before";
