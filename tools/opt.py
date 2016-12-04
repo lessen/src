@@ -1,15 +1,5 @@
-[home](http://tiny.cc/ttv1) |
-[copyright](https://github.com/ttv1/src/blob/master/LICENSE.md) &copy;2016, tim&commat;menzies.us
-<br>
-[<img width=900 src="https://github.com/ttv1/src/blob/master/img/banner.png?raw=true">](http://tiny.cc/ttv1)<br>
-[src](https://github.com/ttv1/src) |
-[chat](https://ttv1.slack.com/)
 
-______
-
-_(This file is auto-generated from [options.py](options.py).)_  
-
-
+"""
 
 # Easier Command-Line Options
 
@@ -17,7 +7,7 @@ Documentation for this code is available [on-line](http://tiny.cc/ttv1optionsdoc
 
 ## Synopsis
 
-Install via `
+Install via `wget -O options.py http://ttvi1.net/options.py`. Then use as follows:
 
      from options import *
      
@@ -61,12 +51,9 @@ will print help text, divided into the groups.
 ## How it Works
 
 The standard way to process options in Python is the `optparse`
-library which can be verbose, to say the least.
-So this code
-is an expansion function that takes
-a simple declarative syntax of the optopms, then
-expands it into the optparse
-commands. 
+library which can be verbose, to say the least.  So this code is
+an expansion function that takes a simple declarative syntax of the
+optopms, then expands it into the optparse commands.
 
 There's two functions that handle this process:
 
@@ -116,4 +103,54 @@ expands into
 
 In the above `"mon"` was used as the default since it was
 the first item in the when list.
+
+"""
+
+import sys,argparse
+
+def h(help,**d):
+  print(help,d.items())
+  key,val = d.items()[0]
+  default = val[0] if isinstance(val,list) else val
+  # step0: remember defaults
+  out = dict(default=default)
+  add = lambda **d : out.update(d) # convenience function for adding args
+  # step1: Set type and meta var
+  if   val is  not False:
+    if   isinstance(default,int  ): add(metavar= "I", type= int)
+    elif isinstance(default,float): add(metavar= "F", type= float)
+    else                          : add(metavar= "S", type= str)
+  # step2: add help and type-specific misc flags
+  if   val is False :        add(help=help, action="store_true")
+  elif isinstance(val,list): add(help=help, choices=val)
+  else:                      add(help=help + ("; e.g. %s" % str(val)))
+  # --------------
+  return key, out
+
+def options(prog, before, after, **d):
+  class o:
+    def __init__(i, **d) : i.__dict__.update(d)
+    def __repr__(i)      : return i.__dict__.__repr__()
+  # -------------------------------
+  parser = argparse.ArgumentParser(
+               prog        = prog,
+               description = before,
+               epilog      = after,
+               formatter_class=argparse.RawTextHelpFormatter)
+  inside,out = {}, o()
+  for context in sorted(d.keys()):
+    out[context] = o()
+    description = d[context][0]
+    group = parser.add_argument_group(context, description)
+    for key,rest in d[context][1:]:
+      group.add_argument("--" + key,**rest)
+      assert key not in inside, 'keys cannot repeat'
+      inside[key] = context
+  parsed = vars(parser.parse_args())
+  for key,val in parsed.items():
+    out[inside[key]][key]= val
+  return out
+
+
+
 
