@@ -3,7 +3,7 @@ from opt import *
 our = options(
   "python smore.py",
   """
-SMORE: simple multi-objective rule engine   
+Timm Tools: misc python methods (data mining, optimization).
 (C) 2016,2017 Tim Menzies, George Mathews MIT, v2.
 The stuff we can use is either simple, or not at all.""",
   "",
@@ -38,3 +38,7 @@ The stuff we can use is either simple, or not at all.""",
   ]
 )
 
+if __name__ == "__main__":
+  print("cull",our.groups.cull)
+  print("verbose",our.all.verbose)
+  print(our.all)

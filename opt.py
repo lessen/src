@@ -11,38 +11,39 @@ Install via `wget -O options.py http://ttvi1.net/options.py`. Then use as follow
 
      from options import *
      
-     THE = options( 
-           "1 line header",
-           "Preamble text (multi-line).",
-           "End text (multi-line).",
-           group1 = [
-              "1 line group description",
-              ,h("1 line help",keyword1 = num")       # "--keyword1 X" expects any float
-              ,h("1 line help",keyword2 = False")     # "--keyword2" will set keyword=True
-              ,h("1 line help",keyword3 = str)        # "--keyword3 X" expects any string
-              ,h("1 line help",keyword4 = [x,y,z..]") # "--keyword4 X" expects one of x,y,z...
-                                                      # where the type of "X" is set from "x"
-          ],
-          group2 = [
-              ...
-         ])
+     our = options( 
+       "1 line header",
+       "Preamble text (multi-line).",
+       "End text (multi-line).",
+       group1 = [
+         "1 line group description",
+          ,h("1 line help",keyword1 = num")       # "--keyword1 X" expects any float
+          ,h("1 line help",keyword2 = False")     # "--keyword2" will set keyword=True
+          ,h("1 line help",keyword3 = str)        # "--keyword3 X" expects any string
+          ,h("1 line help",keyword4 = [x,y,z..]") # "--keyword4 X" expects one of x,y,z...
+                                                  # where the type of "X" is set from "x"
+       ],
+       group2 = [
+         ...
+       ])
+
+After that, data on the above groups is stored in `our`; e.g. `our.group1.keyword1`.
 
 ## Description
 
-The following call defines a variable `THE` with fields (e.g.) 
+The above call defines a variable `our` with fields (e.g.) 
 
-     THE.group1.keyword1
+     our.group1.keyword1
 
 etc. Also, on the command line, 
 
-     python --keyword1 X --keyword2 Y
+     python codeThatUsesOptions.py--keyword1 X --keyword2 Y
      
 will override the defaults shown below. Further, 
 
      python --help
      
 will print help text, divided into the groups.
-
           
 ## Installation
 
@@ -50,17 +51,17 @@ will print help text, divided into the groups.
 
 ## How it Works
 
-The standard way to process options in Python is the `optparse`
+The standard way to process options in Python is the `argparse`
 library which can be verbose, to say the least.  So this code is
 an expansion function that takes a simple declarative syntax of the
-optopms, then expands it into the optparse commands.
+optopms, then expands it into the argparse commands.
 
 There's two functions that handle this process:
 
 - `our=options(about,header,footer, groups)` writes a dictionary of options to `our`,
   while first checking if any command-line options overrides the defaults.
 - `h(help,key=default)` is for one item. It exapnds into a whole
-  dictionary of options for optparse.
+  dictionary of options for argparse.
 
 Here are some examples of this expansions. For example,
 

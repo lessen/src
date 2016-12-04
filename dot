@@ -38,7 +38,6 @@
 #      - Note: don't have a good way to share the local spelling dictionary. Suggestions anyone?
 # - python 
 #      - calls python3
-#      - adding sub-directories to PYTHONPATH and
 #      - disabling genration of those .pyc files.
 
 # Inside the dot shell, certain
@@ -422,14 +421,8 @@ EOF
 
 #########################################################
 
-PATH1="$(find $PWD -type f -name '*py' | grep -o '\(.*\)/' | sort -u | tr '\n' ':')"
-
-find . -type f  -name '*.py' | 
-awk -F\/ '{ if (++seen[$NF] >  1) print "Warning, repeated file: " $0 }'
-
 # call a shell with functions that call things with the above config 
 Dot=$Dot                       \
 DotDir=$PWD                     \
-PYTHONPATH="$PATH1:$PYTHONPATH"  \
 MYVIMRC=$Dot/dotvimrc             \
 bash --init-file $Dot/dotbashrc  -i
