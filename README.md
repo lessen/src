@@ -59,6 +59,8 @@ Goals: this code is  a reference implementation of the ideas in my talk
         local practicalities like what is observable and what is controllable);
 - *Goal aware*: 
       - Mulitple goals = no problem, different goals = different models;
+- *Stable*:
+      - Offers not just point solutions, but decision regions inside of which we can confidently expect some effect
 - *Humble*: 
       - Offers a <em>cerfication envelope</em> where all conclusions come with a note saying 
         "you should (not) trust me since I have (not) seen this kind of thing before";
