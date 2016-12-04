@@ -9,7 +9,7 @@ Documentation for this code is available [on-line](http://tiny.cc/ttv1optionsdoc
 
 Install via `wget -O options.py http://ttvi1.net/options.py`. Then use as follows:
 
-     from options import *
+     from opt import *
      
      our = options( 
        "1 line header",
