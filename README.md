@@ -48,14 +48,23 @@ Goals: this code is  a reference implementation of the ideas in my talk
 [Data Science<sup>2</sup>  = (Test * DataScience)](http://tiny.cc/timm4). This is 
  a combined data mining/optimization tool kit that is
 
-- *Fast*: all algorithms near linear-time, not RAM hogs;
-- *Goal aware*: mulitple goals = no problem, different goals = different models;
-- *Light*: small memory footprint;
-- *Humble*: offers a <em>cerfication envelope</em> where all conclusions come with a note saying "you should (not) trust me since I have (not) seen this kind of thing before;
-- *Context-aware*: knows how local parts of the data can lead to different models; knows how to find different contexts;
-- *Privacy-aware*: can hid data from individuals while preserving trends in the whole population;
-- *Sharable*: knows how to transfer models/data between contexts;
-- *Self-tuning*: and can do so, very quickly;
-- *Incremental*: can update old models with new ideas.
+- *Fast*: 
+      - All algorithms near linear-time, not RAM hogs;
+- *Light*: 
+      - Small memory footprint;
+- *Goal aware*: 
+      - Mulitple goals = no problem, different goals = different models;
+- *Humble*: 
+      - Offers a <em>cerfication envelope</em> where all conclusions come with a note saying "you should (not) trust me since I have (not) seen this kind of thing before;
+- *Context-aware*: 
+       - Knows how local parts of the data can lead to different models; knows how to find different contexts;
+- *Sharable*: 
+       - Knows how to transfer models/data between contexts;
+- *Privacy-aware*: 
+       - Can hid data from individuals while preserving trends in the whole population;
+- *Self-tuning*: 
+       - Can do so, very quickly;
+- *Incremental*: 
+       - Can update old models with new ideas.
  
 That's "all". Should not take more than a few Ph.D.s to finish. 
