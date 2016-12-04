@@ -109,8 +109,7 @@ the first item in the when list.
 import sys,argparse
 
 def h(help,**d):
-  print(help,d.items())
-  key,val = d.items()[0]
+  key,val = [(k,v) for k,v in d.items()][0]
   default = val[0] if isinstance(val,list) else val
   # step0: remember defaults
   out = dict(default=default)
@@ -129,8 +128,10 @@ def h(help,**d):
 
 def options(prog, before, after, **d):
   class o:
-    def __init__(i, **d) : i.__dict__.update(d)
-    def __repr__(i)      : return i.__dict__.__repr__()
+    def __init__(i, **d)   : i.__dict__.update(d)
+    def __repr__(i)        : return i.__dict__.__repr__()
+    def __getitem__(i, k)  : return i.__dict__[k]
+    def __setitem__(i,k,v) : i.__dict__[k] = v
   # -------------------------------
   parser = argparse.ArgumentParser(
                prog        = prog,
@@ -150,7 +151,3 @@ def options(prog, before, after, **d):
   for key,val in parsed.items():
     out[inside[key]][key]= val
   return out
-
-
-
-
