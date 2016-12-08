@@ -9,18 +9,27 @@ The stuff we can use is either simple, or not at all.""",
   "",
   all=[
     "Misc options."
-    ,h("disable all tests",        brave=    False)
+    ,h("disable 'ok' functions while loading", brave =      False)
+    ,h("run all tests",            egs=      False)
+    ,h("show import dependencies", depends=  False)
     ,h("found for flags",          rounding= 3)
     ,h("verbose level (0=silent)", verbose=  [0,1,2,3])
   ],
-  sample=[
+  maths=[
+    "misc maths stuff"
+    ,h("set random number seed", seed=1)
+  ],
+  thing=[
     "Incrementally sample data."
+    ,h("set character marking unknowns", unknown="?")
     ,h("samples per column", samples= 256)
-    ,h("small effect (Cliff's delta)", smallEffect= [0.147, 0.33, 0.474][0])
+    ,h("small effect (Cliff's delta)", cliffs= [0.147, 0.33, 0.474][0])
   ],
   num=[
     "Numeric samples."
     ,h("never normalize", noNorms= False)
+    ,h("Hedges threshold", hedges= 0.38)
+    ,h("%statistically confidence", conf=95) 
   ],
   sym=[
     "Samples of symbols."

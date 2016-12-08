@@ -117,8 +117,13 @@ emacs() { "$Emacs" -q -l "$Edot" $* &
 em() { emacs -q -l "$Edot" $*   
      }
 
-oks() {
-    for i in *ok.py; do
+egs() {
+    for i in *eg.py; do
+        echo ""
+        echo "#################"
+        echo "# $i "
+        echo "#################"
+        echo ""
         python $i
     done
 }

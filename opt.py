@@ -3,14 +3,15 @@
 
 # Easier Command-Line Options
 
-Documentation for this code is available [on-line](http://tiny.cc/ttv1optionsdoc).
+Documentation for this code is available
+[on-line](http://tttv1.net/GLOBALS.py).
 
 ## Synopsis
 
-Install via `wget -O options.py http://ttvi1.net/options.py`. Then use as follows:
+Install via `wget -O options.py http://ttvi1.net/GLOBALS.py`. Then use as follows:
 
      from opt import *
-     
+     # 
      our = options( 
        "1 line header",
        "Preamble text (multi-line).",
@@ -110,7 +111,7 @@ the first item in the when list.
 import sys,argparse
 
 def h(help,**d):
-  key,val = [(k,v) for k,v in d.items()][0]
+  key,val = next(iter(d.items()))
   default = val[0] if isinstance(val,list) else val
   # step0: remember defaults
   out = dict(default=default)
