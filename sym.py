@@ -1,9 +1,8 @@
 import math
 
 class sym:
-  def __init__(i,txt,col):
-    i.n, i.most, i.mode = 0,0,None
-    i.name,i.col, i.counts = txt,col,{}
+  def __init__(i):
+    i.n, i.most, i.mode, i.counts = 0,0,None,{}
   
   # ----------------
   # preparing
@@ -33,6 +32,8 @@ class sym:
      return (i.counts.get(x,0) + m*prior)/(i.n + m)
   def k(i):
     return len(i.counts.keys())
+  def ke(i):
+    return i.k()*i.ent()
   def wriggle(i): return i.ent()
   def ent(i):
     tmp = 0

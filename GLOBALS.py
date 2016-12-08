@@ -21,19 +21,22 @@ The stuff we can use is either simple, or not at all.""",
   ],
   thing=[
     "Incrementally sample data."
-    ,h("set character marking unknowns", unknown="?")
-    ,h("samples per column", samples= 512)
-    ,h("small effect (Cliff's delta)", cliffs= [0.147, 0.33, 0.474][0])
-    ,h("bootstrap repeats", b=1000)
-    ,h("recursive bi-cluster, stop",tiny=30)
-    ,h("recursive bi-cluster, divide",enough=0.5)
-    ,h("recrusive bi-cluster, trival",trival=1.01)
-    ,h("recrusive bi-cluster, verbose",vebose=False)
+    ,h("set character marking unknowns",unknown="?")
+  ],
+  sample=[
+    "Keeping and analyzing (some) raw data"
+    ,h("samples per column",            samples= 512)
+    ,h("small effect (Cliff's delta)",  cliffs= [0.147, 0.33, 0.474][0])
+    ,h("bootstrap repeats",             b=1000)
+    ,h("recursive bi-cluster, epsilon", epsilon=0)
+    ,h("recursive bi-cluster, enough" , enough=0.5)
+    ,h("recrusive bi-cluster, trival" , trivial=1.01)
   ],
   num=[
-    "Numeric samples."
+    "Numeric samples"
     ,h("Cohen's d", d=0.3)
-    ,h("%statistically confidence", conf=95) 
+    ,h("%statistically confidence", conf=95)
+    ,h("Hedges' test threshold", hedges=0.38)
   ],
   sym=[
     "Samples of symbols."

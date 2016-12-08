@@ -23,12 +23,12 @@ class num:
     i.mu += delta/i.n
     i.m2 += delta*(x - i.mu)
   def sub(i,x):
-    i.n   = max(0,i.n - 1)
+    i.n  -= 1
     delta = x - i.mu
     i.mu  = max(0,i.mu - delta/i.n)
     i.m2  = max(0,i.m2 - delta*(x - i.mu))
   # --------------
-  # distance
+  # distances
   def norm(i,x):
     x = (x - i.lo)/ (i.hi - i.lo + 1e-32)
     if x > 1: return 1
@@ -53,7 +53,7 @@ class num:
   def hedgesTest(i,j):
     x   = (i.n - 1)*i.sd()**2 + (j.n - 1)*j.sd()**2
     y = (i.n - 1) + (j.n - 1)
-    sp    = ( x / y )**0.5
+    sp    = ( x / y )**0.5 + 1e-32
     delta = abs(i.mu - j.mu) / sp  
     c     = 1 - 3.0 / (4*(i.n + j.n - 2) - 1)
     return (delta * c) < num.hedges
@@ -70,7 +70,5 @@ class num:
      conf   = num.conf
      n1      = min(30,int(df/5 + 0.5)*5) # to fit into criticals
      return  tmp < criticals[num.conf][n1]
-  def same(i,j):
-    return i.hedgesTest(j) and i.ttest(j)
  
 

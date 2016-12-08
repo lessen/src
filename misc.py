@@ -6,3 +6,5 @@ def atom(x)  :
     try: return float(x)
     except ValueError:
       return x
+
+def same(x): return x

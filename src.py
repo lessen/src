@@ -2,6 +2,10 @@
 
 # Rules of src
 
+## Optimizations
+
+Best to run this with pypy3
+
 ## Using global options
 
 Files needing global options start with `from choice import *`.
@@ -19,6 +23,13 @@ class num:
 Thereafter, code needed the options talks to `className.var` and not
 `our.x.y`. Why?  Well, if you are sick of my global system, then dump it and
 make all the config static class variables.
+
+Todo
+====
+
+- slit numeg over into thing
+
+- redp div knowing abut thing.n()
 
 """
 from GLOBALS import *

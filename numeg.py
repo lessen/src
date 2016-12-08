@@ -17,18 +17,18 @@ def _different(m=512):
   rseed(13)
   for sd0 in range(0,10,2):
     sd = sd0/2
-    one = lambda z: r()*z+ random.gauss(0,sd)
+    one = lambda z: r()*z + (-1 if r() <0.5 else 1)*random.gauss(0,sd)
     print("")
     pops = {}
     for n0 in range(0,20,2):
-      n=n0/10
+      n       = n0/10
       pops[n] = thing([one(n) for _ in range(m)])
     p1 = pops[1.0]
     for n in sorted(pops.keys()):
        print(n,end=" ")
     print(" :  sd = "+str(sd/10))
-    for f in [p1.cliffsDelta,p1.bootstrap,p1.sureSame,
-              p1.hedgesTest, p1.ttest,p1.same]:
+    for f in [p1.cliffsDelta,p1.bootstrap,p1.same_CD,
+              p1.hedgesTest, p1.ttest,p1.same_HT]:
       for n in sorted(pops.keys()):
         p0 = pops[n]
         print(" * " if f(p0) else "   ",end=" ")
