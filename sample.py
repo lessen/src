@@ -25,8 +25,8 @@ class sample:
       i.some.append(x)
     elif r() <= now/i._n:
       i.some[ int(r() * now) ]= x
-  def segments(i):
-    return div(i.some)
+  def ranges(i):
+    return ranges(i.some)
   def bootstrap(i,j):
     return bootstrap(i.some,j.some)
   def cliffsDelta(i,j):
@@ -91,7 +91,7 @@ def expectedMuChange(lhs,rhs,all):
 
 def yes(*l): return True
 
-def div(lst,label=0,
+def ranges(lst,label=0,
         x       = lambda z1:z1,
         y       = lambda z2:z2,
         same    = lambda z3,z4: False,

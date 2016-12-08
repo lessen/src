@@ -39,7 +39,7 @@ class thing:
   
   #--- non-parametric tests, defined in samples
   def cliffsDelta(i,j): return i.samples.cliffsDelta(j.samples)
-  def segments(i)     : return i.samples.segments()
+  def ranges(i)       : return i.samples.ranges()
   def bootstrap(i,j)  : return i.samples.bootstrap(j.samples)
   def same_CD(i,j)    : return i.cliffsDelta(j) and i.bootstrap(j)
   
