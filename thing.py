@@ -105,28 +105,34 @@ def bootstrap(y0,z0):
       bigger += 1
   return (bigger / thing.b) > (1 - num.conf/100)
 
-def div(lst,label=0, x= same, y= same, order=None):
+def expectedWriggle(lhs,rhs,all):
+  return lhs.n/all.n * rhs.wriggle() + \
+         rhs.n/all.n * rhs.wriggle()
+
+def expectedMuChange(lhs,rhs,all):
+  return lhs.n/all.n * abs(lhs.mu - all.mu)**2 + \
+         rhs.n/all.n * abs(rhs.mu - all.mu)**2
+
+def div(lst,label=0, x= same, y= same, order=None,f=expectedWriggle):
   def divide(lst, out=[], lvl=0, cut=None):  
     xlhs, xrhs   = thing(),        thing(map(x,lst))
     ylhs, yrhs   = thing(),        thing(map(y,lst))
     score,score1 = yrhs.wriggle(), None
     n            = xrhs.n
-    report       = thing(map(y,lst))
+    overall       = thing(map(y,lst))
     start,stop   = x.my.lo, x.my.hi
     for i,new in enumerate(lst):
         here =  x(new)
         there=  y(new)
         xlhs.add(here) ; xrhs.sub(here)
         ylhs.add(there); yrhs.sub(there)
-        if xrhs.n < enough:
-          break
-        else:
+        if xrhs.n >= enough:
           if xlhs.n >= enough:
             if here - start > tiny:
               if stop - here > tiny:
-                score1 = ylhs.n/n*ylhs.wriggle() + yrhs.n/n*yrhs.wriggle()
+                score1 = f(lhs,rhs,overall)
                 if score1*thing.trivial < score:
-                  if isintance(yrhs.my,num):
+                  if isinstance(yrhs.my,num):
                     cut,score= i,score1
                   else:
                     k0,e0,ke0 = yrhs.my.k(), yrhs.my.ent()
@@ -142,7 +148,7 @@ def div(lst,label=0, x= same, y= same, order=None):
       divide(lst[:cut], out= out, lvl= lvl+1)
       divide(lst[cut:], out= out, lvl= lvl+1)
     else:
-      out.append(dict(label=label, score=score, report=report,
+      out.append(dict(label=label, score=score, report=overall,
                        n=n,  id=len(out),
                        lo=start, up=stop,
                        has=lst))
