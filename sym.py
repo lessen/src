@@ -33,6 +33,7 @@ class sym:
      return (i.counts.get(x,0) + m*prior)/(i.n + m)
   def k(i):
     return len(i.counts.keys())
+  def wriggle(i): return i.ent()
   def ent(i):
     tmp = 0
     for val in i.counts.values():

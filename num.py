@@ -1,12 +1,14 @@
 from GLOBALS import our
 
 class num:
-  conf = our.num.conf   # 0.95
+  conf   = our.num.conf   # 95
   hedges = our.num.hedges # 0.38
+  d      = our.num.d
   
-  def __init__(i):
+  def __init__(i,inits=[]):
     i.lo, i.hi = 1e32,-1e32
     i.n, i.mu, i.m2 = 0,0,0
+    map(i.add,inits)
   #-----------------
   # preparing
   def compile(i,x):
@@ -45,6 +47,7 @@ class num:
     return (x-y)**2
   # -----------------------
   # stats
+  def wriggle(i): return i.sd()
   def sd(i):
     return 0 if i.n <= 2 else (i.m2/(i.n-1))**0.5
   def hedgesTest(i,j):
@@ -53,7 +56,6 @@ class num:
     sp    = ( x / y )**0.5
     delta = abs(i.mu - j.mu) / sp  
     c     = 1 - 3.0 / (4*(i.n + j.n - 2) - 1)
-    #print(dict(delta=delta,c=c,h=num.hedges))
     return (delta * c) < num.hedges
   def ttest(i,j,
            criticals= {
@@ -70,5 +72,5 @@ class num:
      return  tmp < criticals[num.conf][n1]
   def same(i,j):
     return i.hedgesTest(j) and i.ttest(j)
-  
+ 
 
