@@ -130,16 +130,16 @@ def ranges(lst,label=0,
                 if isinstance(yrhs.my,num):
                   if not same(lst,xlhs,ylhs,i,x,y):
                     cut,score= i,score1
-                  else:
-                    e0     = e0 or overally.my.ent()
-                    k0     = k0 or overally.my.k()
-                    ke0    = e0*ke0
-                    gain   = e0 - score1
-                    delta  = math.log(3**k0-2,2)- (ke0 - yrhs.my.ke() - ylhs.my.ke())
-                    border = (math.log(n-1,2) + delta)/n
-                    if gain >= border:
-                      if not same(lst,xlhs,ylhs,i,x,y):
-                        cut,score = i,score1
+                else:
+                  e0     = e0 or overally.my.ent()
+                  k0     = k0 or overally.my.k()
+                  ke0    = e0*ke0
+                  gain   = e0 - score1
+                  delta  = math.log(3**k0-2,2)- (ke0 - yrhs.my.ke() - ylhs.my.ke())
+                  border = (math.log(n-1,2) + delta)/n
+                  if gain >= border:
+                    if not same(lst,xlhs,ylhs,i,x,y):
+                      cut,score = i,score1
     if sample.verbose:
       print('.. '*lvl,n,score1 or '.')
     if cut:
