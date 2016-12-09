@@ -2,6 +2,7 @@ from num import *
 from eg import ok
 from numbers import *
 from thing import thing
+import time
 
 @ok
 def _num():
@@ -14,9 +15,10 @@ def _num():
 
 @ok
 def _different(m=512):
-  rseed(13)
+  rseed(17)  
+  times={}
   for sd0 in range(0,10,2):
-    sd = sd0/2
+    sd = sd0/5
     one = lambda z: r()*z + (-1 if r() <0.5 else 1)*random.gauss(0,sd)
     print("")
     pops = {}
@@ -29,11 +31,19 @@ def _different(m=512):
     print(" :  sd = "+str(sd/10))
     for f in [p1.cliffsDelta,p1.bootstrap,p1.same_CD,
               p1.hedgesTest, p1.ttest,p1.same_HT]:
+      name = f.__name__
       for n in sorted(pops.keys()):
+        rseed(17)
         p0 = pops[n]
-        print(" * " if f(p0) else "   ",end=" ")
-      print(" : ",f.__name__)
-
+        time1 = time.time()
+        tmp = f(p0)
+        time2 = time.time()
+        times[name] = times.get(name,0) + time2 - time1
+        print(" * " if tmp else "   ",end=" ")
+      print(" : ",name)
+  times = sorted([(v,f) for f,v in times.items()])
+  for v,f in times:
+    print(f,int(v)+1,1+int(v/times[0][0]))
 """
 Output: note that everyone agrees that if
 population1 is 1*population2, then they are all the same.

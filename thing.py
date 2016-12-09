@@ -20,16 +20,19 @@ class thing:
     i.txt=str(txt)
     i.pos=pos
     i.want,i.my=None,None
-    i.samples=sample()
+    i.samples=None
     i.add(inits)
   def add(i,xs):
     for x in things(xs):
       if i.my is None:
         what = num if isinstance(x,(float,int)) else sym
         i.my  = what()
+      if i.samples is None:
+        i.samples = sample()   
       i.my.add(x)
       i.samples.add(x)
   def sub(i,xs):
+    i.samples=None
     assert i.my != None
     for x in things(xs):
       if i.my.n > 1:
@@ -41,7 +44,7 @@ class thing:
   def cliffsDelta(i,j): return i.samples.cliffsDelta(j.samples)
   def ranges(i)       : return i.samples.ranges()
   def bootstrap(i,j)  : return i.samples.bootstrap(j.samples)
-  def same_CD(i,j)    : return i.cliffsDelta(j) and i.bootstrap(j)
+  def same_CD(i,j)    : return i.cliffsDelta(j)  and i.bootstrap(j) 
   
   #--- generic. returns sd for nums and entropy for syms
   def wriggle(i)      : return i.my.wriggle()

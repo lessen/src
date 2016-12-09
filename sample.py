@@ -82,15 +82,16 @@ def bootstrap(y0,z0):
 ####################################################
 
 def expectedWriggle(lhs,rhs,all):
-  return lhs.my.n/all.my.n * rhs.wriggle() + \
-         rhs.my.n/all.my.n * rhs.wriggle()
+  return lhs.n()/all.n() * rhs.wriggle() + \
+         rhs.n()/all.n() * rhs.wriggle()
 
 def expectedMuChange(lhs,rhs,all):
-  return lhs.my.n/all.my.n * abs(lhs.my.mu - all.my.mu)**2 + \
-         rhs.my.n/all.my.n * abs(rhs.my.mu - all.my.mu)**2
+  return lhs.n()/all.n() * abs(lhs.my.mu - all.my.mu)**2 + \
+         rhs.n()/all.n() * abs(rhs.my.mu - all.my.mu)**2
 
 def yes(*l): return True
 
+# XXX the rhs will need to be calced
 def ranges(lst,label=0,
         x       = lambda z1:z1,
         y       = lambda z2:z2,
@@ -107,7 +108,7 @@ def ranges(lst,label=0,
     overallx     = thing(xs)
     score,score1 = overally.wriggle(), None
     start,stop   = overallx.my.lo, overallx.my.hi
-    n            = overallx.my.n
+    n            = overallx.n()
     if n >= enough:
       xlhs, xrhs   = thing(), thing(xs)
       ylhs, yrhs   = thing(), thing(ys)
@@ -119,16 +120,16 @@ def ranges(lst,label=0,
         yrhs.sub(there) ; ylhs.add(there)
         if isinstance(here,list): startHere,stopHere = here[0], here[-1]
         else                    : startHere,stopHere = here, here
-        if xrhs.my.n >= enough:
-          if xlhs.my.n >= enough:
+        if xrhs.n() >= enough:
+          if xlhs.n() >= enough:
             #print(".")
             if startHere - start > epsilon:
               if stop - stopHere > epsilon:
                 score1 = scoring(ylhs,yrhs,overally)
                 if score1*sample.trivial < score:
-                  if not same(ylhs,yrhs):
                     if isinstance(yrhs.my,num):
-                      cut,score= i,score1
+                      if not same(lst,xlhs,ylhs,i,x,y):
+                        cut,score= i,score1
                     else:
                       e0     = e0 or overally.my.ent()
                       k0     = k0 or overally.my.k()
@@ -137,7 +138,8 @@ def ranges(lst,label=0,
                       delta  = math.log(3**k0-2,2)- (ke0 - yrhs.my.ke() - ylhs.my.ke())
                       border = (math.log(n-1,2) + delta)/n
                       if gain >= border:
-                        cut,score = i,score1
+                        if not same(lst,xlhs,ylhs,i,x,y):
+                          cut,score = i,score1
     if sample.verbose:
       print('.. '*lvl,n,score1 or '.')
     if cut:
