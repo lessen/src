@@ -1,7 +1,7 @@
-
 from GLOBALS import our
 from num     import num
 from numbers import r
+from thing   import thing
 import random
 
 class sample:
@@ -23,7 +23,7 @@ class sample:
     now  = len(i.some)
     if now < i.max:
       i.some.append(x)
-    elif r() <= now/i._n:
+    elif r() <= now/i.n:
       i.some[ int(r() * now) ]= x
   def ranges(i):
     return ranges(i.some)
@@ -109,37 +109,37 @@ def ranges(lst,label=0,
     score,score1 = overally.wriggle(), None
     start,stop   = overallx.my.lo, overallx.my.hi
     n            = overallx.n()
-    if n >= enough:
-      xlhs, xrhs   = thing(), thing(xs)
-      ylhs, yrhs   = thing(), thing(ys)
-      e0,k0        = None, None
-      for i,new in enumerate(lst):
-        here =  x(new)
-        there =  y(new)
-        xrhs.sub(here)  ; xlhs.add(here)  
-        yrhs.sub(there) ; ylhs.add(there)
-        if isinstance(here,list): startHere,stopHere = here[0], here[-1]
-        else                    : startHere,stopHere = here, here
-        if xrhs.n() >= enough:
-          if xlhs.n() >= enough:
-            #print(".")
-            if startHere - start > epsilon:
-              if stop - stopHere > epsilon:
-                score1 = scoring(ylhs,yrhs,overally)
-                if score1*sample.trivial < score:
-                    if isinstance(yrhs.my,num):
+    #if n >= enough:
+    xlhs, xrhs   = thing(), thing(xs)
+    ylhs, yrhs   = thing(), thing(ys)
+    e0,k0        = None, None
+    for i,new in enumerate(lst):
+      here =  x(new)
+      there =  y(new)
+      xrhs.sub(here)  ; xlhs.add(here)  
+      yrhs.sub(there) ; ylhs.add(there)
+      if isinstance(here,list): startHere,stopHere = here[0], here[-1]
+      else                    : startHere,stopHere = here, here
+      if xrhs.n() >= enough:
+        if xlhs.n() >= enough:
+          #print(".")
+          if startHere - start > epsilon:
+            if stop - stopHere > epsilon:
+              score1 = scoring(ylhs,yrhs,overally)
+              if score1*sample.trivial < score:
+                if isinstance(yrhs.my,num):
+                  if not same(lst,xlhs,ylhs,i,x,y):
+                    cut,score= i,score1
+                  else:
+                    e0     = e0 or overally.my.ent()
+                    k0     = k0 or overally.my.k()
+                    ke0    = e0*ke0
+                    gain   = e0 - score1
+                    delta  = math.log(3**k0-2,2)- (ke0 - yrhs.my.ke() - ylhs.my.ke())
+                    border = (math.log(n-1,2) + delta)/n
+                    if gain >= border:
                       if not same(lst,xlhs,ylhs,i,x,y):
-                        cut,score= i,score1
-                    else:
-                      e0     = e0 or overally.my.ent()
-                      k0     = k0 or overally.my.k()
-                      ke0    = e0*ke0
-                      gain   = e0 - score1
-                      delta  = math.log(3**k0-2,2)- (ke0 - yrhs.my.ke() - ylhs.my.ke())
-                      border = (math.log(n-1,2) + delta)/n
-                      if gain >= border:
-                        if not same(lst,xlhs,ylhs,i,x,y):
-                          cut,score = i,score1
+                        cut,score = i,score1
     if sample.verbose:
       print('.. '*lvl,n,score1 or '.')
     if cut:
@@ -154,6 +154,6 @@ def ranges(lst,label=0,
     # --- end function divide -----------------------------
   if not lst: return []
   epsilon   = epsilon   or num.d * thing([x(z) for z in lst]).wriggle() 
-  enough = enough or len(lst)**thing.enough
+  enough = enough or len(lst)**sample.enough
   order  = order  or x
   return divide( sorted(lst[:], key=order), out=[] ,lvl=0) # copied, sorted

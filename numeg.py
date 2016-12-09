@@ -11,7 +11,7 @@ def _num():
     x.add(r())
   x=thing([96, 104, 126, 134, 140])
   assert round(x.my.sd(),3) == 19.131
-  assert x.n == 5
+  assert x.n() == 5
 
 @ok
 def _different(m=512):
@@ -43,7 +43,7 @@ def _different(m=512):
       print(" : ",name)
   times = sorted([(v,f) for f,v in times.items()])
   for v,f in times:
-    print(f,int(v)+1,1+int(v/times[0][0]))
+    print(int(v)+1,"\t",1+int(v/times[0][0]),"\t",f)
 """
 Output: note that everyone agrees that if
 population1 is 1*population2, then they are all the same.

@@ -5,6 +5,6 @@ from numbers import r
 @ok
 def _sdiv():
   th = thing([r() for _ in range(10000)])
-  for segment in th.segments():
-    print(segment)
+  for one in th.ranges():
+    print(one)
     
