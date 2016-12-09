@@ -3,6 +3,7 @@ import math
 class sym:
   def __init__(i):
     i.n, i.most, i.mode, i.counts = 0,0,None,{}
+    i._ent=None
   
   # ----------------
   # preparing
@@ -11,15 +12,11 @@ class sym:
   # ----------
   # updating
   def add(i,x):
+    i._ent=None
     i.n += 1
     count= i.counts[x] = i.counts.get(x,0) + 1
     if count > i.most:
       i.most,i.mode=count,x
-  def sub(i,x):
-    i.n   = max(0,i.n - 1)
-    i.counts[x] = max(0, i.counts[x] - 1)
-    if x == i.mode:
-      i.most, i.mode = None,None
   # ---------
   # distance
   def dist(i,x,y,miss="?"):
@@ -36,12 +33,14 @@ class sym:
     return i.k()*i.ent()
   def wriggle(i): return i.ent()
   def ent(i):
-    tmp = 0
-    for val in i.counts.values():
-      p = val/i.n
-      if p:
-        tmp -= p*math.log(p,2)
-    return tmp 
+    if i._ent is None:
+      tmp = 0
+      for val in i.counts.values():
+        p = val/i.n
+        if p:
+          tmp -= p*math.log(p,2)
+      i._ent = tmp
+    return i._ent
   # ---------------
   # reporting
   def __repr__(i):

@@ -31,12 +31,6 @@ class thing:
         i.samples = sample()   
       i.my.add(x)
       i.samples.add(x)
-  def sub(i,xs):
-    i.samples=None
-    assert i.my != None
-    for x in things(xs):
-      if i.my.n > 1:
-        i.my.sub(x)
   def n(i):
     return i.my.n
   

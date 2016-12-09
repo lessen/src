@@ -8,7 +8,7 @@ class num:
   def __init__(i,inits=[]):
     i.lo, i.hi = 1e32,-1e32
     i.n, i.mu, i.m2 = 0,0,0
-    map(i.add,inits)
+    [i.add(x) for x in inits]
   #-----------------
   # preparing
   def compile(i,x):
@@ -22,11 +22,6 @@ class num:
     delta = x - i.mu
     i.mu += delta/i.n
     i.m2 += delta*(x - i.mu)
-  def sub(i,x):
-    i.n  -= 1
-    delta = x - i.mu
-    i.mu  = max(0,i.mu - delta/i.n)
-    i.m2  = max(0,i.m2 - delta*(x - i.mu))
   # --------------
   # distances
   def norm(i,x):
