@@ -30,7 +30,7 @@ def ranges(lst,
            d          = 0.3,
            trivial    = 1.01, # 1%
            evaly      = expectedWriggle,
-           goodxsplit = yes
+           goodxsplit = yes,
            goodysplit = yes):
   def stats(segment, xall, yall):
      x,y = num(),yklass()
@@ -58,9 +58,9 @@ def ranges(lst,
     xrhsall, yrhsall, xoverall, yoverall = summary(segments)
     score, score1 = yoverall.wriggle(), None
     xlhs, ylhs    = num(), yklass()
-    for i,(x,y) in enumerate(segments):
-      xrhs = xrhsall[i]
-      yrhs = yrhsall[i]
+    for i,(x,y) in enumerate(segments[:-1]):
+      xrhs = xrhsall[i+1]
+      yrhs = yrhsall[i+1]
       [xlhs+z for z in x.all]
       [ylhs+z for z in y.all]
       if xlhs.lo - xoverall.lo > epsilon:
@@ -72,7 +72,7 @@ def ranges(lst,
                 cut,score = i,score1  
             else:
               if goodysplit(ylhs,yrhs,yoverall, score1):
-                if if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
+                if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
                   cut,score = i,score1
     if verbose:
       print('.. '*lvl,n,score1 or '.')
@@ -108,7 +108,7 @@ class num:
       i.ordered=ordered()
       [i + x for x in inits]
     def __add__(i,x):
-      i.ordered + [x]
+      i.ordered + x
       i.sorted=False
       i.lo  = min(x, i.lo)
       i.hi  = max(x, i.hi)
@@ -124,7 +124,7 @@ class num:
       return i.ordered.median()
 
 class ordered:
-    def __init__(i):
+   def __init__(i):
       i.sorted= False
       i._median = None
       i.all = []
@@ -137,13 +137,13 @@ class ordered:
      if not i.sorted or not i._median:
        i.sorted = True
        i.all    = sorted(i.all)
-       n        = len(i.median)
+       n        = len(i.all)
        p  =  q  = n//2
        if n < 3:
          p,q = 0, n-1
        elif not n % 2:
          q = p -1
-       i._median = (i.all[p]+i.all[q])/2
+       i._median = i.all[p] if p==q else (i.all[p]+i.all[q])/2
      return i._median
 
 class sym:
@@ -163,8 +163,8 @@ class sym:
     def ent(i):
       if i._ent is None:
         i._ent = 0
-        for val in i.counts.values():
-          p    = val/i.n
+        for k in i.counts:
+          p    = i.counts[k]/i.n
           i._ent -= p*math.log(p,2)
       return i._ent
     def k(i):  return len(i.counts.keys())
