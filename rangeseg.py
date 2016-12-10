@@ -21,12 +21,15 @@ def _symnum():
   assert z.median() == 2.5
  
 def _ranges():
-  for x in ranges([r() for _ in range(100)]):
-    print(x)
+  for x in ranges([r()**2 for _ in range(10000)],
+                  verbose=True):
+    for k in ["start","stop","n"]:
+      print(k, "%5s" %round(x[k],3),end=" ")
+    print("")
   
-for f in [_symnum,_ranges]:
-  try: f()
-  except Exception as e: print("E> bad",f.__name__,":",e)
+  lst1=[[r()**2,"a"] for _ in range(1000)]
+  lst1=[[r(),    "b"] for _ in range(1000)]
+  lst1=[[r()**0.5,    "c"] for _ in range(1000)]
   
 _ranges()
 

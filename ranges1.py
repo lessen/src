@@ -1,19 +1,18 @@
-import math
+import sys,math
 from copy import deepcopy as copy
 
 def expectedWriggle(lhs,rhs,all):
-  return lhs.n()/all.n() * lhs.wriggle() + \
-         rhs.n()/all.n() * rhs.wriggle()
+  return lhs.n/all.n * lhs.wriggle() + \
+         rhs.n/all.n * rhs.wriggle()
 
 def expectedMuChange(lhs,rhs,all):
-  return lhs.n()/all.n() * abs(lhs.median() - all.median())**2 + \
-         rhs.n()/all.n() * abs(rhs.median() - all.median())**2
+  return lhs.n/all.n * abs(lhs.median() - all.median())**2 + \
+         rhs.n/all.n * abs(rhs.median() - all.median())**2
 
 def fayyadIranni(lhs,rhs,all,score):
-  n     = all.n()
   gain  = all.ent() - score
   delta = math.log(3**all.k()-2,2) - (all.ke() - lhs.ke() - rhs.ke())
-  return gain > (math.log(n-1,2) + delta)/n
+  return gain > (math.log(all.n-1,2) + delta)/all.n
 
 def yes(*l,**d): return True
 
@@ -65,7 +64,7 @@ class num:
     def median(i):
       return i.ordered.median()
     def __repr__(i):
-     return str(dict(n=i.n,lo=i.lo,hi=i.hi))
+     return "(:lo %s :hi %s :n %s)" % (i.lo, i.hi, i.n)
    
 class sym:
     def __init__(i,inits=[]):
@@ -93,15 +92,17 @@ class sym:
 
 #-----------------------------------
 def ranges(lst,
-           verbose    = True,
+           verbose    = False,
            label      = "ranges",
            x          = lambda z:z,
            y          = lambda z:z,
            enough     = None,
            flat       = True,
+           key        = lambda z:z,
            ynum       = True,
            enoughth   = 0.5,
            epsilon    = 0,
+           rnd        = 3,
            d          = 0.3,
            trivial    = 1.01, # 1%
            evaly      = expectedWriggle,
@@ -133,24 +134,26 @@ def ranges(lst,
     xrhsall, yrhsall, xoverall, yoverall = summary(segments)
     score, score1 = yoverall.wriggle(), None
     xlhs, ylhs    = num(), yklass()
-    for i,(x,y) in enumerate(segments[:-1]):
+    
+    for i,(x,y) in enumerate(segments[:-2]):
       xrhs = xrhsall[i+1]
       yrhs = yrhsall[i+1]
       [xlhs+z for z in x.all]
       [ylhs+z for z in y.all]
-      if xlhs.lo - xoverall.lo > epsilon:
-        if xoverall.hi - xlhs.hi > epsilon:
+      if   xoverall.lo < xlhs.median() - epsilon:
+        if xoverall.hi > xlhs.median() + epsilon :
           score1 = evaly(ylhs,yrhs,yoverall)
           if score1*trivial < score:
             if yklass == num:
               if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                cut,score = i,score1  
+                cut,score = i+1,score1  
             else:
               if goodysplit(ylhs,yrhs,yoverall, score1):
                 if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                  cut,score = i,score1
+                  cut,score = i+1,score1
     if verbose:
-      print('.. '*lvl,xoverall.n,score1 or '.')
+      score1 = round(score1,rnd) if score1 else '.'
+      print(' ..'*lvl,xoverall.n,score1)
     if cut:
       divide(segments[:cut], out= out, lvl= lvl+1)
       divide(segments[cut:], out= out, lvl= lvl+1)
@@ -159,7 +162,7 @@ def ranges(lst,
                       start = xoverall.lo, stop  = xoverall.hi,
                       reportx = xoverall,
                       reporty = yoverall,
-                      #has     = segments,
+                      has     = segments,
                       n=xoverall.n,    id=len(out)))
     return out
   #------------------
@@ -169,15 +172,12 @@ def ranges(lst,
   if not lst:
     return []
   else:
-    width      = int(enough or len(lst)**enoughth)
-    segments   = lst if not flat else [x for x in chunks(lst,width)]
-    print 
     yklass     = num if ynum else sym
     xall, yall = num(), yklass()
+    width      = int(enough or len(lst)**enoughth)
+    ordered    = sorted(lst,key=key)
+    segments   = ordered if not flat else [x for x in chunks(ordered,width)]
     parts      = [stats(segment, xall, yall) for segment in segments]
-    print(parts[0])
     epsilon    = epsilon or d * xall.wriggle()
-    parts      = sorted(parts,key=lambda z:z[0].median())
-  
     return divide(parts,out=[], lvl=0)
 
