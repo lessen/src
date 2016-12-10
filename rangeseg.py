@@ -19,12 +19,14 @@ def _symnum():
   assert z.median() == 1.5
   z = num([1,2,3,4])
   assert z.median() == 2.5
-  3/0
-
-
-for f in [_symnum]:
+ 
+def _ranges():
+  for x in ranges([r() for _ in range(1000)]):
+    pass #print(x)
+  
+for f in [_symnum,_ranges]:
   try: f()
   except Exception as e: print("E> bad",f.__name__,":",e)
   
-
+_ranges()
 

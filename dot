@@ -98,6 +98,14 @@ Emacs=${Emacs:-"/Applications/Emacs.app/Contents/MacOS/Emacs"}
 
 ###
 
+
+
+for x in nano awk bash python3 pypy3 mvim $Emacs vim ; do
+    if [ -z "`which $x`" ]; then
+        echo "$What needs install $x"
+    fi
+done
+
 echo 
 echo "$What v1.0 (c) $When ${Who}, $How"
 
@@ -109,7 +117,8 @@ dot0() { # start-up actions
 }
 
 alias python="`which python3`  -B "
-#alias vi="`which mvim` -u $Dot/dotvimrc "
+alias pypy="`which pypy3`  -B "
+alias vi="`which mvim` -u $Dot/dotvimrc "
 
 emacs() { "$Emacs" -q -l "$Edot" $* &  
 }
@@ -380,7 +389,6 @@ set expandtab ts=2 sw=2 ai
 "autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <=
 "line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
 "set t_ti= t_te=
-colors elflord
 
 set nocompatible              " be iMproved, required
 filetype off                  " required
@@ -420,7 +428,15 @@ let NERDTreeWinSize = 15 " window size, default=31.
 autocmd VimEnter * NERDTree
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-colorscheme 1989
+" - font type and size setting.
+if has('win32')
+    set guifont=Consolas:h12   " Win32.
+elseif has('gui_macvim')
+    set guifont=Monaco:h11     " OSX.
+else
+    set guifont=Monospace\ 12  " Linux.
+endif
+colorscheme slate
 " vim -u vimrc
 EOF
 
