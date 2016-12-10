@@ -64,7 +64,9 @@ class num:
       return i.sd
     def median(i):
       return i.ordered.median()
-
+    def __repr__(i):
+     return str(dict(n=i.n,lo=i.lo,hi=i.hi))
+   
 class sym:
     def __init__(i,inits=[]):
       i.n, i.most, i.mode, i.counts = 0,0,None,{}
@@ -169,9 +171,11 @@ def ranges(lst,
   else:
     width      = int(enough or len(lst)**enoughth)
     segments   = lst if not flat else [x for x in chunks(lst,width)]
+    print 
     yklass     = num if ynum else sym
     xall, yall = num(), yklass()
     parts      = [stats(segment, xall, yall) for segment in segments]
+    print(parts[0])
     epsilon    = epsilon or d * xall.wriggle()
     parts      = sorted(parts,key=lambda z:z[0].median())
   

@@ -21,8 +21,8 @@ def _symnum():
   assert z.median() == 2.5
  
 def _ranges():
-  for x in ranges([r() for _ in range(1000)]):
-    pass #print(x)
+  for x in ranges([r() for _ in range(100)]):
+    print(x)
   
 for f in [_symnum,_ranges]:
   try: f()
