@@ -5,7 +5,7 @@ humidity,
 windy,
 play # class
 ###########
-sunny	,	85	,	85	,	FALSE	,	no
+sunny	,	85.0	,	85	,	FALSE	,	no
 sunny	,	80	,	90	,	TRUE	,	no
 overcast	,	83	,	86	,	FALSE	,	yes
 rainy	,	70	,	96	,	FALSE	,	yes
