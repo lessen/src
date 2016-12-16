@@ -1,6 +1,7 @@
-from ranges1 import num,sym,ranges
+from ranges1 import *
 from random import random as r
 from random import seed
+
 
 def _symnum():
   seed(1)
@@ -20,16 +21,61 @@ def _symnum():
   z = num([1,2,3,4])
   assert z.median() == 2.5
  
-def _ranges():
+def _ranges1():
   for x in ranges([r()**2 for _ in range(10000)],
                   verbose=True):
     for k in ["start","stop","n"]:
       print(k, "%5s" %round(x[k],3),end=" ")
     print("")
+
+def first(x): return x[0]
+def second(x): return x[1]
+
+
+def _ranges2():
+  n=1000
+  def cut(x):
+    more = lambda x:x - (0.2+2*0.2*r())
+    if x < 0.6: return more(0.3)
+    if x < 0.85: return more(0.7)
+    return more(1)
+  lst0 = [r()**2 for _ in range(n)]
+  lst = [[x, cut(x)] for x in lst0]
+  print(">>",lst[-1])
+  for x in ranges(lst,
+                  key=first,
+                  x=first,
+                  y=second,
+                  verbose=True):
+    for k in ["start","stop","n"]:
+      print(k, "%5s" %round(x[k],3),end=" ")
+    print("")
+
+def _ranges3():
+  n=1000
+  def cut(x):
+    if x < 0.6: return "a"
+    return "c"
+ #   if x < 0.85: return "b"
+  #  return "c"
+  lst0 = [r()**2 for _ in range(n)]
+  lst = [[x, cut(x)] for x in lst0]
+  print(">>",lst[-1])
+  for x in ranges(lst,
+                  key=first,
+                  x=first,
+                  y=second,
+                  ynum=False,
+                  verbose=True):
+    for k in ["start","stop","n"]:
+      print(k, "%5s" %round(x[k],3),end=" ")
+    print("")
+
+seed(1)
   
-  lst1=[[r()**2,"a"] for _ in range(1000)]
-  lst1=[[r(),    "b"] for _ in range(1000)]
-  lst1=[[r()**0.5,    "c"] for _ in range(1000)]
-  
-_ranges()
+_ranges1()
+print("------------")
+_ranges2()
+print("-------")
+_ranges3()
 
