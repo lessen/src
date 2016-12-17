@@ -72,7 +72,7 @@ class num:
     def median(i):
       return i.ordered.median()
     def __repr__(i):
-     return "(:lo %s :hi %s :n %s)" % (i.lo, i.hi, i.n)
+     return "(:lo %s :hi %s :n %s :med %s)" % (i.lo, i.hi, i.n,i.median())
    
 class sym:
     def __init__(i,inits=[]):
@@ -97,10 +97,37 @@ class sym:
       return i._ent
     def k(i):  return len(i.counts.keys())
     def ke(i): return i.k()*i.ent()
-    
+
+def div(lst):
+  return ranges(lst)
+
+def sdiv(lst,
+         x   = lambda z:z[ 0],
+         y   = lambda z:z[-1],
+         key = lambda z:z[ 0]):
+  return ranges(lst, key=key, x=x, y=y)
+
+def ediv(lst,
+         x   = lambda z:z[ 0],
+         y   = lambda z:z[-1],
+         key = lambda z:z[ 0]):
+  return ranges(lst, ynum=False, goodysplit=fayyadIranni,key=key, x=x, y=y)
+
+def ddiv(d):
+   lst=[]
+   for k,v in d.items():
+     tmp=num(v)
+     tmp.label= k
+     lst += [tmp]
+   return ranges(lst,
+                 flat=False,
+               x   = lambda z:z.all,
+               y   = lambda z:z.all,
+               key = lambda z:z.median())
+  
 #-----------------------------------
 def ranges(lst,
-           d          = 0.3,
+           d          = 0.2,
            enough     = None,
            enoughth   = 0.5,
            epsilon    = 0,
@@ -119,13 +146,20 @@ def ranges(lst,
           ):
   def stats(segment, xall, yall,flat):
      xs,ys = num(),yklass()
-     for one in segment:
-       x1=x(one)
-       y1=y(one)
-       xs   + x1
-       xall + x1
-       ys   + y1
-       yall + y1
+     if flat:
+       for one in segment:
+         x1 = x(one)
+         y1 = y(one)
+         xs   + x1
+         xall + x1
+         ys   + y1
+         yall + y1
+     else:
+       for x1 in segment.all:
+         xs   + x1
+         xall + x1
+         ys   + x1
+         yall + x1
      return xs,ys
   #-----------------
   def summary(segments):
@@ -145,7 +179,7 @@ def ranges(lst,
   #-----------------
   def divide(segments, out,lvl, cut=None):
     xrhsall, yrhsall, xoverall, yoverall = summary(segments)
-    
+    print(xoverall.lo, xoverall.hi)
     score, score1 = yoverall.wriggle(), None
     xlhs, ylhs    = num(), yklass()
     for i,(x,y) in enumerate(segments[:-2]):
@@ -153,17 +187,25 @@ def ranges(lst,
       yrhs = yrhsall[i+1]
       [xlhs+z for z in x.all]
       [ylhs+z for z in y.all]
-      if   xoverall.lo < xlhs.median() - epsilon:
-        if xoverall.hi > xlhs.median() + epsilon :
-          score1 = evaly(ylhs,yrhs,yoverall)
-          if score1*trivial < score:
-            if yklass == num:
-              if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                cut,score = i+1,score1  
-            else:
-              if goodysplit(ylhs,yrhs,yoverall, score1):
+      print(">>",xlhs.lo,xlhs.hi, xrhs.lo, xrhs.hi)
+      if yrhs.n > width:
+        print(1111,xoverall.lo,  xlhs.median(),epsilon)
+        if   xoverall.lo < xlhs.median() - epsilon:
+          if xoverall.hi > xlhs.median() + epsilon :
+            print(2,evaly)
+            score1 = evaly(ylhs,yrhs,yoverall)
+            print(3,score1,score,trivial)
+            if score1*trivial < score:
+              print(4)
+              if yklass == num:
+                print(5)
                 if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                  cut,score = i+1,score1
+                  print(6)
+                  cut,score = i+1,score1  
+              else:
+                if goodysplit(ylhs,yrhs,yoverall, score1):
+                  if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
+                    cut,score = i+1,score1
     if verbose:
       score1 = round(score1,rnd) if score1 else '.'
       print(' ..'*lvl,xoverall.n,score1)
@@ -186,14 +228,19 @@ def ranges(lst,
   if not lst:
     return []
   else:
+    lst=lst[:]
     yklass     = num if ynum else sym
     xall, yall = num(), yklass()
     width      = int(enough or len(lst)**enoughth)
     ordered    = sorted(lst,key=key)
+    print([key(x) for x in ordered])
     segments   = ordered if not flat else [z for z in chunks(ordered,width)]
     
     parts      = [stats(segment, xall, yall,flat) for segment in segments]
-    
+    for part in parts:
+      print(part)
+    print("x",xall,xall.wriggle())
     epsilon    = epsilon or d * xall.wriggle()
+    print("epsilon",epsilon)
     return divide(parts,out=[], lvl=0)
 

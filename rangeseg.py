@@ -1,4 +1,4 @@
-from ranges1 import *
+from ranges import *
 from random import random as r
 from random import seed
 
@@ -21,9 +21,8 @@ def _symnum():
   z = num([1,2,3,4])
   assert z.median() == 2.5
  
-def _ranges1():
-  for x in ranges([r()**2 for _ in range(10000)],
-                  verbose=True):
+def _div(n=1000):
+  for x in div([r()**2 for _ in range(n)]):
     for k in ["start","stop","n"]:
       print(k, "%5s" %round(x[k],3),end=" ")
     print("")
@@ -32,8 +31,7 @@ def first(x): return x[0]
 def second(x): return x[1]
 
 
-def _ranges2():
-  n=1000
+def _sdiv(n=1000):
   def cut(x):
     more = lambda x:x - (0.2+2*0.2*r())
     if x < 0.6: return more(0.3)
@@ -41,41 +39,35 @@ def _ranges2():
     return more(1)
   lst0 = [r()**2 for _ in range(n)]
   lst = [[x, cut(x)] for x in lst0]
-  print(">>",lst[-1])
-  for x in ranges(lst,
-                  key=first,
-                  x=first,
-                  y=second,
-                  verbose=True):
+  for x in sdiv(lst):
     for k in ["start","stop","n"]:
       print(k, "%5s" %round(x[k],3),end=" ")
     print("")
 
-def _ranges3():
-  n=1000
+def _ediv(n=1000):
   def cut(x):
-    if x < 0.6: return "a"
-    return "c"
- #   if x < 0.85: return "b"
-  #  return "c"
-  lst0 = [r()**2 for _ in range(n)]
-  lst = [[x, cut(x)] for x in lst0]
-  print(">>",lst[-1])
-  for x in ranges(lst,
-                  key=first,
-                  x=first,
-                  y=second,
-                  ynum=False,
-                  verbose=True):
+    return "a" if x < 0.65 else "b"
+  lst0 = [r()**2 for i in range(n)]
+  lst = [[x, cut(x)] for x in lst0]  
+  for x in ediv(lst):
     for k in ["start","stop","n"]:
       print(k, "%5s" %round(x[k],3),end=" ")
     print("")
 
+def _ddiv(n=1000):
+  data = dict(rx1 = [10*r()**3 for _ in range(n)],
+              rx2 = [10*r()**0.33   for _ in range(n)],
+              rx3 = [10*r()      for _ in range(n)])
+  for x in ddiv(data):
+    for k in ["start","stop","n"]:
+      print(k, "%5s" %round(x[k],3),end=" ")
+    print("")
+    
 seed(1)
   
-_ranges1()
-print("------------")
-_ranges2()
-print("-------")
-_ranges3()
+#for f in [_div,_sdiv,_ediv,_ddiv]:
+for f in [_ddiv]:
+  n=1000
+  print("\n# ------------\n#",f.__name__)
+  f(n)
 
