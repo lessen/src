@@ -1,5 +1,5 @@
 import sys,math
-from copy import deepcopy as copy
+from cliffsDelta import cliffsDelta as different
 
 def expectedWriggle(lhs,rhs,all):
   #print(dict(nlhs=lhs.n,
@@ -129,10 +129,11 @@ def ddiv(d):
   
 #-----------------------------------
 def ranges(lst,
-           d          = 0.2,
+           d          = 0.3,
+           cliffsDelta= 0.147,
            enough     = None,
-           enoughth   = 0.5,
-           epsilon    = 0,
+           enoughth   = 0.71,
+           epsilon    = None,
            evaly      = expectedWriggle,
            flat       = True,
            goodxsplit = yes,
@@ -140,7 +141,7 @@ def ranges(lst,
            greedy     = True,
            label      = "ranges",
            rnd        = 3,
-           trivial    = 1.01, # 1%
+           trivial    = 1.05, # 1%
            key        = lambda z:z,
            verbose    = False,
            x          = lambda z:z,
@@ -183,7 +184,6 @@ def ranges(lst,
   #-----------------
   def divide(segments, out,lvl, cut=None):
     xrhsall, yrhsall, xoverall, yoverall = summary(segments)
-    #print("overall",xoverall.lo, xoverall.hi)
     score, score1 = yoverall.wriggle(), None
     xlhs, ylhs    = num(), yklass()
     for i,(x,y) in enumerate(segments[:-1]):
@@ -191,32 +191,18 @@ def ranges(lst,
       yrhs = yrhsall[i+1]
       [xlhs+z for z in x.all]
       [ylhs+z for z in y.all]
-      #print(":::",xlhs.wriggle())
-      #print("\n>>",xlhs.lo,xlhs.hi, xlhs.wriggle(), xrhs.lo,)
-      if yrhs.n > width:
-        #print(1111,xoverall.lo,  xlhs.median(),epsilon)
-        if   xoverall.lo < xlhs.median() - epsilon:
-          if xoverall.hi > xlhs.median() + epsilon :
-            #print(2,evaly)
-            #print("left", ylhs.wriggle())
-            #print("right",yrhs.wriggle())
-            #print("all",yoverall.wriggle())
-            #print("score1",evaly(ylhs,yrhs,yoverall))
-            score1 = evaly(ylhs,yrhs,yoverall)
-            #print(3,i,score1,score,trivial)
-            if score1*trivial < score:
-              #print(4)
-              if yklass == num:
-                #print(5)
-                if not greedy or ylhs.median()*trivial < yrhs.median(): 
-                  if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                  #print(6)
-                    cut,score = i+1,score1  
-              else:
-                if not greedy or ylhs.mode != yrhs.mode:
-                  if goodysplit(ylhs,yrhs,yoverall, score1):
-                    if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                      cut,score = i+1,score1
+      if xlhs.median() + epsilon < xrhs.median():
+        score1 = evaly(ylhs,yrhs,yoverall)
+        if score1*trivial < score:
+          if yklass == num:
+            if not greedy or ylhs.median()*trivial < yrhs.median(): 
+              if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
+                cut,score = i+1,score1  
+          else:
+            if not greedy or ylhs.mode != yrhs.mode:
+              if goodysplit(ylhs,yrhs,yoverall, score1):
+                if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
+                  cut,score = i+1,score1
     if verbose:
       score1 = round(score1,rnd) if score1 else '.'
       print(' ..'*lvl,xoverall.n,score1)
@@ -251,6 +237,6 @@ def ranges(lst,
     #print("x",xall,xall.wriggle())
     epsilon    = epsilon or d * xall.wriggle()
     #print("all",xall.sd)
-    #print("epsilon",epsilon)
+    print("!!!!epsilon",epsilon)
     return divide(parts,out=[], lvl=0)
 

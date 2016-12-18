@@ -34,7 +34,7 @@
 def cliffsDelta(lst1,lst2, trivial=0.147, fast=True):
   f       = cdTricky if fast else cdSimple
   lt,gt,n = f(lst1,lst2)
-  return abs(gt-lt) / (n + 1e-32) <= trivial
+  return abs(gt-lt) / (n + 1e-32) < trivial
 
 def cdSimple(lst1,lst2):
   "Simple, shows basic idea"
