@@ -137,6 +137,7 @@ def ranges(lst,
            flat       = True,
            goodxsplit = yes,
            goodysplit = yes,
+           greedy     = True,
            label      = "ranges",
            rnd        = 3,
            trivial    = 1.01, # 1%
@@ -158,6 +159,8 @@ def ranges(lst,
          yall + y1
      else:
        for x1 in segment.all:
+         xs.label = segment.label
+         ys.label = segment.label
          xs   + x1
          xall + x1
          ys   + x1
@@ -205,11 +208,12 @@ def ranges(lst,
               #print(4)
               if yklass == num:
                 #print(5)
-                if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
+                if not greedy or ylhs.median()*trivial < yrhs.median(): 
+                  if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
                   #print(6)
-                  cut,score = i+1,score1  
+                    cut,score = i+1,score1  
               else:
-                if ylhs.mode != yrhs.mode:
+                if not greedy or ylhs.mode != yrhs.mode:
                   if goodysplit(ylhs,yrhs,yoverall, score1):
                     if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
                       cut,score = i+1,score1
