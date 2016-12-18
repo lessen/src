@@ -25,7 +25,7 @@
 # 1) using Python's built-in sort
 # 2) then reporing the middle number
 #
-# Assuming lists of length 64, remedian is about 30% faster than
+# When using pypy, and assuming lists of length 64, remedian is about 30% faster than
 # raw sort after 500 items (while at the same time, avoids
 # having to store all the numbers in RAM).
 #
