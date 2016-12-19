@@ -1,43 +1,47 @@
-# remedian: incrementally find median.
-# Copyright (c) 2016, Tim Menzies, BSD (2-Clause).
+"""
+remedian: incrementally find median.
+Copyright (c) 2016, Tim Menzies, BSD (2-Clause).
 
-# Implemented via a set of lists. New numbers are added
-# to lst[i] and when it fills up, it posts its median
-# to lst[i+1]. When a remedian is queried for the current
-# median, it returns the median of the last list with any
-# numbers.
+Implemented via a set of lists. New numbers are added to lst[i] and when it
+fills up, it posts its median to lst[i+1]. When a remedian is queried for the
+current median, it returns the median of the last list with any numbers.
 
-# Example usage:
+Example usage:
 
-#    z=remedian()
-#    for i in range(1000):
-#      z + i
-#      if not i % 100:
-#        print(i, z.median())
+   z=remedian()
+   for i in range(1000):
+     z + i
+     if not i % 100:
+       print(i, z.median())
 
-# Based on The Remedian:A Robust Averaging Method for Large Data Sets
-# Peter J. Rousseeuw and Gilbert W. Bassett Jr.
-# Journal of the American Statistical Association
-# March 1990, Vol. 85, No. 409, Theory and Methods
-# http://web.ipac.caltech.edu/staff/fmasci/home/astro_refs/Remedian.pdf
+Based on The Remedian:A Robust Averaging Method for Large Data Sets Peter
+J. Rousseeuw and Gilbert W. Bassett Jr.  Journal of the American Statistical
+Association March 1990, Vol. 85, No. 409, Theory and Methods
+http://web.ipac.caltech.edu/staff/fmasci/home/astro_refs/Remedian.pdf
 
-# The test code (at bottom) compares this rig to
-# 1) using Python's built-in sort
-# 2) then reporing the middle number
-#
-# Assuming lists of length 64, remedian is about 30% faster than
-# raw sort after 500 items (while at the same time, avoids
-# having to store all the numbers in RAM).
-#
-# Further, remedian's computed median is within 1% (or less)
-# of the medians found via Python's sort.
+The test code (at bottom) compares this rig to
+
+1) using Python's built-in sort
+2) then reporing the middle number
+
+Assuming lists of length 64, remedian is about 30% faster than raw sort after
+500 items (while at the same time, avoids having to store all the numbers in
+RAM).
+
+Further, remedian's computed median is within 1% (or less) of the medians found
+via Python's sort.
+
+"""
 
 class remedian:
+  "Watch over a stream of numbers, incrementally learning their median."
   def __init__(i,k=64,  # after some experimentation, 64 works ok
                lvl=0):
+    "Constructor"
     i.all,i.k,i.lvl = [],k,lvl
     i.more,i._median=None,None
   def __add__(i,x):
+    "When full, push the median of current values to next list, then reset."
     i._median = None
     i.all.append(x)
     if len(i.all) == i.k:
@@ -45,8 +49,10 @@ class remedian:
       i.more + i.median0(i.all)
       i.all = []
   def median(i):
+    "If there is a next list, ask its median. Else, work it out locally."
     return i.more.median() if i.more else i.median0(i.all)
   def median0(i,lst):
+    "Primitive: return the median of a list of numbers"
     if not i._median:
       n  = len(lst)
       p  = q  = n//2
