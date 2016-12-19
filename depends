@@ -21,7 +21,6 @@ function depends(x,seen) {
       for(y in needs[x]) 
 		    depends(y,seen)
 }}
-' > $Z/.tmp.sh
+' > $Z/zips.sh
 
-#bash $Z/.tmp.sh
-echo "bash $Z/.tmp.sh"
+echo "bash $Z/zips.sh"
