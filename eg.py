@@ -1,11 +1,11 @@
 # eg.py
 # =====
 #
-# A very simple test engine inspired by Kent Beck's video: https://goo.gl/0bCy0X
-# Copyright (C) 2016, Tim Menzies BSD (2 clause)
+# A very simple test engine inspired by Kent Beck's video: https://goo.gl/0bCy0X.
+# Copyright (C) 2016, Tim Menzies BSD (2 clause).
 #
 # Usage
-# -----
+# -----    
 #
 # 1. Write many functions, each contain zero or more asserts.
 # 2. Preface each such function with `@eg`
@@ -20,6 +20,8 @@
 # Example
 #
 #     # file = egdemo1.py
+#     from eg import eg
+#
 #     @eg
 #     def lstTest():
 #       a={}
@@ -28,13 +30,26 @@
 #
 #     # Other example functions here
 #     
-#     ok()
+#     eg()
 #
-# Once that is written, then:
+# Tips
+# ----
 #
 # - `python egdemo1.py` will run all examples
 # - `python egdemo1.py -?` will list all examples in the file.
 # - `python egdemo1.py` -- a b c` will run just the examples `a`, `b` etc
+#
+# When I use this, then my code file file x.py has demos in (say) xeg.py whose
+# first few lines are:
+#
+#        import x
+#        from eg import eg
+#
+# To do
+# -----
+#
+# Find some what to hook this into some continuous integration testing tool
+# like https://travis-ci.org/.
 #
 # ___________________________________________________________________________
 
@@ -62,9 +77,9 @@ def eg(f=None, lst=[], seed=1):
     print(hdr % f.__name__,end="\n# ")
     doc(f)
     print("")
-    t1=time.time()
+    t1=time.process_time()
     f()
-    t2=time.time()
+    t2=time.process_time()
     print("# pass","(%.4f secs)" % (t2-t1))
   def runall(lst):
     "Run all the functions in lst, catching and counting all failures"
@@ -88,4 +103,5 @@ def eg(f=None, lst=[], seed=1):
   elif "--" in sys.argv : runall( some(lst) )
   else                  : runall( lst )
   return f
+
 

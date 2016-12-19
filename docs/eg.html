@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>eg.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>eg.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <h1>eg.py</h1>
+<p>A very simple test engine inspired by Kent Beck's video: https://goo.gl/0bCy0X.
+Copyright (C) 2016, Tim Menzies BSD (2 clause).</p>
+<h2>Usage</h2>
+<ol>
+<li>Write many functions, each contain zero or more asserts.</li>
+<li>Preface each such function with <code>@eg</code></li>
+<li>End file with <code>eg()</code>.</li>
+<li>After that, then loading the file will run the examples.<ul>
+<li>This code catches any fails executions and, for each one, adds one to a
+    <code>FAIL</code> counter. Them at the end of the file, it reports the number of
+    functions that do not <code>FAIL</code>.</li>
+<li>If a function contains a doco string, then that is printed before each
+    function is run.</li>
+</ul>
+</li>
+</ol>
+<p>Example</p>
+<pre><code># file = egdemo1.py
+from eg import eg
+
+@eg
+def lstTest():
+  a={}
+  a[1]=10
+  assert a[1] == 10
+
+# Other example functions here
+
+eg()
+</code></pre>
+<h2>Tips</h2>
+<ul>
+<li><code>python egdemo1.py</code> will run all examples</li>
+<li><code>python egdemo1.py -?</code> will list all examples in the file.</li>
+<li><code>python egdemo1.py</code> -- a b c<code>will run just the examples</code>a<code>,</code>b` etc</li>
+</ul>
+<p>When I use this, then my code file file x.py has demos in (say) xeg.py whose
+first few lines are:</p>
+<pre><code>   import x
+   from eg import eg
+</code></pre>
+<h2>To do</h2>
+<p>Find some what to hook this into some continuous integration testing tool
+like https://travis-ci.org/.</p>
+<hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span><span class="nn">re</span><span class="o">,</span><span class="nn">random</span><span class="o">,</span><span class="nn">sys</span><span class="o">,</span><span class="nn">time</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">eg</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lst</span><span class="o">=</span><span class="p">[],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">doc</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="s">&quot;Print function doco&quot;</span>
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="n">__doc__</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;\n[ \t]*&#39;</span><span class="p">,</span><span class="s">&quot;</span><span class="se">\n</span><span class="s"># &quot;</span><span class="p">,</span><span class="n">f</span><span class="o">.</span><span class="n">__doc__</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">some</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="s">&quot;Return just the examples mentioned on the command line&quot;</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="p">{</span><span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">:</span><span class="n">f</span>  <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">}</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">pairs</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="k">if</span> <span class="n">x</span>  <span class="ow">in</span> <span class="n">pairs</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">listAvailableExamples</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="s">&quot;For all items in lst, print their doc string&quot;</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%10s</span><span class="s"> : &quot;</span> <span class="o">%</span> <span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+      <span class="n">doc</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">run1</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="s">&quot;Time the running of 1 function, print its doco string (if it has it)&quot;</span>
+    <span class="n">hdr</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">-----| </span><span class="si">%s</span><span class="s"> |&quot;</span><span class="o">+</span> <span class="p">(</span><span class="s">&quot;-&quot;</span><span class="o">*</span><span class="mi">40</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">hdr</span> <span class="o">%</span> <span class="n">f</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span><span class="n">end</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\n</span><span class="s"># &quot;</span><span class="p">)</span>
+    <span class="n">doc</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">t1</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span>
+    <span class="n">f</span><span class="p">()</span>
+    <span class="n">t2</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">process_time</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;# pass&quot;</span><span class="p">,</span><span class="s">&quot;(</span><span class="si">%.4f</span><span class="s"> secs)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">t2</span><span class="o">-</span><span class="n">t1</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">runall</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="s">&quot;Run all the functions in lst, catching and counting all failures&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">lst</span><span class="p">:</span>
+      <span class="k">print</span><span class="p">(</span><span class="s">&quot;# No known examples.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">PASS</span><span class="o">=</span><span class="n">FAIL</span><span class="o">=</span><span class="mi">0</span>
+      <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span> 
+      <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">run1</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> 
+          <span class="n">PASS</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+          <span class="k">print</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">())</span>
+          <span class="n">FAIL</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">print</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">## Test results: PASS = </span><span class="si">%s</span><span class="s"> FAIL = </span><span class="si">%s</span><span class="s"> </span><span class="si">%%</span><span class="s">PASS = </span><span class="si">%s</span><span class="s">&quot;</span>  <span class="o">%</span> <span class="p">(</span>
+            <span class="n">PASS</span><span class="p">,</span> <span class="n">FAIL</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">PASS</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="p">(</span><span class="n">PASS</span><span class="o">+</span><span class="n">FAIL</span><span class="o">+</span><span class="mf">0.001</span><span class="p">)))))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">if</span>   <span class="n">f</span>                <span class="p">:</span> <span class="n">lst</span> <span class="o">+=</span> <span class="p">[</span><span class="n">f</span><span class="p">]</span>
+  <span class="k">elif</span> <span class="s">&quot;-?&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="p">:</span> <span class="n">listAvailableExamples</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+  <span class="k">elif</span> <span class="s">&quot;--&quot;</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="p">:</span> <span class="n">runall</span><span class="p">(</span> <span class="n">some</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="p">)</span>
+  <span class="k">else</span>                  <span class="p">:</span> <span class="n">runall</span><span class="p">(</span> <span class="n">lst</span> <span class="p">)</span>
+  <span class="k">return</span> <span class="n">f</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

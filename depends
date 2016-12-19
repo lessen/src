@@ -1,0 +1,27 @@
+Z=docs/zips
+mkdir -p $Z
+egrep '^(from|import)' *.py | 
+sed 's/:/ /' | 
+gawk '            { sub(".py","")} 
+      $2~/from/   { print $1,$3} 
+			$2~/import/ { split($3,a,","); 
+			              for(x in a) 
+											 print $1,a[x]}'  |
+gawk '     { needs[$1][$2] == 1} 
+       END { for (x in needs) {
+							printf(" [ \"%s.py\" -nt \"docs/%s.html\" ] && pycco %s.py\n",x,x,x)
+							printf("zip -qu '$Z'/%s.zip docs/%s.html docs/pycco.css",x,x)
+							depends(x)
+							print "\ngit add docs/* '$Z'/*\n"
+}}
+function depends(x,seen) {
+	if (x in needs) 
+	  if (++seen[x] == 1) {
+		  printf(" %s.py",x)
+      for(y in needs[x]) 
+		    depends(y,seen)
+}}
+' > $Z/.tmp.sh
+
+#bash $Z/.tmp.sh
+echo "bash $Z/.tmp.sh"

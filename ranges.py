@@ -2,17 +2,8 @@ import sys,math
 from cliffsDelta import cliffsDelta as different
 
 def expectedWriggle(lhs,rhs,all):
-  #print(dict(nlhs=lhs.n,
-   #          wlhs=lhs.wriggle(),
-    #         nrhs=rhs.n,
-     #        wrhs=rhs.wriggle(),
-      #       nall=all.n,
-       #      wall=all.wriggle()
-        #     ))
-  tmp = lhs.n/all.n * lhs.wriggle() + \
+  return lhs.n/all.n * lhs.wriggle() + \
          rhs.n/all.n * rhs.wriggle()
-  #print(tmp)
-  return tmp
 
 def expectedMuChange(lhs,rhs,all):
   return lhs.n/all.n * abs(lhs.median() - all.median())**2 + \
@@ -113,7 +104,9 @@ def ediv(lst,
          x   = lambda z:z[ 0],
          y   = lambda z:z[-1],
          key = lambda z:z[ 0]):
-  return ranges(lst, ynum=False, goodysplit=fayyadIranni,key=key, x=x, y=y)
+  return ranges(lst,
+                ynum=False,
+                goodysplit=fayyadIranni,key=key, x=x, y=y)
 
 def ddiv(d):
    lst=[]
