@@ -1,5 +1,5 @@
 import sys,math
-from copy import deepcopy as copy
+from cliffsDelta import cliffsDelta as different
 
 def expectedWriggle(lhs,rhs,all):
   #print(dict(nlhs=lhs.n,
@@ -72,7 +72,7 @@ class num:
     def median(i):
       return i.ordered.median()
     def __repr__(i):
-     return "(:lo %s :hi %s :n %s :med %s)" % (i.lo, i.hi, i.n,i.median())
+      return "(:lo %.4f :hi %.4f :n %.4f :med %.4f :sd %.4f)" % (i.lo, i.hi, i.n,i.median(),i.sd)
    
 class sym:
     def __init__(i,inits=[]):
@@ -97,6 +97,8 @@ class sym:
       return i._ent
     def k(i):  return len(i.counts.keys())
     def ke(i): return i.k()*i.ent()
+    def __repr__(i):
+      return 'n: %s most: %s more: %s ent: %s' % (i.n, i.most, i.more, i.ent())
 
 def div(lst):
   return ranges(lst)
@@ -127,17 +129,19 @@ def ddiv(d):
   
 #-----------------------------------
 def ranges(lst,
-           d          = 0.2,
+           d          = 0.3,
+           cliffsDelta= 0.147,
            enough     = None,
-           enoughth   = 0.5,
-           epsilon    = 0,
+           enoughth   = 0.71,
+           epsilon    = None,
            evaly      = expectedWriggle,
            flat       = True,
            goodxsplit = yes,
            goodysplit = yes,
+           greedy     = True,
            label      = "ranges",
            rnd        = 3,
-           trivial    = 1.01, # 1%
+           trivial    = 1.05, # 1%
            key        = lambda z:z,
            verbose    = False,
            x          = lambda z:z,
@@ -156,6 +160,8 @@ def ranges(lst,
          yall + y1
      else:
        for x1 in segment.all:
+         xs.label = segment.label
+         ys.label = segment.label
          xs   + x1
          xall + x1
          ys   + x1
@@ -164,48 +170,39 @@ def ranges(lst,
   #-----------------
   def summary(segments):
     xall,yall=[],[]
-    xs, ys, oldx, oldy = {}, {}, num(), yklass()
+    xs, ys  = {},{}
     for i,(x,y) in enumerate(segments[::-1]):
       j    = len(segments) - i - 1
       xall += x.all
       yall += y.all
       newx = num(xall)
       newy = yklass(yall)
-      [newx + z for z in x.all]
-      [newy + z for z in y.all]
-      oldx= xs[j] = newx
-      oldy= ys[j] = newy
+      xs[j] = newx
+      ys[j] = newy
+      #print("!!!",j,newx,newy)
     return xs, ys, num(xall), yklass(yall)
   #-----------------
   def divide(segments, out,lvl, cut=None):
     xrhsall, yrhsall, xoverall, yoverall = summary(segments)
-    print(xoverall.lo, xoverall.hi)
     score, score1 = yoverall.wriggle(), None
     xlhs, ylhs    = num(), yklass()
-    for i,(x,y) in enumerate(segments[:-2]):
+    for i,(x,y) in enumerate(segments[:-1]):
       xrhs = xrhsall[i+1]
       yrhs = yrhsall[i+1]
       [xlhs+z for z in x.all]
       [ylhs+z for z in y.all]
-      print(">>",xlhs.lo,xlhs.hi, xrhs.lo, xrhs.hi)
-      if yrhs.n > width:
-        print(1111,xoverall.lo,  xlhs.median(),epsilon)
-        if   xoverall.lo < xlhs.median() - epsilon:
-          if xoverall.hi > xlhs.median() + epsilon :
-            print(2,evaly)
-            score1 = evaly(ylhs,yrhs,yoverall)
-            print(3,score1,score,trivial)
-            if score1*trivial < score:
-              print(4)
-              if yklass == num:
-                print(5)
+      if xlhs.median() + epsilon < xrhs.median():
+        score1 = evaly(ylhs,yrhs,yoverall)
+        if score1*trivial < score:
+          if yklass == num:
+            if not greedy or ylhs.median()*trivial < yrhs.median(): 
+              if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
+                cut,score = i+1,score1  
+          else:
+            if not greedy or ylhs.mode != yrhs.mode:
+              if goodysplit(ylhs,yrhs,yoverall, score1):
                 if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                  print(6)
-                  cut,score = i+1,score1  
-              else:
-                if goodysplit(ylhs,yrhs,yoverall, score1):
-                  if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
-                    cut,score = i+1,score1
+                  cut,score = i+1,score1
     if verbose:
       score1 = round(score1,rnd) if score1 else '.'
       print(' ..'*lvl,xoverall.n,score1)
@@ -215,11 +212,9 @@ def ranges(lst,
     else:
       assert xoverall.lo < xoverall.hi
       out.append(dict(label   = label, score = score,
-                      start   = xoverall.lo, stop  = xoverall.hi,
-                      reportx = xoverall,
-                      reporty = yoverall,
-                      has     = segments,
-                      n=xoverall.n,    id=len(out)))
+                      x       = xoverall,
+                      y       = yoverall,
+                      has     = segments,id=len(out)))
     return out
   #------------------
   def chunks(l, n):
@@ -233,14 +228,15 @@ def ranges(lst,
     xall, yall = num(), yklass()
     width      = int(enough or len(lst)**enoughth)
     ordered    = sorted(lst,key=key)
-    print([key(x) for x in ordered])
+    #print([key(x) for x in ordered])
     segments   = ordered if not flat else [z for z in chunks(ordered,width)]
     
     parts      = [stats(segment, xall, yall,flat) for segment in segments]
-    for part in parts:
-      print(part)
-    print("x",xall,xall.wriggle())
+    #for x,y in parts:
+     # print(dict(x=x,y=y))
+    #print("x",xall,xall.wriggle())
     epsilon    = epsilon or d * xall.wriggle()
-    print("epsilon",epsilon)
+    #print("all",xall.sd)
+    print("!!!!epsilon",epsilon)
     return divide(parts,out=[], lvl=0)
 
