@@ -5,7 +5,7 @@
 # Copyright (C) 2016, Tim Menzies BSD (2 clause).
 #
 # Usage
-# -----    
+# -----        
 #
 # 1. Write many functions, each contain zero or more asserts.
 # 2. Preface each such function with `@eg`
