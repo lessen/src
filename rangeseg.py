@@ -3,6 +3,7 @@ from random import random as r
 from random import seed
 from eg import eg
 
+@eg
 def _symnum():
   seed(1)
   lst=[10,11,12,13,14,15,16,17,18,19,20,
@@ -22,14 +23,14 @@ def _symnum():
   assert z.median() == 2.5
 
 @eg
-def _div1(n=1000):
+def _div1(n=10000):
   "1D cluster. Noise. Should divide evenly."
   for zz in div([r() for _ in range(n)]):
     xx = zz["x"]
     print("start  %.4f stop %.4f n %s" % (xx.lo, xx.hi, xx.n))
 
 @eg
-def _div2(n=1000):
+def _div2(n=100000):
   "1D cluster. random**3: most nums below half are very similar"
   for zz in div([r()**3 for _ in range(n)]):
     xx = zz["x"]
@@ -44,7 +45,7 @@ def first(x): return x[0]
 def second(x): return x[1]
 
 @eg
-def _sdiv(n=1000):
+def _sdiv(n=10000):
   "2D. Y does not change except at 33 and 66"
   def cut(x):
     more = lambda x:x + (0.1*r())
@@ -94,10 +95,26 @@ def _ddiv20():
             x4=[0.6,  0.7,  0.8,  0.9],
             x5=[0.1,  0.2,  0.3,  0.4]))
 
+@eg
+def _ddiv4():
+  ddv0(dict(x1=[101, 100, 99,   101,  99.5],
+            x2=[101, 100, 99,   101, 100],
+            x3=[101, 100, 99.5, 101,  99],
+            x4=[101, 100, 99,   101, 100]))
 
+@eg
+def _ddiv5():
+  ddv0(dict(x1=[11,11,11],
+            x2=[11,11,11],
+            x3=[11,11,11]))
+
+@eg
+def _ddiv6():
+  ddv0(dict(x1=[11,11,11],
+            x2=[11,11,11],
+            x3=[32,33,34,35]))
     
 def ddv0(data):
-  q = lambda z:round(z,3)
   for zz in ddiv(data):
     xx = zz["x"]
     yy = zz["y"]

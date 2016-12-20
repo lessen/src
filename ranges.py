@@ -1,5 +1,5 @@
 import sys,math
-from cliffsDelta import cliffsDelta as different
+from cliffsDelta import cd as different
 
 def expectedWriggle(lhs,rhs,all):
   return lhs.n/all.n * lhs.wriggle() + \
@@ -203,7 +203,7 @@ def ranges(lst,
       divide(segments[:cut], out= out, lvl= lvl+1)
       divide(segments[cut:], out= out, lvl= lvl+1)
     else:
-      assert xoverall.lo < xoverall.hi
+      assert xoverall.lo <= xoverall.hi
       out.append(dict(label   = label, score = score,
                       x       = xoverall,
                       y       = yoverall,
@@ -216,20 +216,13 @@ def ranges(lst,
   if not lst:
     return []
   else:
-    lst=lst[:]
+    lst        = lst[:]
     yklass     = num if ynum else sym
     xall, yall = num(), yklass()
     width      = int(enough or len(lst)**enoughth)
     ordered    = sorted(lst,key=key)
-    #print([key(x) for x in ordered])
     segments   = ordered if not flat else [z for z in chunks(ordered,width)]
-    
     parts      = [stats(segment, xall, yall,flat) for segment in segments]
-    #for x,y in parts:
-     # print(dict(x=x,y=y))
-    #print("x",xall,xall.wriggle())
     epsilon    = epsilon or d * xall.wriggle()
-    #print("all",xall.sd)
-    print("!!!!epsilon",epsilon)
     return divide(parts,out=[], lvl=0)
 
