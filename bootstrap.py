@@ -1,12 +1,10 @@
-# bootstrap
-# Tim Menzies: tim@menzies.us
-# Inputs two lists of numbers.
-# Returns true if two lists of numbers are not signifincalty different.
+"""
+Returns true if two lists are not statistically significantly different.
+ 
+____
 
-# requires python3
-# Built using the guidelines from p220 to 223 of 
-# Efron's book 'An introduction to the boostrap.
-
+## Programmer's Guide
+"""
 import random
   
 def bootstrap(y0,z0, b = 1000, conf= 95):

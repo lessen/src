@@ -73,6 +73,62 @@ trap zap EXIT
 zap() { rm -rf $Dot; }
 
 #########################################################
+cat<<'EOF' >$Dot/header
+""" 
+
+<img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=middle 
+width=70>
+_Just another [Timm Tool](http://ttv1.github.com)._
+<br clear=all>
+
+_________________
+
+
+EOF
+cat <<'EOF' > $Dot/footer 
+
+"""
+____
+## Copyleft
+
+<img align=right 
+src="https://s-media-cache-ak0.pinimg.com/236x/9f/6d/3f/9f6d3f9e606fc448b5f781391e4cb3c3.jpg" 
+width=170>
+Copyright © 2016 Tim Menzies <tim@menzies.us>
+
+This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+[http://www.wtfpl.net](http://www.wtfpl.net) for more details.
+
+Share and enjoy.
+
+"""
+
+EOF
+cat <<'EOF' > $Dot/footer.html
+
+<hr>
+<h2> Copyleft </h2>
+
+<img align=right 
+src="https://s-media-cache-ak0.pinimg.com/236x/9f/6d/3f/9f6d3f9e606fc448b5f781391e4cb3c3.jpg" 
+width=170>
+<p>Copyright &copy; 2016 Tim Menzies <tim@menzies.us></p>
+
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a>) for more details.</p>
+
+<p>Share and enjoy.</p>
+
+EOF
+
 cat <<'EOF' > $Dot/dotbashrc
 # -*- sh -*- 
 #### begin config
@@ -114,6 +170,38 @@ Edot="$Dot/dotemacs"
 dot0() { # start-up actions
   vim +PluginInstall +qall      # install vim plugins
   emacs -script $Dot/install.el # install emacs plugins
+}
+
+pyccos() {
+  for p in *.py; do
+    if [ "$p" -nt "docs/$p" ]; then
+       pycco $p
+    fi
+  done
+  (echo "<h1>Timm Tools</h1><ul>"
+  echo "<img src=\"https://avatars0.githubusercontent.com/u/23156192?v=3&s=200\" align=right  width=170>"
+  for p in *.py; do
+     h=${p%.*}.html 
+     echo "<li><a href="$h">$p</a></li>"
+   done
+   echo "</ul>"
+   cat $Dot/footer.html
+   ) > docs/index.html
+
+}
+
+pycco() {
+  if [ -f "$1" ]; then
+    d=$DotDir/docs
+    mkdir -p $d
+    x=`which pycco`
+    cat $1 | gawk 'NR==1 {system("cat '$Dot/header'"); next}
+                         { print $0}
+                  END    {system("cat '$Dot/footer'"); } ' > $d/$1
+    $x -d $d $d/$1
+  else
+    echo "$1 not found"
+  fi
 }
 
 alias python="`which python3`  -B "
