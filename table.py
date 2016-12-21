@@ -36,6 +36,7 @@ class table:
     [i + row for row in i.columns(inits)]
     
   def columns(i,src):
+    """Yields just the columns not marked as missing."""
     use=[]
     for row in src:
       use = use or [col for col,cell in enumerate(row)
