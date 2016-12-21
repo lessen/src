@@ -1,73 +1,62 @@
-from num import *
-from sym import *
+from num import num
+from sym import sym
 
 class table:
-  whitespace = '[\n\r\t]'
-  comments   = '#.*'
-  sep        = ","
-  ignore     = "-"
-  missing    = '?'
-  cols       = dict(less= ("<", num),
-                    more= (">", num),
-                    nums= ("$", num),
-                    syms= ("=", sym))
+  WHITESPACE = '[\n\r\t]'
+  COMMENTS   = '#.*'
+  IGNORE     = "-"
+  MISSING    = '?'
+  COLS       = dict(less= "<",
+                    more= ">",
+                    klass=":",
+                    nums= "$",
+                    syms= "!")
+  class _row:
+    id = 0
+    def __init__(i,lst):
+      i.id = row.id = row.id+1
+      i.raw=lst
+      i.cooked=[]
+    def _data(i)          : return i.cooked if i.cooked else i.raw
+    def __repr__(i)       : return '#%s,%s' % (i.id,i._data())
+    def __getitem__(i,k)  : return i._data()[k]
+    def __setitem__(i,k,v): i._data()[k] = v
+    def __len__(i)        : return len(i._data())
+    def __hash__(i)       : return i.id 
+    def __eq__(i,j)       : return i.id == j.rid
+    def __ne__(i,j)       : return i.id != j.rid
 
-  def __init__(i,file=None):
-    i.rows,i.cols,i.all = [],{},[]
-    i.col2cell, i.cell2col = {}, {}
-    for key in table.cols.keys():
+  def __init__(i,inits=[],file=None.zip=None):
+    i.rows, i.cols, i.all = [],{},[]
+    for key in table.COLS.keys():
       i.cols[key] = []
     if file:
-      return i.create(i.lines(file))
+      for row in csv(file=file,zip=zip):
+        i + row
 
-  def create(i,src):
-    width = None
-    for j,line in enumerate(src):
-      if j == 0:
-        width = len(line)
-        i.header(line)
-      else:
-        assert width == len(line), "wanted %s cells" % width
-        i.rows += [ i.compile(line) ]
-        
-  def compile(i,line):
-    for x in i.all:
-      y = line[x.col] = x.compile( line[x.col] )
-      x.add(y)
-    return line
-  
-  def header(i,line):
-    for col,cell in enumerate(line):
-      i.col2cell[col] = cell
-      i.cell2col[cell] = col
-      if cell[0] != table.ignore:
-        for key,(char,what) in table.cols.items():
+  def __add__(i,row):
+    i.header(row) if i.all else i.data(row)
+
+  def header(i,row,pos= -1):
+    for col,cell in enumerate(row):
+      if cell[0] != table.IGNORE:
+        pos += 1
+        for key,char in table.COLS.items():
           if cell[0] == char:
-            new = what(cell,col)
-            i.cols[ key ] = i.cols.get( key, []) + [new]
-            i.all += [new]
+            new = thing(pos=pos, get=col txt=cell)
+            i.cols[ key ] += [new]
+            i.all +=  [new]
             break
           
-  def lines(i,file):
-    doomed = re.compile('(' + table.whitespace + '|' +  table.comments + ')')
-    with open(file) as fs:
-      cache = []
-      for line in fs:
-        line = re.sub(doomed, "", line)
-        if line:
-          cache += [line]
-          if line[-1] != ",":
-            line  = "".join(cache)
-            cache = []
-            row   = map(lambda z:z.strip(),  line.split(table.sep))
-            if len(row)> 0:
-              yield row
+  def data(i,row):
+    row = [x + row[x.get] for x in i.all]
+    i.rows += [ _row(row) ] 
               
   def dist(i, j,k, what=["syms","nums"]):
     ds,ns = 0,1e-32
     for x in what:
       for y in i.cols[x]:
-        d,n  = y.dist(j[y.col], k[y.col], table.missing)
+        d,n  = y.dist(j[y.col], k[y.col], table.MISSING)
         ds  += d
         ns  += n
     return ds**0.5 / ns**0.5

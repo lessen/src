@@ -1,29 +1,31 @@
 import random
 from   misc    import same
-from GLOBALS import our
 from num     import num
 from sym     import sym
 from numbers import r
 from sample  import sample
 
-def things(xs):
+UNKNOWN="?"
+
+def items(xs):
   xs= xs if isinstance(xs,(list,tuple)) else [xs]
   for x in xs:
-    if x != thing.unknown:
+    if x != thing.UNKNOWN:
       yield x
 
 class thing:
-  unknown = our.thing.unknown
+  UNKNOWN = "?"
   
-  def __init__(i,inits=[],pos=None, txt=None,samples=None):
+  def __init__(i,inits=[],pos=None, get=None,txt=None,samples=None):
     txt = txt or pos
     i.txt=str(txt)
     i.pos=pos
     i.want,i.my=None,None
     i.samples=None
-    i.add(inits)
-  def add(i,xs):
-    for x in things(xs):
+    i.get = i.get or i.pos
+    i + inits
+  def __add__(i,xs):
+    for x in items(xs):
       if i.my is None:
         what = num if isinstance(x,(float,int)) else sym
         i.my  = what()
@@ -31,6 +33,7 @@ class thing:
         i.samples = sample()   
       i.my.add(x)
       i.samples.add(x)
+      return x
   def n(i):
     return i.my.n
   
@@ -44,9 +47,9 @@ class thing:
   def wriggle(i)      : return i.my.wriggle()
 
   #--- parametric. assumes gaussians
-  def same_HT(i,j)    : return i.hedgesTest(j) and i.ttest(j)
+  def same_HT(i,j)    : return i.hedges(j) and i.ttest(j)
   def ttest(i,j)      : return i.my.ttest(j.my)
-  def hedgesTest(i,j) : return i.my.hedgesTest(j.my)
+  def hedges(i,j)     : return i.my.hedges(j.my)
 
   # -- pretty print
   def __repr__(i):

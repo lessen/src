@@ -1,10 +1,10 @@
 from num import *
-from eg import ok
+from eg import eg
 from numbers import *
 from thing import thing
 import time
 
-@ok
+@eg
 def _num():
   x = num()
   for _ in range(10**5):
@@ -13,7 +13,7 @@ def _num():
   assert round(x.my.sd(),3) == 19.131
   assert x.n() == 5
 
-@ok
+@eg
 def _different(m=512):
   rseed(17)  
   times={}
@@ -30,7 +30,7 @@ def _different(m=512):
        print(n,end=" ")
     print(" :  sd = "+str(sd/10))
     for f in [p1.cliffsDelta,p1.bootstrap,p1.same_CD,
-              p1.hedgesTest, p1.ttest,p1.same_HT]:
+              p1.hedges, p1.ttest,p1.same_HT]:
       name = f.__name__
       for n in sorted(pops.keys()):
         rseed(17)
@@ -96,3 +96,5 @@ likely that all the values are the same.
          *   *   *   *   *               :  ttest
          *   *   *   *   *               :  same
 """
+
+eg()

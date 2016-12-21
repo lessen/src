@@ -1,5 +1,14 @@
 import sys
 
+
+def det(**d):
+   k,v = next(iter(d.items()))
+   return globals()[k] if k in globals() else v
+
+print(det(a=1))
+b=2
+print(det(b=10))
+
 def streamingMedian(seq,epsilon=0.001,pause=100):
    n = sd= 0
    mu =m2=0
