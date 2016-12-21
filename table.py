@@ -16,15 +16,15 @@ class table:
     def __init__(i,lst):
       i.id = row.id = row.id+1
       i.raw=lst
-      i.cooked=[]
+      i.cooked=None
     def _data(i)          : return i.cooked if i.cooked else i.raw
     def __repr__(i)       : return '#%s,%s' % (i.id,i._data())
     def __getitem__(i,k)  : return i._data()[k]
     def __setitem__(i,k,v): i._data()[k] = v
     def __len__(i)        : return len(i._data())
     def __hash__(i)       : return i.id 
-    def __eq__(i,j)       : return i.id == j.rid
-    def __ne__(i,j)       : return i.id != j.rid
+    def __eq__(i,j)       : return i.id == j.id
+    def __ne__(i,j)       : return i.id != j.id
 
   def __init__(i,inits=[],file=None.zip=None):
     i.rows, i.cols, i.all = [],{},[]
