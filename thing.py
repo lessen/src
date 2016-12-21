@@ -16,13 +16,12 @@ def items(xs):
 class thing:
   UNKNOWN = "?"
   
-  def __init__(i,inits=[],pos=None, get=None,txt=None,samples=None):
+  def __init__(i,inits=[],pos=None, txt=None,samples=None):
     txt = txt or pos
     i.txt=str(txt)
     i.pos=pos
     i.want,i.my=None,None
     i.samples=None
-    i.get = i.get or i.pos
     i + inits
   def __add__(i,xs):
     for x in items(xs):

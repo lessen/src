@@ -10,7 +10,7 @@ class table:
                     more= ">",
                     klass=":",
                     nums= "$",
-                    syms= "!")
+                    syms= "!")      
   class _row:
     id = 0
     def __init__(i,lst):
@@ -31,32 +31,40 @@ class table:
     for key in table.COLS.keys():
       i.cols[key] = []
     if file:
-      for row in csv(file=file,zip=zip):
+      for row in i.columns(csv(file=file,zip=zip)):
         i + row
+    [i + row for row in i.columns(inits)]
+    
+  def columns(i,src):
+    """Yields just the columns not marked as missing."""
+    use=[]
+    for row in src:
+      use = use or [col for col,cell in enumerate(row)
+                        if  cell[0] != table.MISSING ]
+      yield [row[col] for col in use]
 
   def __add__(i,row):
-    i.header(row) if i.all else i.data(row)
+    i.data(row) if i.all else i.header(row)
 
-  def header(i,row,pos= -1):
+  def header(i,row):
     for col,cell in enumerate(row):
       if cell[0] != table.IGNORE:
-        pos += 1
         for key,char in table.COLS.items():
           if cell[0] == char:
-            new = thing(pos=pos, get=col txt=cell)
-            i.cols[ key ] += [new]
-            i.all +=  [new]
+            column       = thing(pos=col, txt=cell)
+            i.cols[key] += [column]
+            i.all       += [column]
             break
           
   def data(i,row):
-    row = [x + row[x.get] for x in i.all]
+    row = [x + row[x.pos] for x in i.all]
     i.rows += [ _row(row) ] 
               
   def dist(i, j,k, what=["syms","nums"]):
     ds,ns = 0,1e-32
     for x in what:
       for y in i.cols[x]:
-        d,n  = y.dist(j[y.col], k[y.col], table.MISSING)
+        d,n  = y.dist(j[y.pos], k[y.pos], table.MISSING)
         ds  += d
         ns  += n
     return ds**0.5 / ns**0.5
