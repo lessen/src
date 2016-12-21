@@ -43,7 +43,7 @@ class table:
       yield [row[col] for col in use]
 
   def __add__(i,row):
-    i.header(row) if i.all else i.data(row)
+    i.data(row) if i.all else i.header(row)
 
   def header(i,row):
     for col,cell in enumerate(row):
