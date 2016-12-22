@@ -199,7 +199,7 @@ pycco() {
             { print $0}
       END   { system("cat '$Dot/footer'"); } ' > $d/$1
     $x -d $d $d/$1
-    cp $Dot/pycco.css $d
+    #cp $Dot/pycco.css $d
   else
     echo "$1 not found"
   fi
