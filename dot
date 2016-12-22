@@ -194,9 +194,10 @@ pycco() {
     d=$DotDir/docs
     mkdir -p $d
     x=`which pycco`
-    cat $1 | gawk 'NR==1 {system("cat '$Dot/header'"); next}
-                         { print $0}
-                  END    {system("cat '$Dot/footer'"); } ' > $d/$1
+    cat $1 | gawk '
+      NR==1 { system("cat '$Dot/header'"); next}
+            { print $0}
+      END   { system("cat '$Dot/footer'"); } ' > $d/$1
     $x -d $d $d/$1
     cp $Dot/pycco.css $d
   else
@@ -233,6 +234,11 @@ ok() {
 
 reload() { . "$Dot"/dotbashrc ; }
 
+eight() {
+  echo ""
+  cat - | sed 's/^/        /'
+  echo ""
+}
 sh2md() { x2md $1 '#[<>]'   '^#[<> ]?';}
 py2md() { x2md $1 '^\"\"\"' '^"""'; }
 

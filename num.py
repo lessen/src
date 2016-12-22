@@ -33,8 +33,8 @@ Also, can be used to:
 - compute likelihood a number belongs to a sample (used in Bayes classifiers);
 - compute parametric tests for effect size and statistical hypothesis checking
 
-_____________________
-## Programmer's guide        
+_____
+## Programmer's Guide    
 """
 
 from math import pi,e
@@ -48,7 +48,8 @@ class num:
     [i + x for x in inits]
   # Reporting
   def __repr__(i):
-    return "{:n %s :lo %s :hi %s :mu %g :sd %.4g}" % (i.n, i.lo, i.hi, i.mu, i.sd())
+    return "{:n %s :lo %s :hi %s :mu %g :sd %.4g}" % (
+            i.n, i.lo, i.hi, i.mu, i.sd())
   
   # Updating (uses Knuth's method to also update `sd`-related info).
   def __add__(i,x):
@@ -102,8 +103,8 @@ class num:
   # Parametric effect size test (uses eqns 1,2,3,4 and Table9 from 
   # [Kampenes et al., 2007](https://goo.gl/WBDWm3)).
   def hedges(i,j,enough = 0.38):
-    x   = (i.n - 1)*i.sd()**2 + (j.n - 1)*j.sd()**2
-    y = (i.n - 1) + (j.n - 1)
+    x     = (i.n - 1)*i.sd()**2 + (j.n - 1)*j.sd()**2
+    y     = (i.n - 1) + (j.n - 1)
     sp    = ( x / y )**0.5 + 1e-32
     delta = abs(i.mu - j.mu) / sp  
     c     = 1 - 3.0 / (4*(i.n + j.n - 2) - 1)
@@ -111,7 +112,7 @@ class num:
   
   # Parametric statistical signifance test (the standard t-test).
   def ttest(i,j, conf=95,
-           criticals= { # approximations to the table of critical values
+            criticals= { # approximations to the table of critical values
                    95: {  5:2.015, 10:1.812, 15:1.753,
                          20:1.725, 25:1.708, 30:1.697},
                    99: {  5:3.365, 10:2.764, 15:2.602,
