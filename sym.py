@@ -13,22 +13,22 @@ Example of incremental usage:
         print(s)
 
         # output:
-        {:n 1 :most You :mode 1 :ent 0}
-        {:n 26 :most is :mode 3 :ent 4.1329}
-        {:n 51 :most is :mode 4 :ent 5.0546}
-        {:n 76 :most is :mode 5 :ent 5.495}
-        {:n 101 :most the :mode 7 :ent 5.8595}
-        {:n 126 :most the :mode 7 :ent 6.2548}
-        {:n 151 :most is :mode 10 :ent 6.2816}
-        {:n 176 :most is :mode 12 :ent 6.3449}
-        {:n 199 :most is :mode 13 :ent 6.5374}
+        {:n   1 :most  1 :mode You :ent 0}
+        {:n  26 :most  3 :mode is  :ent 4.1329}
+        {:n  51 :most  4 :mode is  :ent 5.0546}
+        {:n  76 :most  5 :mode is  :ent 5.495}
+        {:n 101 :most  7 :mode the :ent 5.8595}
+        {:n 126 :most  7 :mode the :ent 6.2548}
+        {:n 151 :most 10 :mode is  :ent 6.2816}
+        {:n 176 :most 12 :mode is  :ent 6.3449}
+        {:n 199 :most 13 :mode is  :ent 6.5374}
 
 Example of batch usage:
 
        print( sym( x for x in words ))
 
        # output:
-       {:n 199 :most is :mode 13 :ent 6.5374}
+       {:n 199 :most 13 :mode is :ent 6.5374}
 
 Also, can be used to:
 
@@ -51,7 +51,7 @@ class sym:
 
   # Reporting
   def __repr__(i):
-    return '{:n %s :most %s :mode %s :ent %.5g}' % (i.n,i.mode,i.most,i.ent())
+    return '{:n %s :most %s :mode %s :ent %.5g}' % (i.n,i.most,i.mode,i.ent())
 
   # Updating. If we find a new most frequent symbol, update `mode`.
   def __add__(i,x):

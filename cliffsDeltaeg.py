@@ -1,6 +1,15 @@
 from eg import eg
 from cliffsDelta import cd,basic,optimized
+from random import random as r
 
+@eg
+def cd0():
+  base = [r()*10 for _ in range(30)]
+  print([round(x,4) for x in sorted(base)])
+  for n in range(1,8,1):
+      other = [x+ (r()*n/2) for x in base]
+      print(n/2, cd(base, other))
+         
 @eg
 def _fastWorks():
   "check that the slow and fast CD  methods above give the same results"
@@ -23,6 +32,7 @@ def _fastWorks():
     assert gt1==gt2, "more wrong"
     assert n1==n2 ,  "n wrong"
   print("repeats:",r, "listSize:",m,"slow:", one,"fast:", two,"slow/fast:",int(one/two))
+  assert two < one/10
 
 if __name__ == "__main__": eg()
 
