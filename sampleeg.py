@@ -12,5 +12,4 @@ def _sample():
   s= sample(i for i in range(901))
   print(s,s.stats())
 
-    
-eg()
+if __name__ == "__main__": eg()

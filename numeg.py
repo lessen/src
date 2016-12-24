@@ -12,7 +12,7 @@ def _num1():
 @eg
 def _num2():
   print(num(i for i in range(901)))
-  
+
 @eg
 def _num3():
   x = num()
@@ -22,5 +22,4 @@ def _num3():
   assert round(x.sd(),3) == 19.131
   assert x.n == 5
 
-
-eg()
+if __name__ == "__main__": eg()

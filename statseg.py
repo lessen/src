@@ -89,4 +89,4 @@ likely that all the values are the same.
          *   *   *   *   *               :  same
 """
 
-eg()
+if __name__ == "__main__": eg()

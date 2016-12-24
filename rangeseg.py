@@ -122,6 +122,4 @@ def ddv0(data):
     print("median %.4f mode %.4f has %s" % (xx.median(), yy.median(), len(zz["has"])),end= " ")
     print("has %s" % [s[0].label for s in zz["has"]])
 
-    
-  
-eg()
+if __name__ == "__main__": eg()

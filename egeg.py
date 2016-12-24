@@ -17,4 +17,4 @@ def _passes2():
   "Check that even after a fail, other functions get called."
   assert 10==10
 
-eg() 
+if __name__ == "__main__": eg() 

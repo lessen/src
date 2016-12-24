@@ -35,8 +35,7 @@ We are what we repeatedly do; excellence, then, is not an act but a habit.
 """
 
 words=re.sub(r'[-—,\.\n]'," ",words).split()
-print(words)
-  
+
 @eg
 def _sym1():
   s=sym()
@@ -48,6 +47,5 @@ def _sym1():
 @eg
 def _sym2():
   print( sym( x for x in words ))
-    
-  
-eg()
+
+if __name__ == "__main__" : eg()

@@ -24,7 +24,7 @@ def _fastWorks():
     assert n1==n2 ,  "n wrong"
   print("repeats:",r, "listSize:",m,"slow:", one,"fast:", two,"slow/fast:",int(one/two))
 
-eg()
+if __name__ == "__main__": eg()
 
 """
 bash$ for((i=32;i<=4096;i*=2)); do pypy3 cliffsDelta.py 20 $i; done

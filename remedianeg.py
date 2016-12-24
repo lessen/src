@@ -40,7 +40,7 @@ def _remedian2():
                medianError=    q(merr/repeats),
                timeDifference= q(terr/repeats)))
 
-eg()
+if __name__ == "__main__" : eg()
 
 """
 ----| _remedian1 |----------------------------------------

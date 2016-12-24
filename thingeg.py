@@ -3,7 +3,7 @@ from thing  import thing
 from random import seed
 
 @eg
-def _sample():
+def _thing():
   seed(0)
   # nums
   t=thing()
@@ -18,5 +18,5 @@ def _sample():
   for i in list("""Science is a way of thinking much more than it is a body of knowledge"""):
     t + i
   print(t)
-    
-eg()
+
+if __name__ == "__main__": eg()
