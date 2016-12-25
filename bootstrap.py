@@ -1,24 +1,22 @@
-"""
-Returns true if two lists are not statistically significantly different.
+"""Returns true if two lists are not statistically significantly different.
 
 Based on [An introduction to the
 bootstrap](https://github.com/timm/timm.github.io/blob/master/pdf/93bootstrap.pdf)
 by Bradley Efron, 1993, Chapman and Hall, page 220 to 223.
 
+Works via `bootstrap sampling` which Effron describes as a variant of the Fisher
+permutation test:
 
-Works via `bootstrap sampling`:
+- A magic number, the achieved significance level (ASL) is caluclated 
+  from numerous random samples of the original lists (and,
+  by sample, Effron means "sample with replacement").
+- The _larger_ the ASL, the weaker the evidence _against) the null
+  hypothesis (that the two lists belong to the same distribution);
+- I.e. the larger the ASL, we more we can believe in the lists are the same.
 
-
-- On the original two lists, determine some difference between the lists
-  (this is computed via a `testStatistic` function).
-- Check if that difference is "stable" across multiple samples of
-  the data. 
-     - Count how many times we can see a diffferent and bigger difference
-       in the sampled lists (again, computed via `testStatistic`, but
-       this time on the sampled data).
-     - If that count is _rare_ (as defined by the `conf` value,
-       then return `True`.
- 
+The importance of this method is that, unlike standard statistical hypothesis
+tests, there is no assumption here that the distributions come from some known
+distribution (e.g. the normal distribution).
 
 ____
 
@@ -82,15 +80,15 @@ def bootstrap(y0,z0, b = 1000, conf= 95):
   yhat   = [y1 - y.mu + x.mu for y1 in y.all]
   zhat   = [z1 - z.mu + x.mu for z1 in z.all]
   
-  # Count how often we see a diffferent and bigger difference
-  # in the sampled lists
-  bigger = tiny
+  # Compute the achieved significance level.
+  asl = tiny
   for _ in range(b):
     if testStatistic(num(sampleWithReplacement(yhat)),
                      num(sampleWithReplacement(zhat))) > tobs:
-      bigger += 1
+      asl += 1/b
 
-  # Return true if we "rarely" see these different and bigger differences
-  # <and "rarely" is defined by `conf`).
-  return (bigger / b) > (1-conf/100)
+  # The larger the `asl` value, the more likely it
+  # is `True` that the lsts are the same.
+  #print("asl",asl)
+  return asl > conf/100
 
