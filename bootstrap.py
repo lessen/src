@@ -3,7 +3,7 @@ Returns true if two lists are not statistically significantly different.
 
 Based on [An introduction to the
 bootstrap](https://github.com/timm/timm.github.io/blob/master/pdf/93bootstrap.pdf)
-by Bradley Efron, 1993, Chapman and Hall, page 220 to 224.
+by Bradley Efron, 1993, Chapman and Hall, page 220 to 223.
 
 
 Works via `bootstrap sampling`:
@@ -69,7 +69,6 @@ def bootstrap(y0,z0, b = 1000, conf= 95):
       i.mu   = i.sum/(i.n + tiny)
     def __add__(i1,i2):
       return num(i1.all + i2.all)
-    
  
   # -------------------------
   # ### Run this script
@@ -86,12 +85,12 @@ def bootstrap(y0,z0, b = 1000, conf= 95):
   # Count how often we see a diffferent and bigger difference
   # in the sampled lists
   bigger = tiny
-  for i in range(b):
+  for _ in range(b):
     if testStatistic(num(sampleWithReplacement(yhat)),
                      num(sampleWithReplacement(zhat))) > tobs:
       bigger += 1
 
   # Return true if we "rarely" see these different and bigger differences
-  # (and "rarely" is defined by `conf`).
-  return (bigger / b) > (1 - conf/100)
+  # <and "rarely" is defined by `conf`).
+  return (bigger / b) > (1-conf/100)
 
