@@ -16,7 +16,8 @@ Works via `bootstrap sampling`:
      - Count how many times we can see a diffferent and bigger difference
        in the sampled lists (again, computed via `testStatistic`, but
        this time on the sampled data).
-
+     - If that count is _rare_ (as defined by the `conf` value,
+       then return `True`.
  
 
 ____
@@ -27,12 +28,18 @@ ____
 import random
   
 def bootstrap(y0,z0, b = 1000, conf= 95):
-  tiny=1e-32 # added to add divisions to stop div zero errors
+  tiny=1e-32 # added to some divisions to stop div zero errors
 
-  # Generating the samples (using sampling with replacement).
+  # ### Helpers
+
+  # Return any number 0 to n
+  def any(n): return random.uniform(0,n)
+
+  # Return any list item (uses `any`).
+  def one(lst): return lst[ int(any(len(lst))) ]
+  
+  # Return any sample from `lst` (uses `one`).
   def sampleWithReplacement(lst):
-    def any(n)  : return random.uniform(0,n)
-    def one(lst): return lst[ int(any(len(lst))) ]
     return [one(lst) for _ in lst]
   
   # The test statistic: comments on the difference between two lists
@@ -46,6 +53,9 @@ def bootstrap(y0,z0, b = 1000, conf= 95):
     if s1+s2:
       delta =  delta/((s1/(y.n + tiny) + s2/(z.n + tiny))**0.5)
     return delta
+  
+  #______
+  # ### Num class
   
   # A counter class to simplify reasoning about sets of numbers
   class num():
@@ -62,7 +72,9 @@ def bootstrap(y0,z0, b = 1000, conf= 95):
     
  
   # -------------------------
-  # Run this script
+  # ### Run this script
+  
+  # Some set up
   y, z   = num(y0), num(z0)
   x      = y + z
   tobs   = testStatistic(y,z)
@@ -70,16 +82,16 @@ def bootstrap(y0,z0, b = 1000, conf= 95):
   # Effron recommends adjusting all the populations so they have the same mean
   yhat   = [y1 - y.mu + x.mu for y1 in y.all]
   zhat   = [z1 - z.mu + x.mu for z1 in z.all]
-  bigger = tiny
   
   # Count how often we see a diffferent and bigger difference
   # in the sampled lists
+  bigger = tiny
   for i in range(b):
     if testStatistic(num(sampleWithReplacement(yhat)),
                      num(sampleWithReplacement(zhat))) > tobs:
       bigger += 1
 
   # Return true if we "rarely" see these different and bigger differences
-  # (and "rarely" is defined by conf).
+  # (and "rarely" is defined by `conf`).
   return (bigger / b) > (1 - conf/100)
 
