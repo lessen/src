@@ -20,7 +20,8 @@ Example of incremental usage:
         {:n 801 :lo 0 :hi 800 :mu 400 :sd 231.4}
         {:n 901 :lo 0 :hi 900 :mu 450 :sd 260.2}
 
-Example of batch usage:
+Example of batch usage (where, at initialization, 100s
+of numbers are thrown in at once):
 
       print(num(i for i in range(901)))
 
@@ -34,7 +35,8 @@ Also, can be used to:
 - compute parametric tests for effect size and statistical hypothesis checking
 
 _____
-## Programmer's Guide    
+## Programmer's Guide          
+
 """
 
 from math import pi,e

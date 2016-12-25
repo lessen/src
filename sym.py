@@ -4,7 +4,7 @@ Maintains summaries of symbols. Can be used incrementally, or in batch.
 Example of incremental usage:
 
         words = # some long list of quotes
-        words = re.sub(r'[-—,\.\n]'," ",words).split()
+        words = re.sub(r'[-,\.\n]'," ",words).split()
 
         s=sym()
         for i,x in enumerate(words):

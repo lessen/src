@@ -75,12 +75,12 @@ zap() { rm -rf $Dot; }
 #########################################################
 cat<<'EOF' >$Dot/header
 """ 
-
 <img 
-src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
-align=middle
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
 width=120>
-_Just another [Timm Tool](http://ttv1.github.com)._
+&nbsp;<br>&nbsp;<br>
+_Just another [Timm Tool](http://ttv1.github.com).<br> Browse this file [on Github](https://github.com/ttv1/src/blob/master/ABABABAB). <img align=middle src="https://github.com/favicon.ico">_
 <br clear=all>
 
 _________________
@@ -91,12 +91,14 @@ cat <<'EOF' > $Dot/footer
 
 """
 ____
-## Copyleft
+
 
 <img align=right 
-src="https://s-media-cache-ak0.pinimg.com/236x/9f/6d/3f/9f6d3f9e606fc448b5f781391e4cb3c3.jpg" 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
 width=170>
-Copyright © 2016 Tim Menzies <tim@menzies.us>
+## Copyleft
+
+Copyright &copy; 2016 Tim Menzies <tim@menzies.us>
 
 This program is free software. It comes without any warranty, to
 the extent permitted by applicable law. You can redistribute it
@@ -115,7 +117,7 @@ cat <<'EOF' > $Dot/footer.html
 <h2> Copyleft </h2>
 
 <img align=right 
-src="https://s-media-cache-ak0.pinimg.com/236x/9f/6d/3f/9f6d3f9e606fc448b5f781391e4cb3c3.jpg" 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
 width=170>
 <p>Copyright &copy; 2016 Tim Menzies <tim@menzies.us></p>
 
@@ -195,7 +197,7 @@ pycco() {
     mkdir -p $d
     x=`which pycco`
     cat $1 | gawk '
-      NR==1 { system("cat '$Dot/header'"); next}
+      NR==1 { system("cat '$Dot/header' | sed \"s/ABABABAB/'$1'/\"    "); next}
             { print $0}
       END   { system("cat '$Dot/footer'"); } ' > $d/$1
     $x -d $d $d/$1
@@ -215,15 +217,13 @@ emacs() { "$Emacs" -q -l "$Edot" $* &
 em() { emacs -q -l "$Edot" $*   
      }
 
-egs() {
-    for i in *eg.py; do
-        echo ""
-        echo "#################"
-        echo "# $i "
-        echo "#################"
-        echo ""
-        python $i
-    done
+eg() {
+ if [ -f "${1}eg.py" ]; then pypy3 ${1}eg.py; fi
+ if [ -f "${1}.py" ]; then
+    if [  "${1}.py" -nt "docs/${1}.html" ]; then 
+       pycco $1.py    
+    fi
+ fi
 }
 
 ok() {

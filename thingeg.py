@@ -12,11 +12,12 @@ def _thing():
     if i % 100 == 0: print(t,t.samples.stats())
   t= thing(i for i in range(901))
   print(t,t.samples.stats())
+  assert t.samples.stats()==(480.5,443)
 
   # symbols
   t= thing()
   for i in list("""Science is a way of thinking much more than it is a body of knowledge"""):
     t + i
-  print(t)
-
+  assert t.my.most==14
+  
 if __name__ == "__main__": eg()

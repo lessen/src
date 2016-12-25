@@ -19,7 +19,7 @@ The following values for this argument are recommented:
 ### Reference:
 
 Romano, Jeanine, et al. [Exploring methods for evaluating group differences on
-the NSSE and other surveys: Are the t-test and Cohen’sd indices the most
+the NSSE and other surveys: Are the t-test and Cohen's d indices the most
 appropriate
 choices](http://www.coedu.usf.edu/main/departments/me/documents/methodsforevaluatinggroup.pdf),
 Annual meeting of the Southern Association for Institutional Research. 2006.

@@ -21,7 +21,7 @@ Example of incremental usage:
         {:n 801 :len 256 :some [8, 9, 10, 16, 18]} (413.5, 415)
         {:n 901 :len 256 :some [8, 9, 10, 16, 18]} (462.5, 450)
 
-Example of batch usage
+Example of batch usage     
 
         s= sample(i for i in range(901))
         print(s,s.stats())

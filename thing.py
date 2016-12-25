@@ -1,15 +1,19 @@
-"""
+"""Maintains summaries of numbers or symbols:
 
-Maintains summaries of numbers or symbols.  In use, values are just thrown at a
-`thing` and, internally, this code works out if we are talking about `num`s or
-`sym`s.
+- In use, values are just thrown at a `thing` and, internally, this code works
+  out if we are talking about `num`s or `sym`s.
+     - Internally, `thing`s have a variable `thing.my`s containing either a `num` or a `sym`.
 
-Apart from sumamries, `thing`s also keep a random `sample` of the values
-seen so far.
+
+- Apart from sumamries, `thing`s also keep a random `sample` of the values seen
+  so far.
+     - This variable is kept in `thing.samples`.
+
+### Usage
 
 Can be used incrementally, or in batch.
 
-Example of incremental usage:
+#### Example of incremental usage:
 
        t=thing()
        for i in range(1000):#
@@ -29,8 +33,7 @@ Example of incremental usage:
         {:txt 0 :pos 0 :n 901} (462.5, 450)
         {:txt 0 :pos 0 :n 901} (480.5, 443)
 
-
-Example of batch usage:
+#### Example of batch usage:
 
         t= thing(i for i in range(901))
         print(t,t.samples.stats())
@@ -42,7 +45,6 @@ ______
 ## Programmer's Guide
 
 """
-import random
 from num     import num
 from sym     import sym
 from sample  import sample
@@ -101,8 +103,6 @@ class thing:
   def bootstrap(i,j)  : return i.samples.bootstrap(j.samples)
   def same_CD(i,j)    : return i.cliffsDelta(j)  and i.bootstrap(j) 
   
-  # Generic. returns sd for nums and entropy for syms
-  def wriggle(i)      : return i.my.wriggle()
 
   # Parametric. assumes gaussians
   def same_HT(i,j)    : return i.hedges(j) and i.ttest(j)

@@ -11,5 +11,6 @@ def _sample():
     if i % 100 == 0: print(s,s.stats())
   s= sample(i for i in range(901))
   print(s,s.stats())
+  assert s.stats() == (480.5,443)
 
 if __name__ == "__main__": eg()

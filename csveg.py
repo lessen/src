@@ -11,24 +11,32 @@ def _csvFromString():
    10,20,30,y"""
    for row in csv(stringOfData, header=True):
       print(row)
+   print(row)
+   assert row == [10, 20.0, 30, 'y']
 
 @eg
 def _csvFromSimpleFile():
+  "Reading a few Ascii rows."
   for row in csv(file="data/weather.csv"):
     print(row)
+  assert row == ['rainy', 71.0, 91, 'TRUE', 'no']
 
 @eg
-def _csvFromLargeFile(m=0):
+def _csvFromLargeFile(n=0):
+    "Reading nearly 2M rows from file."
     print("\nPlz wait 10 seconds while I read 100MB+ of data...")
-    for row1 in csv(file="data/weatherLarge.csv"):
-      m += 1
-    print(m)
+    for row in csv(file="data/weatherLarge.csv"):
+      n +=1 
+    assert row == ['rainy', 71.0, 91, 'TRUE', 'no']
+    assert n == 1835009
 
 @eg
 def _csvFromZip(n=0):
-    for row2 in csv(file="weatherLarge.csv",
+    "Reading nearly 2M rows from zip."
+    for row in csv(file="weatherLarge.csv",
                       zip="data/data.zip"):
       n += 1
-    print(n)
-
+    assert row == ['rainy', 71.0, 91, 'TRUE', 'no']
+    assert n == 1835009
+    
 if __name__ == "__main__": eg()

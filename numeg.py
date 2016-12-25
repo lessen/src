@@ -8,10 +8,13 @@ def _num1():
    for i in range(1000):
      n + i
      if i % 100 == 0: print(n)
+   assert n.n == 1000
 
 @eg
 def _num2():
-  print(num(i for i in range(901)))
+  n = num(i for i in range(901))
+  print(n)
+  assert n.n == 901
 
 @eg
 def _num3():
