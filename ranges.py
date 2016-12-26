@@ -24,7 +24,7 @@ can implement all the following discretization processes:
 
 ### Examples
 
-#### Convert a List to a Range
+#### `div`: Separate a List into Ranges
 
        from ranges import div
        #
@@ -34,11 +34,66 @@ can implement all the following discretization processes:
                       ]):
          print("range,rng["id"],":",
                  dict(lo= rng["x"].lo,
-                      hi= rng["y"].hi))
-       #
+                      hi= rng["x"].hi))
+       
+       # Output
        range 1: {'lo': 10, 'hi': 20} # nums 10 to 20
        range 2: {'lo': 21, 'hi': 31} # nums 21 to 31
        range 3: {'lo': 33, 'hi': 37} # nums 33 to 37
+
+#### `ediv`: Separate pairs of Number,Symbols into Ranges
+
+       from ranges import div,ediv
+       # 
+       a,b  = "a","b"
+       for rng in ediv([ 
+                    (10,a),(11,a),(13,a),(14,a),(15,a),
+                    (20,b),(21,b),(23,b),(24,b),(25,b),
+                    (30,b),(31,b),(33,b),(34,b),(35,b) ]):
+          print(dict(id= rng["id"],
+                     lo= rng["x"].lo,
+                     hi= rng["x"].hi))
+        
+       # Output
+       range 0 : {'lo': 10, 'hi': 20}
+       range 1 : {'lo': 21, 'hi': 35}
+
+#### `sdiv`: Separate pairs of Number,Numbers into Ranges
+
+       lst= [( 0.7,  2),  ( 0.75,  2 ), ( 0.8,  2  ),
+             ( 0,85 ,2),  ( 0.9,   2),  ( 0.8 ,  2  ),
+             ( 1  ,  2 ), ( 1.05 , 2),  ( 1,2),
+             ( 0.7,  2),  ( 0.75,  2 ), ( 0.8,  2  ),
+             ( 0.85 , 2), ( 0.9,  2),   (10   , 14  ),
+             (10.5, 13.5),(11    ,13),  (11.5, 13),  
+             (12   , 12.5),(12.5, 12  ),(13    ,11.5),
+             (13.5, 10.5),(14   , 10  ),(14.5,  9.5),
+             (15    , 9), (15.5, 8.5) ]
+       for rng in sdiv(lst):
+           print("range",rng["id"],":",
+                    dict(lo= rng["x"].lo,
+                          hi= rng["x"].hi))
+        
+       # Output
+       range 0 : {'lo': 0,   'hi':  0.9}
+       range 1 : {'lo': 0.9, 'hi': 15.5}
+
+#### `ddiv`: Separate lists of Treatment into Ranges
+
+       for rng in ddv(dict(x1= [0.34, 0.49, 0.51, 0.6],
+                           x2= [0.6,  0.7,  0.8,  0.9],
+                           x3= [0.15, 0.25, 0.4,  0.35],
+                           x4= [0.6,  0.7,  0.8,  0.9],
+                           x5= [0.1,  0.2,  0.3,  0.4])):   
+         print("range", rng["id"],":",
+               [x[0].label for x in rng["has"]],
+               dict(lo= rng["x"].lo,
+                    hi= rng["x"].hi))
+      
+       # Output
+       range 0 : ['x5', 'x3'] {'lo': 0.1,  'hi': 0.4} 
+       range 1 : ['x1']       {'lo': 0.34, 'hi': 0.6} 
+       range 2 : ['x2', 'x4'] {'lo': 0.6,  'hi': 0.9} 
 
 ### Internal Details
 
@@ -62,8 +117,6 @@ However it runs, this ranges returns a list of dictionaries:
               has   = items,
               id    = aNumber)
 
-
-
 ____ 
 
 ## Programmer's Guide
@@ -74,13 +127,15 @@ import sys,math
 from cliffsDelta import cd as different
 from bootstrap   import bootstrap
 
-# ___________________
 # ### Top-level drives
 
-# The generic 
+# Short-cuts, defined for standard usages.
+
+# Standard usage #1: divide a list of numbers.
 def div(lst):
   return ranges(lst)
 
+# Standard usage #2:
 def sdiv(lst,
          x   = lambda z:z[ 0],
          y   = lambda z:z[-1],

@@ -1,18 +1,51 @@
-from ranges import div
+from ranges import div,ediv,sdiv,ddiv
 from random import random as r
 from random import seed
 from eg import eg
 
 
 @eg
-def _div0():
+def _div0a():
   for rng in div([ 10,11,13,14,15,15,16,16,17,
                    20,21,23,24,25,25,26,26,27,
                    30,31,33,34,35,35,36,36,37 ]):
-    print(dict(id= rng["id"],
-               lo= rng["x"].lo,
-               hi= rng["y"].hi))
-      
+    print("range", rng["id"],":",
+                   dict(lo= rng["x"].lo,
+                        hi= rng["x"].hi))
+
+@eg
+def _div0b():
+  a,b  = "a","b"
+  for rng in ediv([ (10,a),(11,a),(13,a),(14,a),(15,a),
+                   (20,b),(21,b),(23,b),(24,b),(25,b),
+                   (30,b),(31,b),(33,b),(34,b),(35,b) ]):
+    print("range",rng["id"],":",
+                  dict(lo= rng["x"].lo,
+                       hi= rng["x"].hi))
+    
+@eg
+def _div0c():
+  for rng in sdiv([ (0.7,2),(0.75,2),(0.8,2),(0,85,2),(0.9,2),(0.8,2),(1,2),
+                    (1.05,2),(1,2),(0.7,2),(0.75,2),(0.8,2),(0.85,2),(0.9,2),
+                    (10,14),(10.5,13.5),(11,13),(11.5,13),(12,12.5),(12.5,12),
+                    (13,11.5),(13.5,10.5),(14,10),(14.5,9.5),(15,9),(15.5,8.5)
+                  ]):
+    print("range",rng["id"],":",
+                  dict(lo= rng["x"].lo,
+                       hi= rng["x"].hi))
+    
+@eg
+def _div0d():
+  for rng in ddiv(dict(x1=[0.34, 0.49, 0.51, 0.6],
+                       x2=[0.6,  0.7,  0.8,  0.9],
+                       x3=[0.15, 0.25, 0.4,  0.35],
+                       x4=[0.6,  0.7,  0.8,  0.9],
+                       x5=[0.1,  0.2,  0.3,  0.4])):    
+    print("range",rng["id"],":",
+          [x[0].label for x in rng["has"]],
+          dict(lo= rng["x"].lo,
+               hi= rng["x"].hi))
+     
 @eg
 def _div1(n=10000):
   "1D cluster. Noise. Should divide evenly."
