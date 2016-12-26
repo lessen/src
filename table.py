@@ -1,7 +1,8 @@
-from num import num
-from sym import sym
+from thing import thing
+from csv   import csv
 
 class table:
+  id = 0
   WHITESPACE = '[\n\r\t]'
   COMMENTS   = '#.*'
   IGNORE     = "-"
@@ -9,29 +10,16 @@ class table:
   COLS       = dict(less= "<",
                     more= ">",
                     klass=":",
-                    nums= "$",
-                    syms= "!")      
-  class _row:
-    id = 0
-    def __init__(i,lst):
-      i.id = row.id = row.id+1
-      i.raw=lst
-      i.cooked=None
-    def _data(i)          : return i.cooked if i.cooked else i.raw
-    def __repr__(i)       : return '#%s,%s' % (i.id,i._data())
-    def __getitem__(i,k)  : return i._data()[k]
-    def __setitem__(i,k,v): i._data()[k] = v
-    def __len__(i)        : return len(i._data())
-    def __hash__(i)       : return i.id 
-    def __eq__(i,j)       : return i.id == j.id
-    def __ne__(i,j)       : return i.id != j.id
+                    nums= "$<>",
+                    syms= ":!")       
 
-  def __init__(i,inits=[],file=None.zip=None):
+  def __init__(i,inits=[],file=None,zip=None):
     i.rows, i.cols, i.all = [],{},[]
     for key in table.COLS.keys():
       i.cols[key] = []
     if file:
       for row in i.columns(csv(file=file,zip=zip)):
+        print(row)
         i + row
     [i + row for row in i.columns(inits)]
     
@@ -48,15 +36,28 @@ class table:
 
   def header(i,row):
     for col,cell in enumerate(row):
+      print("[%s,%s]" % (col,cell))
       if cell[0] != table.IGNORE:
-        for key,char in table.COLS.items():
-          if cell[0] == char:
-            column       = thing(pos=col, txt=cell)
-            i.cols[key] += [column]
-            i.all       += [column]
-            break
+        column  = thing(pos=col, txt=cell)
+        i.all  += [column]
+        for key,chars in table.COLS.items():
+          for char in chars:
+            if cell[0] == char:
+              print(char,col,cell)
+              i.cols[key] += [column]
           
   def data(i,row):
+    class _row:    
+      def __init__(i,lst):
+        i.id = table.id = table.id+1
+        i.raw=lst
+      def __repr__(i)       : return '#%s,%s' % (i.id,i.raw)
+      def __getitem__(i,k)  : return i.raw[k]
+      def __setitem__(i,k,v): i.raw[k] = v
+      def __len__(i)        : return len(i.raw)
+      def __hash__(i)       : return i.id 
+      def __eq__(i,j)       : return i.id == j.id
+      def __ne__(i,j)       : return i.id != j.id
     row = [x + row[x.pos] for x in i.all]
     i.rows += [ _row(row) ] 
               

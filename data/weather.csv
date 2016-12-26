@@ -1,7 +1,7 @@
 # weather
 outlook,
 temp,
-humidity,
+?humidity,
 windy,
 play # class
 ###########
