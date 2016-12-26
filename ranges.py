@@ -1,11 +1,83 @@
 """
 
+_Ranges_ implements discretization; i.e.  transform quantitative 
+data into qualitative data.  Even for algorithms that can directly 
+deal with quantitative data, dscretization can led to faster, 
+more effective learning.
+
+It turns out that a generic recursive bi-clustering procedure 
+can implement all the following discretization processes:
+
+- Divide a list of numbers into a small number of ranges;
+- Given rows of data...
+    - Fayyad-Iranni discretization:
+          - ... find ranges in one column that 
+            minimizes the expected value of the 
+            entropy in another column of symbols.
+    - CART-style discretization:
+          - ... find ranges in one column that 
+            minimizes the expected value of the 
+            standard deviation in another column of numbers.
+    - Scott-Knott ranking of treatments (clustering together 
+      treatments whose distributions are statistically
+      indistinguishable).
+
+### Examples
+
+#### Convert a List to a Range
+
+       from ranges import div
+       #
+       for rng in div([ 10, 11, 13, 14, 15, 15, 16, 16, 17, 
+                        20, 21, 23, 24, 25, 25, 26, 26, 27, 
+                        30, 31, 33, 34, 35, 35, 36, 36, 37 
+                      ]):
+         print("range,rng["id"],":",
+                 dict(lo= rng["x"].lo,
+                      hi= rng["y"].hi))
+       #
+       range 1: {'lo': 10, 'hi': 20} # nums 10 to 20
+       range 2: {'lo': 21, 'hi': 31} # nums 21 to 31
+       range 3: {'lo': 33, 'hi': 37} # nums 33 to 37
+
+### Internal Details
+
+`Ranges` assumes that the input data contains a list of doubles _(x,y)_
+pairs.  The process assumes _x_ is always numeric, but _y_ may 
+be numeric or symbols. 
+
+- If _y_ is _numeric_,  we divide to minimize the expected 
+  _variance_ (after divisions).
+- If _y_ is _symbolic_, we divide to minimize the expected 
+  _entropy_ (after divisions).
+
+To divide a list of numerics, this generates doubles _(x,x)_, 
+after which the same division process executes.
+
+However it runs, this ranges returns a list of dictionaries:
+
+         dict(label = label, score = score,
+              x     = xoverall, # x.lo, x.hi defines the range 
+              y     = yoverall, # could be numerics or symbols
+              has   = items,
+              id    = aNumber)
+
+
+
+____ 
+
+## Programmer's Guide
+
 """
 
 import sys,math
 from cliffsDelta import cd as different
+from bootstrap   import bootstrap
 
+# ___________________
+# ### Top-level drives
 
+# The generic 
 def div(lst):
   return ranges(lst)
 
@@ -74,7 +146,6 @@ def ranges(lst,
   evaly= evaly or expectedWriggle
   goodxsplit = goodxsplit or yes
   goodysplit = goodysplit or yes
-    
   def stats(segment, xall, yall,flat):
      xs,ys = num(),yklass()
      if flat:
@@ -159,7 +230,7 @@ def ranges(lst,
     parts      = [stats(segment, xall, yall,flat) for segment in segments]
     epsilon    = epsilon or d * xall.wriggle()
     return divide(parts,out=[], lvl=0)
-
+ 
 class ordered:
    def __init__(i,lst):
       i.sorted= False
@@ -201,7 +272,6 @@ class num:
       i.m2  += delta*(x - i.mu)
       if i.n > 1:
         i.sd = (i.m2/(i.n-1))**0.5
-    
     def wriggle(i):
       return i.sd
     def median(i):
@@ -233,4 +303,5 @@ class sym:
     def k(i):  return len(i.counts.keys())
     def ke(i): return i.k()*i.ent()
     def __repr__(i):
-      return 'n: %s most: %s more: %s ent: %s' % (i.n, i.most, i.more, i.ent())
+      return 'n: %s most: %s more: %s ent: %s' % (i.n, i.most, i.more, i.ent()) 
+

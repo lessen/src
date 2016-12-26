@@ -1,4 +1,6 @@
-"""Returns true if two lists are not statistically significantly different.
+"""
+
+Returns true if two lists are not statistically significantly different.
 
 Based on [An introduction to the
 bootstrap](https://github.com/timm/timm.github.io/blob/master/pdf/93bootstrap.pdf)
