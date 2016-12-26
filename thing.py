@@ -78,6 +78,7 @@ class thing:
         i.samples = sample()   
       i.my + x
       i.samples + x
+    return xs
 
   # Iterating over items. If passed a list then yield each item.
   # Otherwise, just yield the passed in argument.

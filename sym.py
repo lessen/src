@@ -59,6 +59,7 @@ class sym:
     count= i.counts[x] = i.counts.get(x,0) + 1
     if count > i.most:
       i.most,i.mode=count,x
+    return x
 
   # Entropy calculation (guesstimate of the number of bits required to encode this distribution).
   def ent(i):

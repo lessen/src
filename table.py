@@ -57,6 +57,7 @@ class table:
       def __eq__(i,j)       : return i.id == j.id
       def __ne__(i,j)       : return i.id != j.id
     row = [x + row[x.pos] for x in i.all]
+    
     i.rows += [ _row(row) ] 
               
   def dist(i, j,k, what=["syms","nums"]):

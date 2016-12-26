@@ -61,6 +61,7 @@ class num:
     delta = x - i.mu
     i.mu += delta/i.n
     i.m2 += delta*(x - i.mu)
+    return x
     
   # Calculate sd using Knuth's method.
   def sd(i):
