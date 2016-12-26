@@ -8,18 +8,18 @@ def base0(n):
   return [r() for _ in range(n)]
 
 @eg
-def _b0(n=50,div=100, boo=bst,same=None,f=base0):
+def _b0(n=30,div=100, boo=bst,same=None,f=base0):
   print(boo.__name__)
   base = f(n)
-  print([round(x,2) for x in sorted(base)[::5]])
   same0 = None
   t0 = None
   other=None
-  for conf in [60,95]:
-    for b in [30,120,480,960]:
+  for conf in [90,95,99]:
+    print("")
+    for b in [32,64,128,256,512,1024]:
       report=[]
       t=0
-      for n in range(0,10,1):
+      for n in range(0,10,2):
         other   = [x+ (r()*n/div) for x in base]
         t1      = now()
         same    = boo(base, other,b=b,conf=conf)
@@ -29,17 +29,16 @@ def _b0(n=50,div=100, boo=bst,same=None,f=base0):
         report += ["=" if same else "."]
       t0 = t if t0 == None else t0
       print(''.join(report),dict(conf=conf,b=b,time=round(t/t0,2)))
-  print([round(x,2) for x in sorted(other)[::5]])
+  print("list first:",[round(x,2) for x in sorted(base)[::2]])
+  print("list  last:",[round(x,2) for x in sorted(other)[::2]])
   assert same0,"first must be the same"
   assert not same,"last should be different"
         
 @eg
 def _b1():
-  for _ in range(10):
+  for k in [0.5,1,2,4]:
     print("")
-    k = 0.5+r()*5
-    
-    print(k)
+    print(dict(shape=k))
     f = lambda n: [random.weibullvariate(1,k)
                    for _ in range(n)]
     _b0(f=f)

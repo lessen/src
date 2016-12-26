@@ -10,7 +10,7 @@ permutation test:
 - A magic number, the achieved significance level (ASL) is caluclated 
   from numerous random samples of the original lists (and,
   by sample, Effron means "sample with replacement").
-- The _larger_ the ASL, the weaker the evidence _against) the null
+- The _larger_ the ASL, the weaker the evidence _against_ the null
   hypothesis (that the two lists belong to the same distribution);
 - I.e. the larger the ASL, we more we can believe in the lists are the same.
 
@@ -25,7 +25,7 @@ ____
 """
 import random
   
-def bootstrap(y0,z0, b = 1000, conf= 95):
+def bootstrap(y0,z0, b = 256, conf= 95):
   tiny=1e-32 # added to some divisions to stop div zero errors
 
   # ### Helpers
@@ -89,6 +89,22 @@ def bootstrap(y0,z0, b = 1000, conf= 95):
 
   # The larger the `asl` value, the more likely it
   # is `True` that the lsts are the same.
-  #print("asl",asl)
   return asl > conf/100
 
+"""
+
+___ 
+
+## FAQ
+
+Why is the last line above  `asl > conf/100` and not `asl < conf/100`?
+
+This is because of the way Efrom defines `asl` 
+(the _larger_ the ASL, the weaker the evidence that the lists
+are different). Chapter 16 of his text explains that in more detail.
+
+(Aside: since I am not a very trusting soul, I have coded this up reversing
+ &gt; with &lt;. When I did, `bootstrap` produced the reverse
+of the expected results.)
+
+"""

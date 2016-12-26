@@ -80,7 +80,7 @@ src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
 align=left
 width=120>
 &nbsp;<br>&nbsp;<br>
-_Just another [Timm Tool](http://ttv1.github.com).<br> Browse this file [on Github](https://github.com/ttv1/src/blob/master/ABABABAB). <img align=middle src="https://github.com/favicon.ico">_
+_Just another [Timm Tool](http://ttv1.github.com).<br> Discuss this file [on Github](https://github.com/ttv1/src/issues). <img  align=middle src="https://github.com/favicon.ico">_
 <br clear=all>
 
 _________________
@@ -197,10 +197,22 @@ pycco() {
     mkdir -p $d
     x=`which pycco`
     cat $1 | gawk '
-      NR==1 { system("cat '$Dot/header' | sed \"s/ABABABAB/'$1'/\"    "); next}
+      NR==1 { system("cat '$Dot/header'"); next}
             { print $0}
       END   { system("cat '$Dot/footer'"); } ' > $d/$1
     $x -d $d $d/$1
+    html="docs/${1%.*}.html"
+    echo $html
+    cat $html |
+    gawk '/<div id=.container.>/ { print $0
+                                  print "<a href=\"https://github.com/ttv1/src/blob/master/ABABABAB\"><img style=\"z-index: 10; position: absolute; top: 0; left: 0; border: 0;\" src=\"https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67\" alt=\"Fork me on GitHub\" data-canonical-src=\"https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png\"></a> "; next
+                                }
+           /<h1>/               { sub(/<h1>/,"<h1>\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;"); print $0; next }
+                                { print $0 }
+    ' |
+    sed 's/ABABABAB/'$1'/' > $Dot/$1
+    cp $Dot/$1 $html
+   
     #cp $Dot/pycco.css $d
   else
     echo "$1 not found"

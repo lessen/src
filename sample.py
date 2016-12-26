@@ -105,7 +105,7 @@ class sample:
     return not i.cliffsDelta(j) and not i.bootstrap(j)
   
   # Non-parametric statistical signifance test
-  def bootstrap(i,j,b=1000,conf=95):
+  def bootstrap(i,j,b=256,conf=95):
     return bootstrap(i.some,j.some,b=b,conf=conf)
   
   # Non-parametric effect size test
