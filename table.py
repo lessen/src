@@ -19,7 +19,6 @@ class table:
       i.cols[key] = []
     if file:
       for row in i.columns(csv(file=file,zip=zip)):
-        print(row)
         i + row
     [i + row for row in i.columns(inits)]
     
@@ -36,7 +35,6 @@ class table:
 
   def header(i,row):
     for col,cell in enumerate(row):
-      print("[%s,%s]" % (col,cell))
       if cell[0] != table.IGNORE:
         column  = thing(pos=col, txt=cell)
         i.all  += [column]
@@ -50,7 +48,7 @@ class table:
     class _row:    
       def __init__(i,lst):
         i.id = table.id = table.id+1
-        i.raw=lst
+        i.raw = lst
       def __repr__(i)       : return '#%s,%s' % (i.id,i.raw)
       def __getitem__(i,k)  : return i.raw[k]
       def __setitem__(i,k,v): i.raw[k] = v

@@ -5,6 +5,6 @@ from table import table
 def _table():
   t=table(file="data/weather.csv")
   for row in t.rows:
-    pass #print(row)
+    print(">>",row)
 
 if __name__ == "__main__" : eg()
