@@ -32,8 +32,6 @@ class table:
       yield [row[col] for col in use]
 
   def __add__(i,row):
-    #print(len(i.rows))
-    if len(i.rows) > 10000: sys.exit()
     i.data(row) if i.all else i.header(row)
 
   def header(i,row):
