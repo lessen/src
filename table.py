@@ -1,5 +1,6 @@
 from thing import thing
 from csv   import csv
+import sys
 
 class table:
   id = 0
@@ -24,13 +25,15 @@ class table:
     
   def columns(i,src):
     """Yields just the columns not marked as missing."""
-    use=[]
+    use = []
     for row in src:
       use = use or [col for col,cell in enumerate(row)
                         if  cell[0] != table.MISSING ]
       yield [row[col] for col in use]
 
   def __add__(i,row):
+    #print(len(i.rows))
+    if len(i.rows) > 10000: sys.exit()
     i.data(row) if i.all else i.header(row)
 
   def header(i,row):

@@ -55,36 +55,25 @@ _____
 
 import traceback,re,random,sys,time
 
-def eg(f=None, lst=[], seed=1, 
-    runs={}   # How often have we run an example (and never run an example twice).
-    ):
+# This code resets the random number seed to `seed` before
+# running any examples.
+#
+# Two default mutable arguments (`lst` and `runs`)
+# are used as the working memory for this test engine:
+# `lst` holds the list of example functions that might be executed;
+# `runs` holds counts of how often each example function has been run
+# (and this code ensures that function is never executed multiple times).
+#
+def eg(f=None, seed=1, lst=[], runs={} ):
 
   # ### Controlling the runs
 
-  # Run all the functions in lst, catching and counting all failures.
-  def runall(lst):
-    if not lst:
-      print("# No known examples.")
-    else:
-      PASS=FAIL=0
-      random.seed(seed) #- Always set the random seed before starting a demo.
-      for f in lst:
-        if runs[f.__name__] > 1: 
-          continue
-        try: # - Run inside a `try:except:` so one crash does not stop the other examples running
-          run1(f) 
-          PASS += 1 # If a function terminates correctly, increment `PASS`.
-        except Exception:
-          FAIL += 1 # If a crash, increment `FAIL`.
-          print(traceback.format_exc())
-      print("\n## Test results: PASS = %s FAIL = %s %%PASS = %s"  % (
-            PASS, FAIL, int(round(PASS*100/(PASS+FAIL+0.001)))))
-
   # Run one function `f`, print any output, plus its
-  # runtime and the functions's name. and doc string (if it exists).
+  # runtime and the functions's name and doc string (if it exists).
+  # Called by `runall`.
   def run1(f):
-    runs[f.__name__] += 1
-    if runs[f.__name__] == 1: 
+    runs[f.__name__] += 1 # if never run before, this value is now "1".
+    if runs[f.__name__] == 1:  # only ever run once.
       hdr = "\n-----| %s |"+ ("-"*40)
       print(hdr % f.__name__,end="\n# ")
       doc(f)
@@ -93,6 +82,26 @@ def eg(f=None, lst=[], seed=1,
       f()
       t2=time.process_time()
       print("# pass","(%.4f secs)" % (t2-t1))
+
+  # Run all the functions in `examples`, catching and counting all failures.
+  def runall(examples):
+    if not examples:
+      print("# No known examples.")
+    else:
+      PASS=FAIL=0
+      random.seed(seed) # Reset the random seed before starting a demo.
+      for f in examples:
+        if runs[f.__name__] > 1: 
+          continue
+        try: # - Run via `try:except:` (so we can contie after crashes)
+          run1(f) 
+          PASS += 1 # If a function terminates correctly, increment `PASS`.
+        except Exception:
+          FAIL += 1 # If a crash, increment `FAIL`.
+          print(traceback.format_exc())
+      print("\n## Test results: PASS = %s FAIL = %s %%PASS = %s"  % (
+            PASS, FAIL, int(round(PASS*100/(PASS+FAIL+0.001)))))
+
 
   # _______
   # ### Misc helper functions
@@ -136,4 +145,4 @@ def eg(f=None, lst=[], seed=1,
   # Otherwise, it runs everything in the list of known functions.
   else : 
       runall( lst )
-  return f 
+  return f # `eg` might be a decorator. So return function `f`.
