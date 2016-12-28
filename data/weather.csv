@@ -1,9 +1,9 @@
 # weather
 outlook,
 temp,
-?humidity,
-windy,
-play # class
+humidity,
+?windy,
+:play # class
 ###########
 sunny	,	85.0	,	85	,	FALSE	,	no
 sunny	,	80	,	90	,	TRUE	,	no

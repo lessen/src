@@ -10,7 +10,8 @@ def _table1(f="data/weather.csv"):
     if i % 1000 == 0:
       print(i)
     i += 1
-    pass #print(">>",row)
+  print(t)
+  print(t.group["x"])
 
 @eg
 def _table2():

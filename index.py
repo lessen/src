@@ -1,7 +1,7 @@
 """
 
 
-This file is the main index of the timm tools project.
+This file is the main index of the Timm Tools project.
 
 
 - [bootstrap.py](bootstrap.html)

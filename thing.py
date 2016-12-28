@@ -64,7 +64,9 @@ class thing:
 
   # Pretty print
   def __repr__(i):
-    return '{:txt %s :pos %s :n %s}' % (i.txt,i.pos,i.n())
+    return '%s{:txt %s :pos %s :n %s}' % (
+              (i.my.__class__.__name__ if i.my else ""),
+              i.txt,i.pos,i.n())
 
   # Updating. If this our first item, then work out the type
   # and initialize the internal summary variable.

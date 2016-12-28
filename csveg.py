@@ -19,24 +19,27 @@ def _csvFromSimpleFile():
   "Reading a few Ascii rows."
   for row in csv(file="data/weather.csv"):
     print(row)
-  assert row == ['rainy', 71.0, 91, 'TRUE', 'no']
+  
+  assert row == ['rainy', 71.0, 'TRUE', 'no']
 
 @eg
 def _csvFromLargeFile(n=0):
-    "Reading nearly 2M rows from file."
-    print("\nPlz wait 10 seconds while I read 100MB+ of data...")
+    "Reading over 50MB+ of data."
+    print("\nPlz wait a few seconds while I read 100MB+ of data...")
     for row in csv(file="data/weatherLarge.csv"):
-      n +=1 
-    assert row == ['rainy', 71.0, 91, 'TRUE', 'no']
+      n +=1
+    print(n,row)
+    assert row == ['rainy', 71.0, 'TRUE', 'no']
     assert n == 1835009
 
 @eg
 def _csvFromZip(n=0):
-    "Reading nearly 2M rows from zip."
+    "Reading over 50MB of data."
     for row in csv(file="weatherLarge.csv",
                       zip="data/data.zip"):
       n += 1
-    assert row == ['rainy', 71.0, 91, 'TRUE', 'no']
+      
+    assert row == ['rainy', 71.0,  91,'TRUE', 'no']
     assert n == 1835009
     
 if __name__ == "__main__": eg()

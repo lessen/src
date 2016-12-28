@@ -13,16 +13,9 @@
 - If called with the default `header=True` flag, then the
   first row is returned verbatim.
 
-Note that `csv` is the fast reader of comma-sperated files
-and `table` is a slower reader, that:
-
-- calls `csv` as a sub-routine,
-- and  also keeeps extensive statistics on each column. 
-
-If those statistics are not required, then use `csv` for (much) faster loads.
-For example, on one machine, with pypy3, `csv` can load nearly two million
-records in under six seconds while in the same time `table` can only load
-10,000.
+`csv` is not slow.  For example, on one machine, with pypy3, `csv` can load
+nearly two million records in under six seconds-- and even faster if that data
+is read from a zip file.
 
 ### Examples
 
@@ -103,6 +96,8 @@ def csv(str= None, file= None, zip= None, header= True,
 
   Finally, the function complains if any
   row is a diofferent size to the first row.
+
+  Todo: when there are headers, don't compile on cols that are marked as missing.
   """  
   def rows(src,n=0,rules=[], lines=[], filter=string):
    for line0 in src:

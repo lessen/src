@@ -1,62 +1,123 @@
+"""
+
+Given a source of csv data, `table` reads and stores the rows while at the same
+time keeping statistics on what was seen in each row.
+
+Column statistics are kept as `thing`s which are instances of a class that
+watches a stream of data and works out if that column is a numeric or symbolic.
+All these `things` are stored in `table.all` as well as in the _column groups_
+defined in `table.COLS`.
+
+       DEFAULT= "x"
+       COLS   = dict(less = "<",   # numeric goals to minimize
+                     more = ">",   # numeric goals to maximize
+                     klass= ":",   # symbolic goal (for classification) 
+                     y    = ":<>"):# all symbols denoting goals
+
+Any column with a header that starts with something else, get stored in the
+group table.DEFAULT.
+
+By default, `table` reads all its data at once from a `inits` list passes to its
+constructor. But `table` can also read table rows incrementally from strings, a
+file, or a file inside a zip file.
+
+For very fast csv reads, use `csv` not `table`.  `Table` uses `csv` as a
+primitive but also keeps extensive statistics on each column.  If those
+statistics are not required, then use `csv` for (much) faster loads.  For
+example, on one machine, with pypy3, `csv` can load nearly two million records
+in under six seconds while in the same time `table` can only load 10,000.
+
+For clues on how to optimize `table`, see the profiler output of `pypy3
+tableg.py -- _table3`.
+
+_____
+## Programmer's Guide
+
+"""
 from thing import thing
 from csv   import csv
-import sys
 
 class table:
-  id = 0
-  WHITESPACE = '[\n\r\t]'
-  COMMENTS   = '#.*'
-  IGNORE     = "-"
-  COLS       = dict(less= "<",
-                    more= ">",
-                    klass=":",
-                    nums= "$<>",
-                    syms= ":!")       
+  DEFAULT    = "x"
+  COLS       = dict(less = "<",   # numeric goals to be minimized
+                    more = ">",   # numeric goals to be maximized
+                    klass= ":",   # symbolic goal (used for classification) 
+                    y    = ":<>"  # all symbols denoting goals
+                    )             # (any any other thing goes into table.DEFAULT)
 
-  def __init__(i,inits=[],file=None,zip=None):
-    i.rows, i.cols, i.all = [],{},[]
+  # Read table either from a `str`, a `file`, a `file` in a `zip`
+  # or from some `inits` list.
+  def __init__(i,inits=[],str=None,file=None,zip=None):
+    i.rows, i.group, i.all = [],{},[]
+    i.group[table.DEFAULT] = []
     for key in table.COLS.keys():
-      i.cols[key] = []
+      i.group[key] = []
     if file:
-      for row in csv(file=file,zip=zip,header=True):
+      for row in csv(str=None, file=file,zip=zip,header=True):
         i + row
     [i + row for row in inits]
 
+  def __repr__(i):
+    return '{:rows %s :less %s :more %s :klass %s :x %s :y %s' % (
+            len(i.rows),           len(i.group["less"]), len(i.group["more"]),
+            len(i.group["klass"]), len(i.group["x"]),    len(i.group["y"]))
+  
+  # If `all` is defined, we are beyong the first header row.
   def __add__(i,row):
     i.data(row) if i.all else i.header(row)
 
+  # Create one `thing` for each column.
+  # Store that `thing` in `all` as well as 
+  # in its associated `COLS` group.
   def header(i,row):
     for col,cell in enumerate(row):
-      if cell[0] != table.IGNORE:
-        column  = thing(pos=col, txt=cell)
-        i.all  += [column]
-        for key,chars in table.COLS.items():
-          for char in chars:
-            if cell[0] == char:
-              print(char,col,cell)
-              i.cols[key] += [column]
+      t      = thing(pos=col, txt=cell)
+      i.all += [t]
+      placed = False
+      for key,chars in table.COLS.items():
+        for char in chars:
+          if cell[0] == char:
+            print(char,col,cell)
+            i.group[key] += [t]
+            placed = True
+      # If we can't place it anywhere else, place it in `table.DEFAULT`.
+      if not placed:
+        i.group[table.DEFAULT] += [t]
           
+  # Update the statistics held in each thing for each column.
+  # Keep the data in `rows`.
   def data(i,row):
-    class _row:    
-      def __init__(i,lst):
-        i.id = table.id = table.id+1
-        i.raw = lst
-      def __repr__(i)       : return '#%s,%s' % (i.id,i.raw)
-      def __getitem__(i,k)  : return i.raw[k]
-      def __setitem__(i,k,v): i.raw[k] = v
-      def __len__(i)        : return len(i.raw)
-      def __hash__(i)       : return i.id 
-      def __eq__(i,j)       : return i.id == j.id
-      def __ne__(i,j)       : return i.id != j.id
-    row = [x + row[x.pos] for x in i.all]
-    
-    i.rows += [ _row(row) ] 
-              
-  def dist(i, j,k, what=["syms","nums"]):
+    [t + row[t.pos] for t in i.all]
+    i.rows += [ row ] 
+
+  # ### Misc utilities
+
+  
+  # Return a table just like this one,
+  # but withtout the row data
+  def twin(i,inits=[]):
+    t = table([[t.txt for t in i.all]])
+    [t + x for x in inits]
+    return t
+  
+  # Return the first klass value of a row 
+  def klass(i,row):
+    return row[i.group["klass"][0].pos]
+
+  # Return the first goal value of a row 
+  def goal(i,row):
+    return row[i.group["y"][0].pos]
+  
+  # Compute Euclidean distance between two rows.
+  # Makes use of sevices defined in each thing in `all`.
+  def dist(i, j,k, what=None):
     ds,ns = 0,1e-32
-    for x in what:
-      for y in i.cols[x]:
-        d,n  = y.dist(j[y.pos], k[y.pos], csv.MISSING)
+    what = what or table.DEFAULT
+    for ts in what:
+      for t in i.group[ts]:
+        d,n  = t.dist(j[t.pos],
+                         k[t.pos],
+                         csv.MISSING)
         ds  += d
         ns  += n
     return ds**0.5 / ns**0.5
