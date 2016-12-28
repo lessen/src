@@ -1,5 +1,4 @@
-"""
-Simple to use csv reader:
+"""Simple to use csv reader:
 
 - Can read from ascii files, zip files, or strings.
 - Rows are `yield`ed one a time, so it is possible to
@@ -14,7 +13,20 @@ Simple to use csv reader:
 - If called with the default `header=True` flag, then the
   first row is returned verbatim.
 
-Example:
+Note that `csv` is the fast reader of comma-sperated files
+and `table` is a slower reader, that:
+
+- calls `csv` as a sub-routine,
+- and  also keeeps extensive statistics on each column. 
+
+If those statistics are not required, then use `csv` for (much) faster loads.
+For example, on one machine, with pypy3, `csv` can load nearly two million
+records in under six seconds while in the same time `table` can only load
+10,000.
+
+### Examples
+
+#### Template for standard usage
 
         from csv import csv
         #
@@ -23,7 +35,7 @@ Example:
 
 Can read from strings, files, zip files.
 
-Example #1: from string
+#### Example #1: from string
 
         from csv import csv
         #
@@ -34,7 +46,7 @@ Example #1: from string
         for row in csv(stringOfData, header=True):
            print(row)
 
-Example #2: read from ascii file.
+#### Example #2: read from ascii file.
 
         from csv import csv
         #
@@ -42,7 +54,7 @@ Example #2: read from ascii file.
           print(row)
 
 
-Example #3: read from zip file
+#### Example #3: read from zip file
 
         from csv import csv
         #
@@ -77,7 +89,7 @@ def csv(str= None, file= None, zip= None, header= True,
   ______
   ### Generator: `yieldAllRow`
 
-  The `yieldAllRows` function kills whitespace and comments (i.e. all the
+  The `rows` function kills whitespace and comments (i.e. all the
   things defined in `DOOMED`).  
 
   Also, it combines lines that end in `,` with the
@@ -92,7 +104,7 @@ def csv(str= None, file= None, zip= None, header= True,
   Finally, the function complains if any
   row is a diofferent size to the first row.
   """  
-  def yieldAllRows(src,n=0,rules=[], lines=[], filter=string):
+  def rows(src,n=0,rules=[], lines=[], filter=string):
    for line0 in src:
      line1 = filter(line0)
      line2 = re.sub(DOOMED, "", line1)
@@ -142,7 +154,22 @@ def csv(str= None, file= None, zip= None, header= True,
       return x
     return [compileCell(i,cell)
              for i,cell in enumerate(lst)]
-  
+
+  # If the csv has headers, and if those headers
+  # start with the `MISSING` marker, then just yield
+  # the columns that are not `MISSING`. Otherwise,
+  # just yield all rows.
+  def cols(src):
+    """Yields just the columns not marked as missing."""
+    if header:
+      use = []
+      for row in src:
+        use = use or [col for col,cell in enumerate(row)
+                      if  cell[0] != MISSING ]
+        yield [row[col] for col in use]
+    else:
+      for row in src:
+        yield row
   """ 
 ______
 
@@ -153,16 +180,16 @@ ______
   if zip:
     with zipfile.ZipFile(zip, 'r') as myzip:
       with myzip.open(file) as src:
-        for row in yieldAllRows( src,filter=utf8 ):
+        for row in cols(rows( src, filter=utf8 )):
           yield row
 
   # Read from file
   elif file:
     with open(file) as src:
-      for row in yieldAllRows( src ):
+      for row in cols(rows( src )):
         yield row
 
   # Read from string
   elif str:
-    for row in yieldAllRows( str.splitlines() ):
+    for row in cols(rows( str.splitlines() )):
       yield row

@@ -7,7 +7,6 @@ class table:
   WHITESPACE = '[\n\r\t]'
   COMMENTS   = '#.*'
   IGNORE     = "-"
-  MISSING    = '?'
   COLS       = dict(less= "<",
                     more= ">",
                     klass=":",
@@ -19,17 +18,9 @@ class table:
     for key in table.COLS.keys():
       i.cols[key] = []
     if file:
-      for row in i.columns(csv(file=file,zip=zip)):
+      for row in csv(file=file,zip=zip,header=True):
         i + row
-    [i + row for row in i.columns(inits)]
-    
-  def columns(i,src):
-    """Yields just the columns not marked as missing."""
-    use = []
-    for row in src:
-      use = use or [col for col,cell in enumerate(row)
-                        if  cell[0] != table.MISSING ]
-      yield [row[col] for col in use]
+    [i + row for row in inits]
 
   def __add__(i,row):
     i.data(row) if i.all else i.header(row)
@@ -65,7 +56,7 @@ class table:
     ds,ns = 0,1e-32
     for x in what:
       for y in i.cols[x]:
-        d,n  = y.dist(j[y.pos], k[y.pos], table.MISSING)
+        d,n  = y.dist(j[y.pos], k[y.pos], csv.MISSING)
         ds  += d
         ns  += n
     return ds**0.5 / ns**0.5
