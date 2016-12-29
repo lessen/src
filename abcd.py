@@ -115,7 +115,7 @@ class abcd:
 
   # Initialize
   def __init__(i,db="all",rx="all"):
-    i.db = db; i.rx=rx;
+    i.db = str(db); i.rx=str(rx);
     i.yes = i.no = 0
     i.known = {}; i.a= {}; i.b= {}; i.c= {}; i.d={}
 
@@ -181,17 +181,18 @@ class abcd:
 
   # Write the performance scores for each class, then the
   # weighted sum of those scores across all classes.
-  def report(i):
+  def report(i,brief=False):
     i.header()
     db = rx = ""
     yes=a=b=c=d=acc=pd=pf=prec=f=g=0
     for x,s in sorted(i.scores().items()):
-      print("#",
-       ('{0:20s} {1:10s} {2:4d} {3:4d} {4:4d}'+\
-        '{5:4d} {6:4d} {7:4d} {8:3d} {9:3d} '+ \
-        '{10:3d} {11:3d} {12:3d} {13:10s}').format(
-          s.db, s.rx,  s.yes, s.a, s.b, s.c, s.d, 
-          s.acc, s.pd, s.pf, s.prec, s.f, s.g, x))
+      if not brief:
+        print("#",
+              ('{0:20s} {1:10s} {2:4d} {3:4d} {4:4d}'+\
+               '{5:4d} {6:4d} {7:4d} {8:3d} {9:3d} '+ \
+               '{10:3d} {11:3d} {12:3d} {13:10s}').format(
+                s.db, s.rx,  s.yes, s.a, s.b, s.c, s.d, 
+                 s.acc, s.pd, s.pf, s.prec, s.f, s.g, x))
       a    += s.a    * s.r
       b    += s.b    * s.r
       c    += s.c    * s.r
@@ -204,7 +205,7 @@ class abcd:
       g    += s.g    * s.r
       yes  += s.yes  * s.r
       db,rx = s.db, s.rx
-    print('-'*100)
+    if not brief: print('-'*100)
     print("#",
        ('{0:20s} {1:10s} {2:4.0f} {3:4.0f} {4:4.0f}'+\
         '{5:4.0f} {6:4.0f} {7:4.0f} {8:3.0f} {9:3.0f} '+ \

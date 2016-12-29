@@ -77,7 +77,6 @@ class table:
       for key,chars in table.COLS.items():
         for char in chars:
           if cell[0] == char:
-            print(char,col,cell)
             i.group[key] += [t]
             placed = True
       # If we can't place it anywhere else, place it in `table.DEFAULT`.
@@ -121,12 +120,13 @@ class table:
           ns  += 1
     return ds**0.5 / ns**0.5
 
-  def nearest(i,row,what=None,details=False,
+  def nearest(i,row,rows=None,what=None,details=False,
               bt   = lambda x,y: x< y,
               zero = 1e32):
     best = zero
     out  = row
-    for otherRow in i.rows:
+    rows = rows or i.rows
+    for otherRow in rows:
       if id(row) != id(otherRow):
         tmp = i.dist(row, otherRow,
                      what=what or [table.DEFAULT])
@@ -134,19 +134,22 @@ class table:
           out,best = otherRow,tmp
     return out,best if details else out
 
-  def furthest(i,row,what=None,details=False):
+  def furthest(i,row,rows=None,what=None,details=False):
     return i.nearest(row,
                    what = what or [table.DEFAULT],
+                   rows = rows or i.rows,
                    bt   = lambda x,y: x > y,
                    zero = -1,
                    details=details)
 
-  def distances(i,what=None):
-    out = {}
-    for j,row1 in enumerate(i.rows):
+  def distances(i,rows=None,what=None):
+    out,index = {},{}
+    rows = rows or i.rows
+    for j,row in enumerate(rows):
       out[j] = []
-    for j,row1 in enumerate(i.rows):
-      for k,row2 in enumerate(i.rows):
+      index[j] = row
+    for j,row1 in enumerate(rows):
+      for k,row2 in enumerate(rows):
         if j > k:
           d = i.dist(row1,row2,
                      what = what or [table.DEFAULT])
@@ -154,5 +157,18 @@ class table:
           out[k] += [(d,j)]
     for k in out:
       out[k].sort()
-    return out
+    return out,index
 
+  def knn(i,row1,k=3,rows=None,w=lambda d:d):
+    rows=rows or i.rows
+    tmp = [(w(i.dist(row1,row2)),
+            i.klass(row2))
+           for row2 in rows 
+           if id(row1) != id(row2)]
+    kth = sorted(tmp)[:k]
+    scores={}
+    for w,klass in kth:
+      scores[klass] = scores.get(klass,0) + w
+    ranked = sorted(scores.items(), reverse=True,key=lambda x: x[1])
+    return ranked[0][0]
+    

@@ -42,6 +42,7 @@ _____
 from math import pi,e
 
 class num:
+  NORMALIZE=True
   
   # Initialization
   def __init__(i,inits=[]):
@@ -76,12 +77,10 @@ class num:
   def dist(i,x,y,miss="?"):
     if x == miss and y == miss: return None
     if x == miss:
-      y = i.norm(y)
-      x = 1 if i.norm(y) < 0.5 else 0 
+      x = i.hi if y < (i.hi+i.lo)/2 else i.lo
     elif y == miss:
-      x = i.norm(x)
-      y = 1 if i.norm(x) < 0.5 else 0
-    else:
+      y = i.hi if x < (i.hi+i.lo)/2 else i.lo
+    elif num.NORMALIZE:
       x,y = i.norm(x), i.norm(y)
     return (x-y)**2
   # Normalization. Adds a tiny amount to the denominator to stop divide by zero errors.
