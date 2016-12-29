@@ -112,13 +112,47 @@ class table:
   # Makes use of sevices defined in each thing in `all`.
   def dist(i, j,k, what=None):
     ds,ns = 0,1e-32
-    what = what or table.DEFAULT
-    for ts in what:
-      for t in i.group[ts]:
-        d,n  = t.dist(j[t.pos],
-                         k[t.pos],
-                         csv.MISSING)
-        ds  += d
-        ns  += n
+    what = what or [table.DEFAULT]
+    for grp in what:
+      for t in i.group[grp]:
+        d    = t.dist(j[t.pos], k[t.pos])
+        if d is not None:
+          ds  += d
+          ns  += 1
     return ds**0.5 / ns**0.5
+
+  def nearest(i,row,what=None,details=False,
+              bt   = lambda x,y: x< y,
+              zero = 1e32):
+    best = zero
+    out  = row
+    for otherRow in i.rows:
+      if id(row) != id(otherRow):
+        tmp = i.dist(row, otherRow,
+                     what=what or [table.DEFAULT])
+        if bt(tmp,best):
+          out,best = otherRow,tmp
+    return out,best if details else out
+
+  def furthest(i,row,what=None,details=False):
+    return i.nearest(row,
+                   what = what or [table.DEFAULT],
+                   bt   = lambda x,y: x > y,
+                   zero = -1,
+                   details=details)
+
+  def distances(i,what=None):
+    out = {}
+    for j,row1 in enumerate(i.rows):
+      out[j] = []
+    for j,row1 in enumerate(i.rows):
+      for k,row2 in enumerate(i.rows):
+        if j > k:
+          d = i.dist(row1,row2,
+                     what = what or [table.DEFAULT])
+          out[j] += [(d,k)]
+          out[k] += [(d,j)]
+    for k in out:
+      out[k].sort()
+    return out
 

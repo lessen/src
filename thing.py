@@ -101,6 +101,8 @@ class thing:
   def n(i):
     return i.my.n
   
+  def dist(i,j,k)     : return i.my.dist(j,k)
+  
   def cliffsDelta(i,j): return i.samples.cliffsDelta(j.samples)
   def ranges(i)       : return i.samples.ranges()
   def bootstrap(i,j)  : return i.samples.bootstrap(j.samples)

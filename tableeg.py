@@ -23,5 +23,14 @@ def _table3():
   import re
   cProfile.run('_table2()')
 
-
+@eg
+def _dis(f="data/weather.csv"):
+  t=table(file=f)
+  for i,r in enumerate(t.rows):
+    print("")
+    print(i,r)
+    print(t.nearest(r,details=True))
+    print(t.furthest(r,details=True))
+  print(t.distances())  
+   
 if __name__ == "__main__" : eg()
