@@ -39,8 +39,70 @@ E.g.
         a c
         a d
         b a
+        EOF
 
 This prints out the same report as above.
+
+### Notes on Performance Measures
+
+Classifiers can be assessed according to the following measures:
+
+                                       Example has class X
+                                       +-------+-----+
+                                       | not X |  X  |
+                                 +-----+-------+-----+
+       classifier predicts not X |  no |     a |  b  |
+                                 +-----+-------+-----+
+       classifier predicts X     | yes |     c |  d  |
+                                 +-----+-------+-----+
+
+        accuracy         = acc          = (a+d)/(a+b+c+d
+        prob detection   = pd  = recall = d/(b+d)
+        prob false alarm = pf           = c/(a+c)
+        precision        = prec         = d/(c+d)
+
+Ideally, detectors have high PDs, low PFs, and low
+effort. This ideal state rarely happens:
+
+- PD and effort are linked. The more modules that trigger
+the detector, the higher the PD. However, effort also gets
+increases
+
+- High PD or low PF comes at the cost of high PF or low PD
+(respectively). This linkage can be seen in a standard
+receiver operator curve (ROC).  Suppose, for example, LOC> x
+is used as the detector (i.e. we assume large modules have
+more errors). LOC > x represents a family of detectors. At
+x=0, EVERY module is predicted to have errors. This detector
+has a high PD but also a high false alarm rate. At x=0, NO
+module is predicted to have errors. This detector has a low
+false alarm rate but won't detect anything at all. At 0<x<1,
+a set of detectors are generated as shown below:
+
+          pd
+         1 |           x  x  x   KEY:
+           |        x     .      "."  denotes the line PD=PF
+           |     x      .        "x"  denotes the roc curve 
+           |   x      .               for a set of detectors
+           |  x     .
+           | x    . 
+           | x  .
+           |x .
+           |x
+           x------------------ pf    
+           0                   1
+
+Note that:
+
+- The only way to make no mistakes (PF=0) is to do nothing
+(PD=0)
+- The only way to catch more detects is to make more
+ mistakes (increasing PD means increasing PF).
+- Our detector bends towards the "sweet spot" of
+ <PD=1,PF=0> but does not reach it.
+- The line pf=pd on the above graph represents the "no information"
+ line. If pf=pd then the detector is pretty useless. The better
+ the detector, the more it rises above PF=PD towards the "sweet spot".
 
 _____
 ## Programmer's guide
@@ -92,13 +154,12 @@ class abcd:
 
   # Computer the performance scores  
   def scores(i):
+    # Convenience class. Can acces fields as x.f not x["f"].
     class oo:
-      def __init__(i, **adds):
-        i.__dict__.update(adds)
+      def __init__(i, **adds): i.__dict__.update(adds)
     def p(y) : return int(100*y + 0.5)
     def n(y) : return int(y)
-    out = {}
-    
+    out = {}    
     for x in i.known:
       pd  = pf = pn = prec = g = f = acc = 0
 

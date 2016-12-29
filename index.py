@@ -1,7 +1,7 @@
 """
 
 
-This file is the main index of the Timm Tools project.
+This file is the main index of the timm tools project.
 
 
 - [abcd.py](abcd.html)
