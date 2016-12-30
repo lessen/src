@@ -1,4 +1,4 @@
-from eg import eg
+from eg import eg,rx
 
 @eg
 def _passes1():
@@ -16,5 +16,7 @@ def _failes():
 def _passes2():
   "Check that even after a fail, other functions get called."
   assert 10==10
+
+
 
 if __name__ == "__main__": eg() 

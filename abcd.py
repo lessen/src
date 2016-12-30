@@ -159,12 +159,11 @@ class abcd:
       def __init__(i, **adds): i.__dict__.update(adds)
     def p(y) : return int(100*y + 0.5)
     def n(y) : return int(y)
-    out = {}    
+    out = {}
+    ass=bs=cs=ds=accs=pds=pfs=precs=fs=gs=yess= 0
     for x in i.known:
       pd  = pf = pn = prec = g = f = acc = 0
-
       a = i.a[x]; b= i.b[x]; c= i.c[x]; d= i.d[x]
-      
       if (b+d)    : pd   = d     / (b+d)
       if (a+c)    : pf   = c     / (a+c)
       if (a+c)    : pn   = (b+d) / (a+c)
@@ -173,18 +172,32 @@ class abcd:
       if (prec+pd): f    = 2*prec*pd/(prec+pd)
       if (i.yes + i.no): acc= i.yes/(i.yes+i.no)
       out[x] = oo(db=i.db, rx=i.rx, yes= n(b+d),
-                  r = (c + d)/(i.yes + i.no),
                  all=n(a+b+c+d), a=n(a),
                  b=n(b), c=n(c), d=n(d), acc=p(acc), pd=p(pd),
                  pf=p(pf), prec=p(prec), f=p(f), g=p(g),x=x)
+      # computer weighted sums
+      ratio  = (c + d)/(i.yes + i.no)
+      ass   += a    * ratio
+      bs    += b    * ratio
+      cs    += c    * ratio
+      ds    += d    * ratio
+      accs  += acc  * ratio
+      pds   += pd   * ratio
+      pfs   += pf   * ratio
+      precs += prec * ratio
+      fs    += f    * ratio
+      gs    += g    * ratio
+    out["__all__"] =  oo(
+      db=i.db, rx=i.rx, yes= n(yess),
+      all=n(ass+bs+cs+ds), a=n(ass),
+      b=n(bs), c=n(cs), d=n(ds), acc=p(accs), pd=p(pds),
+      pf=p(pfs), prec=p(precs), f=p(fs), g=p(gs),x="__all__")
     return out
 
   # Write the performance scores for each class, then the
   # weighted sum of those scores across all classes.
   def report(i,brief=False):
     i.header()
-    db = rx = ""
-    yes=a=b=c=d=acc=pd=pf=prec=f=g=0
     for x,s in sorted(i.scores().items()):
       if not brief:
         print("#",
@@ -193,25 +206,6 @@ class abcd:
                '{10:3d} {11:3d} {12:3d} {13:10s}').format(
                 s.db, s.rx,  s.yes, s.a, s.b, s.c, s.d, 
                  s.acc, s.pd, s.pf, s.prec, s.f, s.g, x))
-      a    += s.a    * s.r
-      b    += s.b    * s.r
-      c    += s.c    * s.r
-      d    += s.d    * s.r
-      acc  += s.acc  * s.r
-      pd   += s.pd   * s.r
-      pf   += s.pf   * s.r
-      prec += s.prec * s.r
-      f    += s.f    * s.r
-      g    += s.g    * s.r
-      yes  += s.yes  * s.r
-      db,rx = s.db, s.rx
-    if not brief: print('-'*100)
-    print("#",
-       ('{0:20s} {1:10s} {2:4.0f} {3:4.0f} {4:4.0f}'+\
-        '{5:4.0f} {6:4.0f} {7:4.0f} {8:3.0f} {9:3.0f} '+ \
-        '{10:3.0f} {11:3.0f} {12:3.0f} {13:10s}').format(
-          db,  rx,  yes, a, b, c, d, 
-          acc, pd, pf, prec, f, g, ""))
 
 
 # Tool for reading in the data from standard input.

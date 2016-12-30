@@ -38,6 +38,8 @@ from thing import thing
 from csv   import csv
 
 class table:
+  K        = 3
+  W        = lambda x:x
   DEFAULT    = "x"
   COLS       = dict(less = "<",   # numeric goals to be minimized
                     more = ">",   # numeric goals to be maximized
@@ -159,8 +161,11 @@ class table:
       out[k].sort()
     return out,index
 
-  def knn(i,row1,k=3,rows=None,w=lambda d:d):
+  def knn(i,row1,k=None,rows=None,w=None):
+    k = k or table.K
+    w = w or table.W
     rows=rows or i.rows
+    k  = k or table.K
     tmp = [(w(i.dist(row1,row2)),
             i.klass(row2))
            for row2 in rows 

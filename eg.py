@@ -64,6 +64,7 @@ import traceback,re,random,sys,time
 # `runs` holds counts of how often each example function has been run
 # (and this code ensures that function is never executed multiple times).
 #
+
 def eg(f=None, seed=1, lst=[], runs={} ):
 
   # ### Controlling the runs
@@ -146,3 +147,18 @@ def eg(f=None, seed=1, lst=[], runs={} ):
   else : 
       runall( lst )
   return f # `eg` might be a decorator. So return function `f`.
+
+from contextlib import contextmanager
+
+@contextmanager
+def rx(klass,**d):
+  b4 = {k: getattr(klass,k) for k in d}
+  for k in d:
+    setattr(klass,k,d[k])
+  try:
+    yield
+  finally:
+    for k in b4:
+      setattr(klass,k,b4[k])
+
+      
