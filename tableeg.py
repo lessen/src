@@ -44,21 +44,20 @@ def _knn(repeats=20, f="data/diabetes.csv"):
   def w2(w): return 1/w
   def w3(w): return (1/w)**2
   def experiment():
-    for k in [1,2,3,4,5]:
-      for norms in [True,False]:
-        for w in [w1,w2,w3]:
-          with rx(table,K=k,W=w): # change this to for _ in rx(table,k=[1,2,3],W=[w1,w2,w3]): etc
-            with rx(num,NORMALIZE=norms):
-                log  = abcd()
-                t    = table(file=f)
-                shuffle(t.rows)          # this
-                for row in t.rows[:100]: # could
-                  if random() < 0.2:     #  be a methid
-                    log(actual = t.klass(row),
-                        predict= t.knn(row,k=k))
-                s = log.scores()["__all__"]
-                yield (dict(k=k,norms=norms,w=w.__name__),
-                       dict(acc=s.acc,pd=s.pd,pf=s.pf, prec=s.prec))
+    for rx1 in rx(table, K=[1,2,3,4,5], W= [w1,w2,w3]:): 
+      for rx2 in rx(num, NORMALIZE=norms):
+        for _ in range(repeats):
+          log = abcd()
+          t   = table(file=f)
+          shuffle(t.rows)          # this
+          for row in t.rows[:100]: # could
+            if random() < 0.2:     #  be a methid
+              log(actual = t.klass(row),
+                  predict= t.knn(row,k=k))
+          s = log.scores()["__all__"]
+          yield ([rx1,rx2],
+                 dict(acc=s.acc,pd=s.pd,pf=s.pf, prec=s.prec))
+          
   for x,y in experiment():
     print(x,y)
     

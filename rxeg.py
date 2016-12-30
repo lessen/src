@@ -7,11 +7,17 @@ def _rx():
   class silly:
     X=1
     Y=min
-  show=lambda s: print(s,dict(X=silly.X, Y=silly.Y.__name__))
-  show("before")
+  class solly:
+    Z=22
+    B="love"
+  def f1():
+    return 3>1
+  for _ in rx(solly, Z=[20,30], B=["love","hate"]):
+    for _ in rx(  silly, X=[2,3], Y=[max,f1]):
+      print("sX", silly.X, "soZ",solly.Z)
+      assert silly.X != 1
+      assert solly.Z != 22
   assert silly.X == 1
-  with rx(silly,X=2,Y=max):
-    show("inside")
-    assert silly.X == 2
-  show("after")
-  assert silly.X == 1
+  assert solly.Z == 22
+
+eg()
