@@ -170,7 +170,7 @@ Emacs=${Emacs:-"/Applications/Emacs.app/Contents/MacOS/Emacs"}
 
 
 
-for x in nano awk bash python3 pypy3 mvim $Emacs vim ; do
+for x in nano awk bash python3 pypy3 mvim $Emacs vim source-highlight; do
     if [ -z "`which $x`" ]; then
         echo "$What needs install $x"
     fi
@@ -180,6 +180,11 @@ echo
 echo "$What v1.0 (c) $When ${Who}, $How"
 
 Edot="$Dot/dotemacs"
+
+export LESSOPEN="| /usr/local/bin/src-hilite-lesspipe.sh %s"
+export LESS=" -R "
+alias less='less -m  -g -i -J --underline-special --SILENT'
+alias more='less'
 
 dot0() { # start-up actions
   vim +PluginInstall +qall      # install vim plugins
