@@ -90,7 +90,25 @@ src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
 align=left
 width=120>
 &nbsp;<br>&nbsp;<br>
-&nbsp;&nbsp; [home](http://ttv1.github.io) | [discuss](#discussion) | [report bug](https://github.com/ttv1/src/issues) 
+&nbsp;&nbsp; [home](http://ttv1.github.io) | [discuss](#discussion) | [report bug](https://github.com/ttv1/src/issues)
+<br>
+<script>
+    (function() {
+    var cx = '009630129455493240085:aja5uvdnjeo';
+    var gcse = document.createElement('script'); gcse.type = 'text/javascript'; gcse.async = true;
+    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//www.google.com/cse/cse.js?cx=' + cx;
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gcse, s);
+})();
+</script>
+<div style="width:0px;overflow:hidden;height:0px;"> <!-- if you use display:none here, it doesn't work-->
+    <gcse:search></gcse:search>
+</div>
+<form style="margin-left: 20px;" id="searchbox_009630129455493240085:aja5uvdnjeo" action="">
+    <input value="009630129455493240085:aja5uvdnjeo" name="cx" type="hidden"/>
+    <input value="FORID:11" name="cof" type="hidden"/>
+    <input id="q" style=""  name="q" size="25" type="text"/>
+    <button class="btn">Search</button>
+</form>
 
 
 <br clear=all>
@@ -249,13 +267,16 @@ pycco() {
     $x -d $d $d/$1
     html="docs/${1%.*}.html"
     cat $html |
-    gawk '/<.head>/ { print "\t<link rel=\"shortcut icon\" href=\"favicon.png\" type=\"image/png\">\n</head>" ; next}
+    gawk '/<.head>/ { 
+                     print "<meta name=\"thumbnail\" content=\"https://avatars0.githubusercontent.com/u/23156192?v=3&s=200\" />";
+                     print "\t<link rel=\"shortcut icon\" href=\"favicon.png\" type=\"image/png\">\n</head>" ; 
+                      next}
                     /<div id=.container.>/ { print $0
                                   print "<a href=\"https://github.com/ttv1/src/blob/master/ABABABAB\"><img style=\"z-index: 10; position: absolute; top: 0; left: 0; border: 0;\" src=\"https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67\" alt=\"Fork me on GitHub\" data-canonical-src=\"https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png\"></a> "; next
                                 }
            /<h1>/               { sub(/<h1>/,"<h1>\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;"); 
                                   
-                                  sub(/\/h1>/,"/h1><p>\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;(just another timm tool)</p>")
+                                  sub(/\/h1>/,"/h1><p>\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;\\&nbsp;This is ttv1 code (Timm tools, version 1).</p>")
                                   print $0
                                   next 
                                 }
@@ -515,6 +536,16 @@ div.code {
 div.clearall {
     clear: both;
 }
+
+  input.gsc-input {
+    border-color: #004220;
+	width:10px;  
+  }
+  input.gsc-search-button {
+    border-color: #004220;
+    background-color: #004220;
+	width:10px;
+  }
 
 
 /*---------------------- Syntax Highlighting -----------------------------*/

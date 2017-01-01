@@ -1,8 +1,7 @@
-from ranges import div,ediv,sdiv,ddiv
+from ranges import div,ediv,sdiv,ddiv,scottknot
 from random import random as r
 from random import seed
 from eg import eg
-
 
 @eg
 def _div0a():
@@ -55,7 +54,7 @@ def _div1(n=10000):
 
 @eg
 def _div2(n=100000):
-  "1D cluster. random**3: most nums below half are very similar"
+  "Large 1D clustering (slow). random**3: most nums below half are very similar"
   for zz in div([r()**3 for _ in range(n)]):
     xx = zz["x"]
     print("start  %.4f stop %.4f n %s" % (xx.lo, xx.hi, xx.n))
@@ -99,7 +98,7 @@ def _ediv(n=1000):
 
 @eg
 def _ddiv1(n=1000):
-  "1D: cluster similiar things"
+  "1D: cluster three sets of similiar things"
   data = dict(rx1 = [10*r()**3 for _ in range(n)],
               rx2 = [10*r()**0.33   for _ in range(n)],
               rx4 = [10*r()**3 for _ in range(n)],
@@ -109,7 +108,8 @@ def _ddiv1(n=1000):
 @eg
 def _ddiv2(n=100):
   ddv0(dict(x1=[0.34, 0.49, 0.51, 0.6],
-            x2=[6,  7,  8,  9]))
+            x2=[6,  7,  8,  9]),
+       f=scottknot)
   
 @eg
 def _ddiv20():
@@ -120,26 +120,42 @@ def _ddiv20():
             x5=[0.1,  0.2,  0.3,  0.4]))
 
 @eg
+def _sk1():
+  ddv0(dict(x1=[0.34, 0.49, 0.51, 0.6],
+            x2=[0.6,  0.7,  0.8,  0.9],
+            x3=[0.15, 0.25, 0.4,  0.35],
+            x4=[0.6,  0.7,  0.8,  0.9],
+            x5=[0.1,  0.2,  0.3,  0.4]),
+       f=scottknot)
+  
+
+@eg
 def _ddiv4():
+  "Four sets that are really, really similar"
   ddv0(dict(x1=[101, 100, 99,   101,  99.5],
             x2=[101, 100, 99,   101, 100],
             x3=[101, 100, 99.5, 101,  99],
-            x4=[101, 100, 99,   101, 100]))
+            x4=[101, 100, 99,   101, 100]),
+       f=scottknot)
 
 @eg
 def _ddiv5():
+  "3 identical sets"
   ddv0(dict(x1=[11,11,11],
             x2=[11,11,11],
-            x3=[11,11,11]))
+            x3=[11,11,11]),
+       f=scottknot)
 
 @eg
 def _ddiv6():
+  "3 sets, 2 are identical"
   ddv0(dict(x1=[11,11,11],
             x2=[11,11,11],
-            x3=[32,33,34,35]))
+            x3=[32,33,34,35]),
+       f=scottknot)
     
-def ddv0(data):
-  for zz in ddiv(data):
+def ddv0(data,f=ddiv):
+  for zz in f(data):
     xx = zz["x"]
     yy = zz["y"]
     print("start  %.4f stop %.4f n %.4f" % (xx.lo, xx.hi, xx.n),end=" ")

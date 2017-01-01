@@ -15,6 +15,7 @@ This file is the main index of the timm tools project.
 - [opt.py](opt.html)
 - [ranges.py](ranges.html)
 - [remedian.py](remedian.html)
+- [rx.py](rx.html)
 - [sample.py](sample.html)
 - [sandbox.py](sandbox.html)
 - [src.py](src.html)
@@ -22,6 +23,7 @@ This file is the main index of the timm tools project.
 - [table.py](table.html)
 - [test_sample.py](test_sample.html)
 - [thing.py](thing.html)
+- [xtile.py](xtile.html)
 - [xval.py](xval.html)
 
 

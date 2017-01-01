@@ -124,7 +124,7 @@ ____
 """
 
 import sys,math
-from cliffsDelta import cd as different
+from cliffsDelta import cd 
 from bootstrap   import bootstrap
 
 # ### Top-level drives
@@ -154,12 +154,28 @@ def ediv(lst,
                 ynum=False,
                 goodysplit=fayyadIranni,key=key, x=x, y=y)
 
-def scottknott(d):
-  def expectedMuChange(lhs,rhs,all):
-    return lhs.n/all.n * abs(lhs.median() - all.median())**2 + \
-      rhs.n/all.n * abs(rhs.median() - all.median())**2
-  return ddiv(d,expectedMuChange)
-
+def scottknot(d):
+   def expectedMuChange(lhs,rhs,all):
+     return lhs.n/all.n * abs(lhs.median() - all.median())**2 + \
+       rhs.n/all.n * abs(rhs.median() - all.median())**2
+   def stats(lhs,rhs,_):
+     tmp = not cd(lhs.all,rhs.all) and not bootstrap(lhs.all,rhs.all)
+     #print(tmp, lhs.all, rhs.all)
+     return tmp
+   lst=[]
+   for k,v in d.items():
+     tmp=num(v)
+     tmp.label= k
+     lst += [tmp]
+   return ranges(lst,
+                 flat=False,
+                 d=0.1,
+                 x   = lambda z:z.all,
+                 y   = lambda z:z.all,
+                 goodxsplit = stats,
+                 #evaly = expectedMuChange,
+                 key = lambda z:z.median())
+ 
 
 def ddiv(d,f=None):
    lst=[]
