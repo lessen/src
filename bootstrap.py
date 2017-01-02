@@ -91,6 +91,7 @@ def bootstrap(y0,z0, b = 256, conf= 95):
 
   # The larger the `asl` value, the more likely it
   # is `True` that the lsts are the same.
+  # print("bb",asl,conf/100)
   return asl > conf/100
 
 """

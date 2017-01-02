@@ -76,6 +76,7 @@ def cd(lst1,lst2, trivial=0.147, fast=True):
   """
   f = optimized if fast else basic
   lt,gt,n = f(lst1,lst2)
+  #print("cd",lt,gt, abs(gt-lt) / (n + 1e-32))
   return (abs(gt-lt) / (n + 1e-32)) < trivial
 
 # _______
