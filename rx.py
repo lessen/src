@@ -100,13 +100,15 @@ def cdom(pop, objs=None, betters=None):
   doms={}
   for i,one in enumerate( pop):
     doms[i] = 0
+  n=0
   for i,xs in enumerate(pop):
       for j,ys in enumerate(pop):
           if i != j:
+            n+=1
             if cdom1(objs(xs),objs(ys),betters):
-              doms[i] += 1
+              doms[i] += 1/n
             elif cdom1(objs(ys),objs(xs),betters):
-              doms[j] += 1
+              doms[j] += 1/n
   return sorted([( doms[i],xs) for i,xs in enumerate(pop)])
 
 def cdom1(x, y,betters):
