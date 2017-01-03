@@ -93,23 +93,21 @@ def watch(src,seed=1,every=10,klass="__all__",repeats=20):
       yield one
 
 
-def cdom(pop, objs=None, betters=None):
+def dominates(pop,objs=None,betters=None):
   betters = betters or [min for _ in pop[0]]
   if objs==None:
     objs= lambda z: z[1:]
   doms={}
   for i,one in enumerate( pop):
     doms[i] = 0
-  n=0
   for i,xs in enumerate(pop):
       for j,ys in enumerate(pop):
           if i != j:
-            n+=1
             if cdom1(objs(xs),objs(ys),betters):
-              doms[i] += 1/n
+              doms[i] += 1
             elif cdom1(objs(ys),objs(xs),betters):
-              doms[j] += 1/n
-  return sorted([( doms[i],xs) for i,xs in enumerate(pop)])
+              doms[j] += 1
+  return sorted([( doms[i] ,xs) for i,xs in enumerate(pop)],reverse=True)
 
 def cdom1(x, y,betters):
   "many objective"

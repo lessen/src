@@ -1,5 +1,5 @@
 from eg    import eg
-from rx    import rx,rx1,say,watch,cdom
+from rx    import rx,rx1,say,watch,dominates
 from table import table
 from abcd  import abcd
 from num import num
@@ -48,8 +48,8 @@ def _knn(f="data/diabetes.csv"):
   def w3(w): return (1/w)**2
   def experiment(klass):
     for rx1 in rx(table,
-                  K=[1,2,3,4,5],
-                  W= [w1,w2]):
+                  K=[1,3,5,7],
+                  W= [w1,w2,w3]):
       for rx2 in rx(num,
                     NORMALIZE=[True,False]):
           log = abcd()
@@ -92,7 +92,7 @@ def _knn(f="data/diabetes.csv"):
     for k2 in xy[k1]:
       new += [xy[k1][k2]]
     tmp += [new]
-  for x in cdom(tmp, betters=betters):
+  for x in dominates(tmp, betters=betters):
     print(x)
   
 if __name__ == "__main__" : eg()
