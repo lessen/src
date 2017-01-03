@@ -37,7 +37,7 @@ values in `d` can be lists or a single items
 
 """
 
-import itertools,sys
+import itertools,sys,random
 
 def rx(klass,**d):
   lst = [[(k,v) for v in
@@ -83,3 +83,45 @@ def say(*lst):
         
       
       
+def watch(src,seed=1,every=10,klass="__all__",repeats=20):
+  random.seed(seed)
+  n = 0
+  for _ in range(repeats):
+    for one in src(klass):
+      n += 1
+      if (n % every) == 0 : say("",n)
+      yield one
+
+
+def cdom(pop, objs=None, betters=None):
+  betters = betters or [min for _ in pop[0]]
+  if objs==None:
+    objs= lambda z: z[1:]
+  doms={}
+  for i,one in enumerate( pop):
+    doms[i] = 0
+  for i,xs in enumerate(pop):
+      for j,ys in enumerate(pop):
+          if i != j:
+            if cdom1(objs(xs),objs(ys),betters):
+              doms[i] += 1
+            elif cdom1(objs(ys),objs(xs),betters):
+              doms[j] += 1
+  return sorted([( doms[i],xs) for i,xs in enumerate(pop)])
+
+def cdom1(x, y,betters):
+  "many objective"
+  def w(better):
+    return -1 if better == min else 1
+  def expLoss(w,x1,y1,n):
+    return -1*2.71828**( w*(x1 - y1) / n )
+  def loss(x, y):
+    losses= []
+    n = min(len(x),len(y))
+    for i,bt in enumerate(betters):
+      x1, y1  = x[i]  , y[i]
+      losses += [expLoss( w(bt),x1,y1,n)]
+    return sum(losses) / n
+  l1= loss(x,y)
+  l2= loss(y,x)
+  return l1 < l2 
