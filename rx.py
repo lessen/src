@@ -102,14 +102,11 @@ def dominates(pop,objs=None,betters=None):
     doms[i] = 0
   for i,xs in enumerate(pop):
       for j,ys in enumerate(pop):
-          if i != j:
-            if cdom1(objs(xs),objs(ys),betters):
-              doms[i] += 1
-            elif cdom1(objs(ys),objs(xs),betters):
-              doms[j] += 1
+        if cdom1(objs(xs),objs(ys),betters):
+          doms[i] += 1
   return sorted([( doms[i] ,xs) for i,xs in enumerate(pop)],reverse=True)
 
-def cdom1(x, y,betters):
+def cdom1(x, y, betters):
   "many objective"
   def w(better):
     return -1 if better == min else 1
