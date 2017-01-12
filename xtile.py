@@ -41,21 +41,21 @@ scale for all numbers. For example:
 
 """
 
-def xtiles(pairs, width=40,rnd=3,
+def xtiles(pairs, width=40,rnd=3,sigs=4,
            ntiles=5 # legal values are 4 or 5
          ):
   pairs = [(name,sorted(lst)) for name,lst in pairs]
   lo   = sorted(map(lambda z:z[1][ 0], pairs))[0]
   up   = sorted(map(lambda z:z[1][-1], pairs))[-1]
   mid  = 2 if ntiles==5 else 1
-  pairs= [ (xtile(pair[1],lo=lo,up=up,width=width,rnd=rnd,ntiles=ntiles),
+  pairs= [ (xtile(pair[1],lo=lo,up=up,width=width,rnd=rnd,sigs=sigs,ntiles=ntiles),
             pair[0])
            for pair in pairs]
   return sorted(pairs,
                 key = lambda z:z[0][1][mid])
 
 # The `xtile` utility.
-def xtile(lst,lo=None, up=None,rnd=3,ntiles=5,width=40):
+def xtile(lst,lo=None, up=None,rnd=3,ntiles=5,width=40,sigs=4):
   lst = sorted(lst)
   lo   = lst[0]  if lo is None else lo
   up   = lst[-1] if up is None else up
@@ -77,6 +77,6 @@ def xtile(lst,lo=None, up=None,rnd=3,ntiles=5,width=40):
   tiles[ pos(0) ] = "|"
   tiles[ pos(1) ] = "|"
   tiles[ pos(0.5) ] = "*"
-  f="%%.%sf" % rnd
+  f="%%%s.%sf" % (sigs,rnd)
   return ''.join(tiles), ros(seen), ', '.join([f % n for n in seen])
 

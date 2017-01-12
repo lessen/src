@@ -165,7 +165,6 @@ class table:
     k = k or table.K
     w = w or table.W
     rows=rows or i.rows
-    k  = k or table.K
     tmp = [(w(i.dist(row1,row2)),
             i.klass(row2))
            for row2 in rows 

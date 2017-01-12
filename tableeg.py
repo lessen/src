@@ -1,5 +1,5 @@
 from eg    import eg
-from rx    import rx,rx1,say
+from rx    import rx,rx1,say,watch,dominates
 from table import table
 from abcd  import abcd
 from num import num
@@ -46,40 +46,53 @@ def _knn(f="data/diabetes.csv"):
   def w1(w): return w
   def w2(w): return 1/w
   def w3(w): return (1/w)**2
-  def experiment(repeats):
+  def experiment(klass):
     for rx1 in rx(table,
-                  K=[1,2,3,4,5],
-#                  W= [w1,w2,w3]):
-                  W=w1):
+                  K=[1,3,5,7],
+                  W= [w1,w2,w3]):
       for rx2 in rx(num,
                     NORMALIZE=[True,False]):
-        for r in range(repeats):
           log = abcd()
           t   = table(file=f)
-          shuffle(t.rows)          # this
-          for row in t.rows[:100]: # could
-            if random() < 0.2:     #  be a methid
+          shuffle(t.rows)     
+          for row in t.rows[:30]: 
               log(actual = t.klass(row),
                   predict= t.knn(row))
-          s = log.scores()["__all__"]
-          yield dict(repeat= r,
-                     result= dict(acc=s.acc,pd=s.pd,pf=s.pf, prec=s.prec),
-                     rx    = [rx1,rx2])
+          s = log.scores()[klass]
+          yield dict(acc=s.acc,pd=s.pd,pf=s.pf, prec=s.prec),rx1,rx2
         
-  
-  results = [x for x  in experiment(30)]
-  for what in ["pd","pf","acc","prec"]:
+    
+  results=[x for x in watch(experiment,
+                            klass="tested_positive",
+                            repeats=30)]
+  keys=results[0][0].keys()
+  betters= [(min if x=="pf" else max) for x in keys]
+  tree = lambda: collections.defaultdict(tree)
+  xy   = tree()
+  for obj,what in enumerate(keys):
+    print("")
     seen = {}
-    for x in results:
-      this = rx1(x["rx"])
-      #if x["repeat"]==0: say("\n",this)
-      #say(" ", x["repeat"])
-      seen[this] = seen.get(this,[]) + [x["result"][what]]
+    for obs,*control in results:
+      this = rx1(control)
+      seen[this] = seen.get(this,[]) + [obs[what]]
     ranks=[]
-    for rng in scottknot(seen):
+    for i,rng in enumerate(scottknot(seen)):
       y,has = rng["y"],rng["has"]
+      for x in has:
+        this = x[0].label
+        xy[this][obj] = i
       ranks += [ (  ' '.join([x[0].label for x in has]), y.all) ]
     for (a,b,c),d in xtiles(ranks,rnd=0):
       print(a,c,":",what,":", d)
-    
+  tmp = []
+  print(betters)
+  print(keys)
+  for k1 in xy:
+    new = [k1]
+    for k2 in xy[k1]:
+      new += [xy[k1][k2]]
+    tmp += [new]
+  for x in dominates(tmp, betters=betters):
+    print(x)
+  
 if __name__ == "__main__" : eg()
