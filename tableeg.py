@@ -35,11 +35,24 @@ def _dis(f="data/weather.csv"):
     print(i,r)
     print(t.nearest(r,details=True))
     print(t.furthest(r,details=True))
-  print(t.distances())  
+  print(t.distances())
+
+@eg
+def _dis1(f="data/china.csv"):
+  t=table(file=f)
+  for i,r in enumerate(t.rows):
+    print("")
+    print(i,r)
+    print(t.nearest(r,details=True))
+    print(t.furthest(r,details=True))
 
 
 from random import random,shuffle
 import collections
+
+@eg
+def _knn1():
+  _knn(f="data/china.csv")
 
 @eg
 def _knn(f="data/diabetes.csv"):
@@ -54,14 +67,14 @@ def _knn(f="data/diabetes.csv"):
                     NORMALIZE=[True,False]):
           log = abcd()
           t   = table(file=f)
-          shuffle(t.rows)     
-          for row in t.rows[:30]: 
+          shuffle(t.rows)
+          for row in t.rows[:30]:
               log(actual = t.klass(row),
                   predict= t.knn(row))
           s = log.scores()[klass]
           yield dict(acc=s.acc,pd=s.pd,pf=s.pf, prec=s.prec),rx1,rx2
-        
-    
+
+
   results=[x for x in watch(experiment,
                             klass="tested_positive",
                             repeats=30)]
@@ -94,5 +107,5 @@ def _knn(f="data/diabetes.csv"):
     tmp += [new]
   for x in dominates(tmp, betters=betters):
     print(x)
-  
+
 if __name__ == "__main__" : eg()

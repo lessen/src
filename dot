@@ -300,6 +300,7 @@ pycco() {
 alias python="`which python3`  -B "
 alias pypy="`which pypy3`  -B "
 alias vi="`which mvim` -u $Dot/dotvimrc "
+alias vim="`which vim` -u $Dot/dotvimrc "
 
 emacs() { "$Emacs" -q -l "$Edot" $* &  
 }
@@ -775,7 +776,7 @@ Plugin 'gmarik/Vundle.vim'
 
 Plugin 'tmhedberg/SimpylFold'
 Plugin 'vim-scripts/indentpython.vim'
-Plugin 'Valloric/YouCompleteMe'
+"Plugin 'Valloric/YouCompleteMe'
 Plugin 'scrooloose/syntastic'
 Plugin 'jnurmine/Zenburn'
 Plugin 'altercation/vim-colors-solarized'
@@ -845,10 +846,10 @@ syntax on
 
 if has('gui_running')
     set background=dark
-    colorscheme solarized
+    colorscheme zenburn
 else
-    colorscheme mustang
-    "colorscheme slate
+    "colorscheme mustang
+    colorscheme zenburn
 endif
 if has('win32')
     set guifont=Consolas:h12   " Win32.

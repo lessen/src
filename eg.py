@@ -15,15 +15,15 @@ functions, containing zero or more asserts.  Preface each such function with
 
        import X          # get the code you want to test
        from eg import eg # get this test engine
-        
+
        @eg
        def lstTest():
          a={}
          a[1]=10
          assert a[1] == 10
-        
+
        # Other example functions here
-        
+
        # Finally
        if __name__ == '__main__': eg()
 
@@ -92,10 +92,10 @@ def eg(f=None, seed=1, lst=[], runs={} ):
       PASS=FAIL=0
       random.seed(seed) # Reset the random seed before starting a demo.
       for f in examples:
-        if runs[f.__name__] > 1: 
+        if runs[f.__name__] > 1:
           continue
         try: # - Run via `try:except:` (so we can contie after crashes)
-          run1(f) 
+          run1(f)
           PASS += 1 # If a function terminates correctly, increment `PASS`.
         except Exception:
           FAIL += 1 # If a crash, increment `FAIL`.
@@ -107,7 +107,7 @@ def eg(f=None, seed=1, lst=[], runs={} ):
   # _______
   # ### Misc helper functions
 
-  # Print function doco, it it has any. 
+  # Print function doco, it it has any.
   #  It a multi-line string, print the lines left justified.
   def doc(f):
     if f.__doc__:
@@ -130,23 +130,23 @@ def eg(f=None, seed=1, lst=[], runs={} ):
   # ### Run the script
 
   # If called as a decorator, add the function to the list of known functions.
-  if f : 
+  if f :
     assert not f.__name__ in runs,("repeated test name %s" % f.__name__)
     runs[f.__name__] = 0
     lst += [f]
   # Else if called with the command line `python Xeg.py -?`,
   # it lists all the known functions, and their
   # documentation strings, in the file `Xeg.py`.
-  elif "-?" in sys.argv : 
+  elif "-?" in sys.argv :
       listAvailableExamples(lst)
   # Else if called with the command line `python Xeg.py -- f1 f2 etc`,
   # it runs just the functions `f1,f2,etc` from the list of known functions.
-  elif "--" in sys.argv : 
+  elif "--" in sys.argv :
         runall( some(lst) )
   # Otherwise, it runs everything in the list of known functions.
-  else : 
+  else :
       runall( lst )
   return f # `eg` might be a decorator. So return function `f`.
 
 
-      
+
