@@ -11,7 +11,7 @@ defined in `table.COLS`.
        DEFAULT= "x"
        COLS   = dict(less = "<",   # numeric goals to minimize
                      more = ">",   # numeric goals to maximize
-                     klass= ":",   # symbolic goal (for classification) 
+                     klass= ":",   # symbolic goal (for classification)
                      y    = ":<>"):# all symbols denoting goals
 
 Any column with a header that starts with something else, get stored in the
@@ -43,7 +43,7 @@ class table:
   DEFAULT    = "x"
   COLS       = dict(less = "<",   # numeric goals to be minimized
                     more = ">",   # numeric goals to be maximized
-                    klass= ":",   # symbolic goal (used for classification) 
+                    klass= ":",   # symbolic goal (used for classification)
                     y    = ":<>"  # all symbols denoting goals
                     )             # (any any other thing goes into table.DEFAULT)
 
@@ -63,13 +63,13 @@ class table:
     return '{:rows %s :less %s :more %s :klass %s :x %s :y %s' % (
             len(i.rows),           len(i.group["less"]), len(i.group["more"]),
             len(i.group["klass"]), len(i.group["x"]),    len(i.group["y"]))
-  
+
   # If `all` is defined, we are beyong the first header row.
   def __add__(i,row):
     i.data(row) if i.all else i.header(row)
 
   # Create one `thing` for each column.
-  # Store that `thing` in `all` as well as 
+  # Store that `thing` in `all` as well as
   # in its associated `COLS` group.
   def header(i,row):
     for col,cell in enumerate(row):
@@ -84,31 +84,31 @@ class table:
       # If we can't place it anywhere else, place it in `table.DEFAULT`.
       if not placed:
         i.group[table.DEFAULT] += [t]
-          
+
   # Update the statistics held in each thing for each column.
   # Keep the data in `rows`.
   def data(i,row):
     [t + row[t.pos] for t in i.all]
-    i.rows += [ row ] 
+    i.rows += [ row ]
 
   # ### Misc utilities
 
-  
+
   # Return a table just like this one,
   # but withtout the row data
   def twin(i,inits=[]):
     t = table([[t.txt for t in i.all]])
     [t + x for x in inits]
     return t
-  
-  # Return the first klass value of a row 
+
+  # Return the first klass value of a row
   def klass(i,row):
     return row[i.group["klass"][0].pos]
 
-  # Return the first goal value of a row 
+  # Return the first goal value of a row
   def goal(i,row):
     return row[i.group["y"][0].pos]
-  
+
   # Compute Euclidean distance between two rows.
   # Makes use of sevices defined in each thing in `all`.
   def dist(i, j,k, what=None):
@@ -167,7 +167,7 @@ class table:
     rows=rows or i.rows
     tmp = [(w(i.dist(row1,row2)),
             i.klass(row2))
-           for row2 in rows 
+           for row2 in rows
            if id(row1) != id(row2)]
     kth = sorted(tmp)[:k]
     scores={}
@@ -175,4 +175,19 @@ class table:
       scores[klass] = scores.get(klass,0) + w
     ranked = sorted(scores.items(), reverse=True,key=lambda x: x[1])
     return ranked[0][0]
-    
+
+  def knn(i,row1,k=None,rows=None,w=None):
+    k = k or table.K
+    w = w or table.W
+    rows=rows or i.rows
+    tmp = [(w(i.dist(row1,row2)),
+            i.klass(row2))
+           for row2 in rows
+           if id(row1) != id(row2)]
+    kth = sorted(tmp)[:k]
+    scores={}
+    for w,klass in kth:
+      scores[klass] = scores.get(klass,0) + w
+    ranked = sorted(scores.items(), reverse=True,key=lambda x: x[1])
+    return ranked[0][0]
+

@@ -739,14 +739,65 @@ EOF
 echo "set backupdir^=$Dot">> $Dot/dotvimrc
 
 cat<<'EOF' >> $Dot/dotvimrc
+set nocompatible              " required
+filetype off                  " required
+filetype plugin indent on
+set modelines=0
+set scrolloff=3
+set autoindent
+set hidden "remember ls
+set wildmenu
+set wildmode=list:longest
+set visualbell
+set ttyfast
+set backspace=indent,eol,start
+set laststatus=2
+"set relativenumber
+set undofile
+nnoremap / /\v
+vnoremap / /\v
+let mapleader = ","
+nnoremap <leader><space> :noh<cr>
+nnoremap <leader>W :%s/\s\+$//<cr>:let @/=''<CR>
+"new window, jump to it
+nnoremap <leader>w <C-w>v<C-w>l
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'gmarik/Vundle.vim'
+
+" Add all your plugins here (note older versions of Vundle used Bundle instead of Plugin)
+
+Plugin 'tmhedberg/SimpylFold'
+Plugin 'vim-scripts/indentpython.vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'scrooloose/syntastic'
+Plugin 'jnurmine/Zenburn'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'kien/ctrlp.vim'
+"Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+Plugin 'bling/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'croaker/mustang-vim'
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+
+set splitbelow
+set splitright
+
 "ascii mouse
 set mouse=a
 "place buffer name into window title
 set title
 "show line numbers
 set number
-"cycling through buffers
-map <C-n> :exe  ":buf ".((bufnr("%") % bufnr("$"))+1)<CR>
 " auto-change directory to that of the current buffer
 autocmd BufEnter * cd %:p:h
 " Shows the matching bracket when entering expressions
@@ -763,82 +814,70 @@ syntax enable
 set ignorecase
 set incsearch
 set smartcase
-" source code indenting
-set smarttab
-set smartindent
+set showmatch
+"set hlsearch
 
+" Enable folding
+set foldmethod=indent
+set foldlevel=99
 
-au BufRead,BufNewFile *.py setfiletype python
+" Enable folding with the spacebar
+nnoremap <space> za
 
-" by default, the indent is 2 spaces. 
-set shiftwidth=2
-set softtabstop=2
-set tabstop=2
+au BufNewFile,BufRead *.py
+    \ set expandtab |
+    \ set tabstop=2 |
+    \ set softtabstop=2 |
+    \ set shiftwidth=2 |
+    \ set textwidth=79 |
+    \ set expandtab |
+    \ set autoindent |
+    \ set fileformat=unix
 
-" for lua/python files, 2 spaces
-autocmd Filetype python setlocal ts=2 sw=2 expandtab
-autocmd Filetype lua setlocal ts=2 sw=2 expandtab
+"au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
 
+highlight BadWhitespace ctermbg=red guibg=red
 
-" Help for viminfo is at:  :he 'viminfo'
-"   '10  : marks will be remembered for up to 10 previously edited files
-"   "100 : will save up to 100 lines for each register
-"   :20  : up to 20 lines of command-line history will be remembered
-"   %    : saves and restores the buffer list
-"   n... : where to save the viminfo files
-"set viminfo='10,\"100,:20,%,n~/.viminfo
-"autocmd BufReadPost * if line("'\"") > 0|if line("'\"") <=
-"line("$")|exe("norm '\"")|else|exe "norm $"|endif|endif
-"set t_ti= t_te=
+set encoding=utf-8
 
-set nocompatible              " be iMproved, required
-filetype off                  " required
+let python_highlight_all=1
+syntax on
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
-
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-
-Plugin 'scrooloose/nerdtree'
-"Plugin 'altercation/vim-colors-solarized'"
-Plugin 'bling/vim-airline'
-Plugin 'tpope/vim-markdown'
-Plugin 'flazz/vim-colorschemes'
-
-" All of your Plugins must be added before the following line
-call vundle#end()            " required
-filetype plugin indent on    " required
-" To ignore plugin indent changes, instead use:
-"filetype plugin on
-"
-" Brief help
-" :PluginList       - lists configured plugins
-" :PluginInstall    - installs plugins; append `!` to update or just :PluginUpdate
-" :PluginSearch foo - searches for foo; append `!` to refresh local cache
-" :PluginClean      - confirms removal of unused plugins; append `!` to auto-approve removal
-"
-" see :h vundle for more details or wiki for FAQ
-" Put your non-Plugin stuff after this line
-
-
-let NERDTreeWinSize = 15 " window size, default=31.
-autocmd VimEnter * NERDTree
-
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-" - font type and size setting.
+if has('gui_running')
+    set background=dark
+    colorscheme solarized
+else
+    colorscheme mustang
+    "colorscheme slate
+endif
 if has('win32')
     set guifont=Consolas:h12   " Win32.
 elseif has('gui_macvim')
     set guifont=Monaco:h11     " OSX.
 else
-    set guifont=Monospace\ 12  " Linux.
+    set guifont=Menlo\ 12  " Linux.
 endif
-colorscheme slate
-" vim -u vimrc
+
+call togglebg#map("<F5>")
+
+set nu
+
+" Always show statusline
+set laststatus=2
+
+ " Use 256 colours (Use this setting only if your terminal supports 256
+" colours)
+set t_Co=256
+
+set clipboard=unnamed
+
+set spell spelllang=en_us
+let g:airline_theme='simple'
+set nospell
+
+"coming home to vim
+set cursorline
+hi CursorLine term=bold cterm=bold guibg=Grey40
 EOF
 
 #########################################################
