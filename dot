@@ -857,7 +857,7 @@ elseif has('gui_macvim')
     set guifont=Monaco:h11     " OSX.
 else
     set guifont=Menlo\ 12  " Linux.
-endif
+endif:
 
 call togglebg#map("<F5>")
 

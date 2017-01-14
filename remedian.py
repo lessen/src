@@ -37,6 +37,7 @@ Assuming lists of length 64 and use of pypy3:
 _____
 ## Programmer's Guide
 """
+from median import median
 
 class remedian:
 
@@ -59,18 +60,8 @@ class remedian:
   def median(i):
     return i.more.median() if i.more else i._medianPrim(i.all)
 
-  # Primitive: return the median of a list of numbers. Cache this
-  # calculation to avoid repeating a needless call to `sort`.
-  # Note that `__add__` zaps that cache if ever a new number is added.
-  def _medianPrim(i,lst):
-    if i._median is None: # _median is the cache of the prior computation
-      n  = len(lst)
-      p  = q  = n//2
-      if n < 3:
-        p,q = 0, n-1
-      else:
-        lst.sort()
-        if not n % 2:
-          q = p -1
-      i._median = lst[p] if p==q else (lst[p]+lst[q])/2
+  def _medianPrim(i,all):
+    if i._median == None:
+      i._median = median(all,ordered=False)
     return i._median
+ 
