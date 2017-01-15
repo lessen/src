@@ -60,6 +60,7 @@ class remedian:
   def median(i):
     return i.more.median() if i.more else i._medianPrim(i.all)
 
+  # Only recompute median if we do not know it already.
   def _medianPrim(i,all):
     if i._median == None:
       i._median = median(all,ordered=False)

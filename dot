@@ -128,13 +128,26 @@ src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
 width=170>
 ## Copyleft
 
-Copyright &copy; 2016 Tim Menzies <tim@menzies.us>
+Copyright &copy; 2016,2017 Tim Menzies <tim@menzies.us>, MIT license v2.
 
-This program is free software. It comes without any warranty, to
-the extent permitted by applicable law. You can redistribute it
-and/or modify it under the terms of the Do What The F*ck You Want
-To Public License, Version 2, as published by Sam Hocevar. See
-[http://www.wtfpl.net](http://www.wtfpl.net) for more details.
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject
+to the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Share and enjoy.
 
@@ -149,13 +162,28 @@ cat <<'EOF' > $Dot/footer.html
 <img align=right 
 src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
 width=170>
-<p>Copyright &copy; 2016 Tim Menzies <tim@menzies.us></p>
+<p>Copyright &copy; 2016,2017 Tim Menzies <tim@menzies.us>, MIT license v2.</p>
 
-<p>This program is free software. It comes without any warranty, to
-the extent permitted by applicable law. You can redistribute it
-and/or modify it under the terms of the Do What The F*ck You Want
-To Public License, Version 2, as published by Sam Hocevar. See
-<a href="http://www.wtfpl.net">http://www.wtfpl.net</a>) for more details.</p>
+<p> Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation files
+(the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sublicense, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions: </p>
+
+<p> The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+</p>
+
+<p> THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</p>
 
 <p>Share and enjoy.</p>
 
@@ -857,7 +885,7 @@ elseif has('gui_macvim')
     set guifont=Monaco:h11     " OSX.
 else
     set guifont=Menlo\ 12  " Linux.
-endif:
+endif
 
 call togglebg#map("<F5>")
 

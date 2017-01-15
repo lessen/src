@@ -161,6 +161,16 @@ class table:
       out[k].sort()
     return out,index
 
+  def knnNum(i,row1,k=None,rows=None,w=None):
+    k = k or table.K
+    w = w or table.W
+    rows= rows or i.rows
+    tmp = [(i.dist(row1,row2), i.klass(row2))
+           for row2 in rows
+           if id(row1) != id(row2)]
+    kth = sorted(tmp)[:k]
+    return w(kth)
+
   def knn(i,row1,k=None,rows=None,w=None):
     k = k or table.K
     w = w or table.W

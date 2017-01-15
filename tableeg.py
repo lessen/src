@@ -47,12 +47,71 @@ def _dis1(f="data/china.csv"):
     print(t.furthest(r,details=True))
 
 
-from random import random,shuffle
-import collections
+from random import random,shuffle,choice
+import collections,nerror
+from median import median
 
 @eg
-def _knn1():
-  _knn(f="data/china.csv")
+def _knn1(f="data/china.csv"):
+  def xs(lst)       : return [x for _,x in lst]
+  def med(lst)  : return median(xs(lst))
+  def mu(lst)    : return sum(xs(lst))/ len(lst)
+  def late(lst): 
+    nom = [klass/d for d,klass in lst]
+    denom=[1/d for d,_ in lst]
+    return sum(nom)/sum(denom)
+
+  def experiment(klass=None):
+    for rx1 in rx(table,
+                  K=[1,2,4,8],
+                  W= [med,mu,late]):
+      for rx2 in rx(num,
+                    NORMALIZE=[True,False]):
+          log = nerror.nerror()
+          t   = table(file=f)
+          shuffle(t.rows)
+          for _ in range(100):
+              row = choice(t.rows)
+              log(actual = t.klass(row),
+                  predict= t.knnNum(row))
+          s = log.scores()
+          yield dict(Mmre=s.mmre, Mdmre = s.mdmre, Se=s.se, pred25=s.pred25,
+                     pred50=s.pred50, corr=s.corr),rx1,rx2
+
+
+  results=[x for x in watch(experiment,
+                            repeats=30)]
+  keys=results[0][0].keys()
+  betters= [(min if x.istitle() else max) for x in keys]
+  print(betters)
+  tree = lambda: collections.defaultdict(tree)
+  xy   = tree()
+  for obj,what in enumerate(keys):
+    print("")
+    seen = {}
+    for obs,*control in results:
+      this = rx1(control)
+      seen[this] = seen.get(this,[]) + [obs[what]]
+    ranks=[]
+    for i,rng in enumerate(scottknot(seen)):
+      y,has = rng["y"],rng["has"]
+      for x in has:
+        this = x[0].label
+        xy[this][obj] = i
+      ranks += [ (  ' '.join([x[0].label for x in has]), y.all) ]
+    for (a,b,c),d in xtiles(ranks,rnd=0):
+      print(a,c,":",what,":", d)
+  tmp = []
+  print(betters)
+  print(keys)
+  for k1 in xy:
+    new = [k1]
+    for k2 in xy[k1]:
+      new += [xy[k1][k2]]
+    tmp += [new]
+  for x in dominates(tmp, betters=betters):
+    print(x)
+
 
 @eg
 def _knn(f="data/diabetes.csv"):
