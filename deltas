@@ -1,0 +1,31 @@
+cat $* |
+gawk ' BEGIN { FS=","
+        split("",lo,"")
+        split("",hi,"")
+}
+function known(x) {
+  if (! (x in hi)) {
+    hi[x] = -1000000
+    lo[x] =  1000000
+}}
+function max(x,y) { return x > y ? x : y }
+function min(x,y) { return x < y ? x : y }
+
+BEGIN { FS="," }
+      { gsub(/[ \t]/,"",$0) }
+      { seen[$2][NR] = $1 }
+function mean(lst, all, x) {
+   for(x in lst) 
+      all += lst[x]
+  return all/length(lst)
+}
+END {
+  for (x in seen )  {
+    n = asort(seen[x])
+    printf("%4.2f : ", mean(seen[x]))
+    for(i=1;i<=n;i++) 
+       printf(",%s",seen[x][i])
+    print " " x
+}}' |
+sort  -n  |
+column -s, -t

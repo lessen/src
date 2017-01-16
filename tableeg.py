@@ -52,13 +52,21 @@ import collections,nerror
 from median import median
 
 @eg
+def _knn2(): _knn1("data/maxwell.csv")
+@eg
+def _knn3(): _knn1("data/nasa93-dem.csv")
+@eg
+def _knn4(): _knn1("data/coc81.csv")
+@eg
+def _knn5(): _knn1("data/miyazaki94.csv")
+@eg
 def _knn1(f="data/china.csv"):
   def xs(lst)       : return [x for _,x in lst]
   def med(lst)  : return median(xs(lst))
   def mu(lst)    : return sum(xs(lst))/ len(lst)
   def late(lst,n=1): 
-    nom = [klass/(d**n) for d,klass in lst]
-    denom=[1/(d**n) for d,_ in lst]
+    nom = [klass/((d+1e-32)**n) for d,klass in lst]
+    denom=[1    /((d+1e-32)**n) for d,_     in lst]
     return sum(nom)/sum(denom)
   def late2(lst): return late(lst,2)
   def experiment(klass=None):
@@ -98,7 +106,7 @@ def _knn1(f="data/china.csv"):
         xy[this][obj] = i
       ranks += [ (  ' '.join([x[0].label for x in has]), y.all) ]
     for rank,((a,b,c),d) in enumerate(xtiles(ranks,ntiles=4,rnd=0)):
-      print(a,c,":", what+"."+str(rank))
+      print(a,c,"=", what+"."+str(rank))
   tmp = []
   for k1 in xy:
     new = [k1]
@@ -154,7 +162,7 @@ def _knn(f="data/diabetes.csv"):
         xy[this][obj] = i
       ranks += [ (  ' '.join([x[0].label for x in has]), y.all) ]
     for (a,b,c),d in xtiles(ranks,rnd=0):
-      print(a,c,":",what,":", d)
+      print(a,c,"=",what,"", d)
   tmp = []
   print(betters)
   print(keys)

@@ -100,7 +100,7 @@ def eg(f=None, seed=1, lst=[], runs={} ):
         except Exception:
           FAIL += 1 # If a crash, increment `FAIL`.
           print(traceback.format_exc())
-      print("\n## Test results: PASS = %s FAIL = %s %%PASS = %s"  % (
+      print("\n## Test results PASS = %s FAIL = %s %%PASS = %s"  % (
             PASS, FAIL, int(round(PASS*100/(PASS+FAIL+0.001)))))
 
 
