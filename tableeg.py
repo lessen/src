@@ -1,5 +1,5 @@
 from eg    import eg
-from rx    import rx,rx1,say,watch,dominates
+from rx    import rx,showrx,say,watch,dominates,watched,printm,freshFile
 from table import table
 from abcd  import abcd
 from num import num
@@ -56,41 +56,39 @@ def _knn1(f="data/china.csv"):
   def xs(lst)       : return [x for _,x in lst]
   def med(lst)  : return median(xs(lst))
   def mu(lst)    : return sum(xs(lst))/ len(lst)
-  def late(lst): 
-    nom = [klass/d for d,klass in lst]
-    denom=[1/d for d,_ in lst]
+  def late(lst,n=1): 
+    nom = [klass/(d**n) for d,klass in lst]
+    denom=[1/(d**n) for d,_ in lst]
     return sum(nom)/sum(denom)
-
+  def late2(lst): return late(lst,2)
   def experiment(klass=None):
     for rx1 in rx(table,
                   K=[1,2,4,8],
-                  W= [med,mu,late]):
+                  W= [med,mu,late,late2]):
       for rx2 in rx(num,
-                    NORMALIZE=[True,False]):
+                    NORMALIZE=[False,True]):
           log = nerror.nerror()
           t   = table(file=f)
           shuffle(t.rows)
-          for _ in range(100):
-              row = choice(t.rows)
+          for row in t.rows[::5]:
               log(actual = t.klass(row),
                   predict= t.knnNum(row))
           s = log.scores()
-          yield dict(Mmre=s.mmre, Mdmre = s.mdmre, Se=s.se, pred25=s.pred25,
-                     pred50=s.pred50, corr=s.corr),rx1,rx2
-
-
-  results=[x for x in watch(experiment,
-                            repeats=30)]
+          yield dict(mmre=s.mmre, mdmre = s.mdmre, se=s.se, Pred25=s.pred25,
+                     Pred50=s.pred50, Corr=s.corr),showrx([rx1,rx2])
+  where = freshFile()
+  for _ in watch(experiment, where, repeats=5): pass
+  #where="/Users/timm/tmp/eg_j61f6q"
+  results = watched(where)
   keys=results[0][0].keys()
-  betters= [(min if x.istitle() else max) for x in keys]
-  print(betters)
+  betters= [(max if x.istitle() else min) for x in keys]
   tree = lambda: collections.defaultdict(tree)
   xy   = tree()
   for obj,what in enumerate(keys):
-    print("")
+    print("\n")
     seen = {}
-    for obs,*control in results:
-      this = rx1(control)
+    for obs,control in results:
+      this = control
       seen[this] = seen.get(this,[]) + [obs[what]]
     ranks=[]
     for i,rng in enumerate(scottknot(seen)):
@@ -99,19 +97,20 @@ def _knn1(f="data/china.csv"):
         this = x[0].label
         xy[this][obj] = i
       ranks += [ (  ' '.join([x[0].label for x in has]), y.all) ]
-    for (a,b,c),d in xtiles(ranks,rnd=0):
-      print(a,c,":",what,":", d)
+    for rank,((a,b,c),d) in enumerate(xtiles(ranks,ntiles=4,rnd=0)):
+      print(a,c,":", what+"."+str(rank))
   tmp = []
-  print(betters)
-  print(keys)
   for k1 in xy:
     new = [k1]
     for k2 in xy[k1]:
       new += [xy[k1][k2]]
     tmp += [new]
-  for x in dominates(tmp, betters=betters):
-    print(x)
-
+  report = [["wins","rx"] + [(">" if key.istitle() else "<")+key for key in keys]]
+  for win,lst in dominates(tmp, betters=betters):
+	  report += [[win,lst[0]] + lst[1:]] 
+  print("")
+  printm(report) 
+  print(where)
 
 @eg
 def _knn(f="data/diabetes.csv"):

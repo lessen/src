@@ -37,7 +37,7 @@ values in `d` can be lists or a single items
 
 """
 
-import itertools,sys,random
+import itertools,sys,random,ast,tempfile,os        
 
 def rx(klass,**d):
   lst = [[(k,v) for v in
@@ -61,7 +61,7 @@ def rx(klass,**d):
       setattr(klass,k,saved[k])
 
 
-def rx1(lst):
+def showrx(lst):
   d   = {key:val for d in lst for key,val in d.items()}
   tmp = []
   for k,v in d.items():
@@ -78,19 +78,44 @@ def rx1(lst):
     tmp += ["%s%s" % (key,v)]
   return ':'.join(tmp)
 
+def printm(matrix,sep=","):
+  s = [[str(e) for e in row] for row in matrix]
+  lens = [max(map(len, col)) for col in zip(*s)]
+  sep = '%s ' % sep
+  fmt = sep.join('{{:>{}}}'.format(x) for x in lens)
+  for row in [fmt.format(*row) for row in s]:
+    print(row)
+
+
+
 def say(*lst):
   print(*lst, sep=' ', end='', file=sys.stdout, flush=True)
         
-      
-      
-def watch(src,seed=1,every=10,klass="__all__",repeats=20):
+
+def freshFile(dir=None,prefix=None):
+  dir    = dir or os.path.expanduser("~")+"/tmp"
+  prefix = prefix or "eg_"
+  if not os.path.exists(dir):
+    os.makedirs(dir)
+  fd,file= tempfile.mkstemp(prefix=prefix,dir=dir,text="w")
+  os.close(fd)
+  print("#",file)
+  return file
+
+def watch(src,file,seed=1,every=10,klass="__all__",repeats=20):
   random.seed(seed)
   n = 0
-  for _ in range(repeats):
-    for one in src(klass):
-      n += 1
-      if (n % every) == 0 : say("",n)
-      yield one
+  with open(file,"w") as out:
+    for _ in range(repeats):
+      for obj,control in src(klass):
+        n += 1
+        if (n % every) == 0 : say("",n)
+        out.write("("+ str(obj) + ",'" + control + "')\n")
+        yield obj,control
+
+def watched(file):
+   with open(file,"r") as hd:
+     return [ast.literal_eval(x) for x in hd.readlines()]
 
 
 def dominates(pop,objs=None,betters=None):
