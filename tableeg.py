@@ -83,7 +83,7 @@ def _knn1(f="data/china.csv"):
                   predict= t.knnNum(row))
           s = log.scores()
           yield dict(mmre=s.mmre, mdmre = s.mdmre, se=s.se, Pred25=s.pred25,
-                     Pred50=s.pred50, Corr=s.corr),showrx([rx1,rx2])
+                     Corr=s.corr),showrx([rx1,rx2])
   where = freshFile()
   for _ in watch(experiment, where, repeats=5): pass
   #where="/Users/timm/tmp/eg_j61f6q"
