@@ -156,8 +156,8 @@ def ediv(lst,
 
 def scottknot(d):
    def expectedMuChange(lhs,rhs,all):
-     return lhs.n/all.n * abs(lhs.median() - all.median())**2 + \
-       rhs.n/all.n * abs(rhs.median() - all.median())**2
+     return  (lhs.n/all.n * abs(lhs.median() - all.median())**2 + \
+       rhs.n/all.n * abs(rhs.median() - all.median())**2)
    def stats(lhs,rhs,_):
      tmp = not cd(lhs.all,rhs.all) and not bootstrap(lhs.all,rhs.all)
      #print(tmp, lhs.all, rhs.all)
@@ -169,11 +169,13 @@ def scottknot(d):
      lst += [tmp]
    return ranges(lst,
                  flat=False,
-                 d=0.1,
+                 d   = 0.3,
                  x   = lambda z:z.all,
                  y   = lambda z:z.all,
                  goodxsplit = stats,
-                 #evaly = expectedMuChange,
+                 evaly = expectedMuChange,
+                 better = lambda new,t,old : new > t*old,
+                 score0 = lambda x: -1e31,
                  key = lambda z:z.median())
  
 
@@ -197,6 +199,8 @@ def ranges(lst,
            enoughth   = 0.71,
            epsilon    = None,
            evaly      = None,
+           better     = lambda new,t,old : new * t < old,
+           score0     = lambda x: x.wriggle(),
            flat       = True,
            goodxsplit = None,
            goodysplit = None,
@@ -253,16 +257,18 @@ def ranges(lst,
   #-----------------
   def divide(segments, out,lvl, cut=None):
     xrhsall, yrhsall, xoverall, yoverall = summary(segments)
-    score, score1 = yoverall.wriggle(), None
+    score, score1 = score0(yoverall), None
     xlhs, ylhs    = num(), yklass()
     for i,(x,y) in enumerate(segments[:-1]):
       xrhs = xrhsall[i+1]
       yrhs = yrhsall[i+1]
+      nextx = segments[i+1][0]
+      #print("::",i,x,y)
       [xlhs+z for z in x.all]
       [ylhs+z for z in y.all]
-      if xlhs.median() + epsilon < xrhs.median():
+      if xlhs.median() + epsilon < nextx.median(): #xrhs.median():
         score1 = evaly(ylhs,yrhs,yoverall)
-        if score1*trivial < score:
+        if better(score1,trivial,score):
           if yklass == num:
             if not greedy or ylhs.median()*trivial < yrhs.median(): 
               if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
@@ -272,9 +278,12 @@ def ranges(lst,
               if goodysplit(ylhs,yrhs,yoverall, score1):
                 if goodxsplit(xlhs,xrhs,xoverall): # hook for stats
                   cut,score = i+1,score1
+        #else:
+         # print("nope")
     if verbose:
       score1 = round(score1,rnd) if score1 else '.'
       print(' ..'*lvl,xoverall.n,score1)
+#      [print(' ++'*lvl,s) for s in segments]
     if cut:
       divide(segments[:cut], out= out, lvl= lvl+1)
       divide(segments[cut:], out= out, lvl= lvl+1)
@@ -300,6 +309,8 @@ def ranges(lst,
     segments   = ordered if not flat else [z for z in chunks(ordered,width)]
     parts      = [stats(segment, xall, yall,flat) for segment in segments]
     epsilon    = epsilon or d * xall.wriggle()
+    #[print(">>>",s) for s in segments]
+    #print(dict(epsilon=epsilon,segs=segments))
     return divide(parts,out=[], lvl=0)
  
 class ordered:
