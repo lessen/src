@@ -42,7 +42,8 @@ from median import median
 class remedian:
 
   # Initialization
-  def __init__(i,inits=[], k=64):  # after some experimentation, 64 works ok
+  def __init__(i,inits=[], k=64, # after some experimentation, 64 works ok
+               about = None):
     i.all,i.k = [],k
     i.more,i._median=None,None
     [i + x for x in inits]

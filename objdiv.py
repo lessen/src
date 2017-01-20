@@ -1,30 +1,26 @@
 from num import num
 
-class N:
-  def __init__(i,here):
-    i.here, i.left, i.right = here, None, None
-
 # need a post-prune
 
 def objdiv(lst, objs,  min=None):
   for one in lst:
-    nums  = objs(one)
-    seens = seens  or [num(pos=i) # this is the wrong i
-                       for i,_ in enumerate(nums)]
-    [seen + x for seen,x in zip(seens,nums)]
-  seens = sorted(seens, reverse=True, key= lambda x:x.sd())
+    meds = meds  or [(remedian(),i) for i,_ in enumerate(objs(one))]
+    [med + objs(one)[i] for med,i in meds]
+  meds = sorted(meds, reverse=True, key= lambda x:x[0].median())
   return objDiv1(lst,objs, seens, min or len(lst)**0.5)
 
 def objDiv1(lst,obs,seens,min):
+  class o:
+    def __init__(i,**d): i.__dict__.update(d)
   if len(lst) < min: 
-    return N(lst)
+    return o(contents=lst)
   elif not seens: 
     return objdiv(lst,objs,min)
   else:
-    n,here,left,right = N(lst), seen[0],[],[]
+    n, ,(med,i), left, right = o(contents=lst), seen[0], [], []
     for one in lst:
-       x     = one[here.pos]
-       what  = left if x <= here.mu else right
+       x     = objs(one)[i]
+       what  = left if x <= med.median() else right
     n.left  = objDiv1(seens[1:], left)
     n.right = objDiv2(seens[1:], right)
     return n
