@@ -216,7 +216,7 @@ Emacs=${Emacs:-"/Applications/Emacs.app/Contents/MacOS/Emacs"}
 
 
 
-for x in nano awk bash python3 pypy3 mvim $Emacs vim source-highlight; do
+for x in nano awk bash python3 pypy3 pycco  vim source-highlight; do
     if [ -z "`which $x`" ]; then
         echo "$What needs install $x"
     fi
@@ -233,10 +233,18 @@ alias less='less -m  -g -i -J --underline-special --SILENT'
 alias more='less'
 
 dot0() { # start-up actions
+  vim0
+  emacs0
+}
+
+vim0() {
   if [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
     git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
   fi
   vim +PluginInstall +qall      # install vim plugins
+}
+
+emacs0() {
   emacs -script $Dot/install.el # install emacs plugins
 }
 
@@ -328,8 +336,13 @@ pycco() {
   fi
 }
 
+if [ -f "$HOME/pypy/bin/pypy3" ]; then
+  alias pypy="$HOME/pypy/bin/pypy3 -B "
+else
+  alias pypy="`which pypy3`  -B "
+fi
+
 alias python="`which python3`  -B "
-alias pypy="`which pypy3`  -B "
 alias vi="`which mvim` -u $Dot/dotvimrc "
 alias vim="`which vim` -u $Dot/dotvimrc "
 
@@ -340,7 +353,7 @@ em() { emacs -q -l "$Edot" $*
      }
 
 eg() {
- if [ -f "${1}eg.py" ]; then pypy3 ${1}eg.py; fi
+ if [ -f "${1}eg.py" ]; then pypy ${1}eg.py; fi
  if [ -f "${1}.py" ]; then
     if [  "${1}.py" -nt "docs/${1}.html" ]; then 
        pycco $1.py    
