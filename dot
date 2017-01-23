@@ -929,7 +929,16 @@ EOF
 #########################################################
 
 # call a shell with functions that call things with the above config 
+
 Dot=$Dot                       \
 DotDir=$PWD                     \
 MYVIMRC=$Dot/dotvimrc             \
 bash --init-file $Dot/dotbashrc  -i
+
+#if [ -n "$@" ]; then
+#  echo shell
+#else
+#  echo run
+#  Dot=$Dot DotDir=$PWD MYVIMRC=$Dot/dotvimrc bash --init-file $Dot/dotbashc -c "$@"          
+#fi	
+#
