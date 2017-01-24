@@ -1,6 +1,27 @@
 from num import num
 import remedian
-from cliffsdelta import cd
+import cliffsDelta
+
+def same(lst1,lst2):
+  return not cliffsDelta.cliffsDelta(lst1,lst2,0.147)
+
+class seens:
+  def __init__(i,objs,inits=[]):
+    i.all=None
+    i.objs=objs
+    [i+x for x in inits]
+  def clone(i,inits=[]):
+    return seens(i.objs,inits)
+  def __add__(i,x):
+    ys = i.objs(x)
+    if y.all is None:
+      i.all = [seen(pos) for pos,_ in enumerate(ys)]
+    [see + y for see,y in zip(i.all,ys)]
+  def same(i,j, f = same):
+    for x,y in zip(i.all, j.all):
+      if not f(x,y):
+        return False
+    return True
 
 # need a post-prune
 class seen:
@@ -20,14 +41,12 @@ class seen:
       i.sd = (i.m2/(i.n-1))**0.5
   def __lt__(i,j):
     return i.sd > j.sd # so higest var goes first
-  def median(i):
-    return i.med.median()
- 
-def clusters(lst,objs,s=None,f=0.25,
-             ne= lambda x,y: not cliffsDelta(x.all,y.all,0.147):
+
+def clusters(lst,objs,s=None,p=0.25, ame= same)
+  s = s or len(lst)**p)
   return prune(
             tree(lst,objects,s,f),
-            ne)
+            same)
 
 def leaf(t): 
   return t.left == t.right == None
@@ -66,7 +85,6 @@ def tree(lst, objs,  s=None, f=0.25):
     [see + obj for see,obj in zip(seens,objs(one))]
   return node(lst, objs, 
                  sorted(seens), 
-                 s or len(lst)**f)
 
 def node(lst,objs,splits,min):
   class o:
