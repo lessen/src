@@ -1,4 +1,6 @@
-import sys,re,math,random
+#!/home/timm//opt/pypy/bin/pypy3
+
+import traceback,sys,re,math,random,time
 
 SEP  = ","
 DIRT = '([\n\r\t]|#.*)'
@@ -17,14 +19,14 @@ def C(s):
     return [ cell.strip() for cell in cells ]
 
 def nasa93():
-  t = table(
+  return dict(
   names=[
      "recordnumber", "projectname", "cat2", "forg", "center", "year", "mode", "rely",
      "data", "cplx", "time", "stor", "virt", "turn", "acap", "aexp", "pcap", "vexp",
-     "lexp", "modp", "tool", "sced", "equivphyskloc", "#act_effort"],
+     "lexp", "modp", "tool", "sced", "equivphyskloc", "act_effort"],
   types=[
-      X,S, S,                 S,S,I,   S,            S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,L,   F])
-  t.data([
+      X,S, S,                  S,S,I,   S,           S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,F,   F],
+  data= [
     C("1,de,avionicsmonitoring,g,2,1979,semidetached,h,l,h,n,n,l,l,n,n,n,n,h,h,n,l,25.9,117.6"),
     C("2,de,avionicsmonitoring,g,2,1979,semidetached,h,l,h,n,n,l,l,n,n,n,n,h,h,n,l,24.6,117.6"),
     C("3,de,avionicsmonitoring,g,2,1979,semidetached,h,l,h,n,n,l,l,n,n,n,n,h,h,n,l,7.7,31.2"),
@@ -118,7 +120,35 @@ def nasa93():
     C("99,X,Avionics,f,2,1983,embedded,h,n,vh,vh,vh,h,h,n,n,n,l,l,n,n,h,16.3,480"),
     C("100,X,Avionics,f,2,1983,embedded,h,n,vh,vh,vh,h,h,n,n,n,l,l,n,n,h,6.2,12"),
     C("101,X,science,f,2,1983,embedded,h,n,vh,vh,vh,h,h,n,n,n,l,l,n,n,h,3,38")])
-  return t
+
+def eg(f=None,want=None,all={},names=[]):
+  if want: # run one example
+    if not want in all:
+      return print("# cannot execute: missing %s" % want)
+    f=all[want]
+    hdr = "\n-----| %s |"+ ("-"*40)
+    print(hdr % f.__name__,end="\n# ")
+    if f.__doc__:
+      print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
+    print("")
+    t1=time.process_time()
+    f()
+    t2=time.process_time()
+    print("# pass","(%.4f secs)" % (t2-t1))
+  else:
+    if f: # add one example
+      all[f.__name__] = f
+      names += [f.__name__]
+    else: # run all examples, count how many do not crash
+      n=y=0
+      for name in names:
+        try:
+          eg(want=name)
+          y += 1
+        except Exception:
+          n += 1
+          print(traceback.format_exc())
+      print("# tried= ",y+n," %passed= ",100*round(y/(y+n)))
 
 def median(lst):
   n = len(lst)
@@ -130,40 +160,110 @@ def median(lst):
     if not n % 2: q = p -1
   return lst[p] if p==q else (lst[p]+lst[q])/2
 
-class nklass: # multiple-row objective row
-  def __init__(i,raw): 
+def printm(matrix,sep=","):
+  s = [[str(e) for e in row] for row in matrix]
+  lens = [max(map(len, col)) for col in zip(*s)]
+  sep = '%s ' % sep
+  fmt = sep.join('{{:>{}}}'.format(x) for x in lens)
+  for row in [fmt.format(*row) for row in s]:
+    print(row)
+
+class row: 
+  def decs(i,lst): pass
+  def objs(i,lst): pass
+  def betters(i):  pass
+  def __init__(i,raw):
     i.raw, i.cooked = raw, None
-  def decs(i,lst): 
-    return lst[:-1]
-  def objs(i,lst): 
-    return [lst[:-1]]
-  def chop(i,chops,plus="+",minus="-"):
+  def __repr__(i):
+    return str(i.cooked if i.cooked else i.raw)
+  def chop(i,chops,pre=""):
     out = i.raw[:]
     for n in chops:
       x,med  = i.raw[n], chops[n]
-      out[n] = minus if x < med else plus
+      out[n] = pre+"-" if x < med else pre+"+"
     i.cooked = i.decs(out) + i.objs(i.raw)
+
+class classifier(row):
+  def decs(i,lst): return lst[:-1]
+  def objs(i,lst): return [lst[-1]]
+  def betters(i):  return [min]
+
+class nklass(row):
+  def __init__(i,*lst):
+    super().__init__(*lst) 
+    i.score=0
+  def cdom(i, j):
+    def w(better):
+      return -1 if better == min else 1
+    def expLoss(w,x1,y1,n):
+      return -1*2.71828**( w*(x1 - y1) / n )
+    def loss(x, y):
+      losses= []
+      n = min(len(x),len(y))
+      for z,bt in enumerate(i.betters()):
+        x1, y1  = x[z]  , y[z]
+        losses += [expLoss( w(bt),x1,y1,n)]
+      return sum(losses) / n
+    x = i.objs(i.cooked)
+    y = j.objs(j.cooked)
+    assert len(x) == len(y), "can't compare apples and oranges"
+    l1= loss(x,y)
+    l2= loss(y,x)
+    return l1 < l2 
+
+class coco(nklass):
+  def decs(i,lst): return lst[:-2]
+  def objs(i,lst): return lst[-2:]
+  def betters(i):  return [max,min]
 
 class table:
   def __init__(i,names= [],
                types= [],
-               rows=  [],
-               has =  nklass):
+               data=  [],
+               ako =  classifier):
     i.names = names
     i.types = types
-    i.has   = has
-    i.nums  = [ n for n,t in enumerate(i.types) if NUM(t) ]
+    i.ako   = ako
     i.rows  = []
-  def data(i, rows):
+    i.chops = []
+    i.nums  = [ n for n,t in enumerate(i.types) if NUM(t) ]
+    i.prep(data)
+  def prep(i,data):
     chops0 = { n: list() for n in i.nums }
-    for row0 in rows:
+    for row0 in data:
       row1 = [ t(cell) for t,cell in zip(i.types, row0) ]
-      i.rows += [i.has(row1)]
+      i.rows += [i.ako(row1)]
       for n in i.nums:
         chops0[n] += [row1[n]]
-    i.chops = { n: median( chops0[n] ) for n in i.nums } 
+    i.chops = { n: median( chops0[n] ) for n in i.nums }
     [row.chop(i.chops) for row in i.rows]
 
-t = nasa93()
-print(t.rows.raw[-1])
-print(t.rows.cooked[-1])
+class moea(table):
+  def rankRows(i):
+    for row1 in i.rows:
+      for row2 in i.rows:
+        if row1.cdom(row2):
+            row1.score += 1
+    i.rows = sorted(i.rows, key=lambda z: z.score, reversed=True)
+
+@eg
+def eg0():
+  t = table(**nasa93())
+  printm([row.cooked for row in t.rows])
+  print(t.rows[-4].raw)
+  print(t.rows[-4].cooked)
+
+@eg
+def eg1():
+  t = moea(ako=coco,**nasa93())
+  t.rankRows()
+  printm([row.cooked for row in t.rows])
+  print(t.rows[-4].raw)
+  print(t.rows[-4].cooked)
+
+if __name__ ==  "__main__":
+  if len(sys.argv) > 1 and sys.argv[1]:
+    eg(want=sys.argv[1])
+  else:
+    eg()
+
