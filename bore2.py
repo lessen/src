@@ -1,6 +1,7 @@
-import re
+import sys,re,math
 
 def X(_) : return "?"
+def L(x) : return math.log(float(x))
 def F(x) : return float(x)
 def S(x) : return x
 def I(x) : return int(x)
@@ -12,7 +13,8 @@ def nasa93():
      "data", "cplx", "time", "stor", "virt", "turn", "acap", "aexp", "pcap", "vexp",
      "lexp", "modp", "tool", "sced", "equivphyskloc", "#act_effort"],
   types=[
-      X,S, S,                 S,I,I,   S,           S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,F,   F])
+      X,S, S,                 S,I,I,   S,
+    S,S,S,S,S,S,S,S,S,S,S,S,S,S,S,F,   F])
   t.data([
     c("1,de,avionicsmonitoring,g,2,1979,semidetached,h,l,h,n,n,l,l,n,n,n,n,h,h,n,l,25.9,117.6"),
     c("2,de,avionicsmonitoring,g,2,1979,semidetached,h,l,h,n,n,l,l,n,n,n,n,h,h,n,l,24.6,117.6"),
@@ -115,7 +117,7 @@ def c(s):
     return [ cell.strip() for cell in cells ]
 
 class table:
-  BINS = 5
+  BINS = 10
   SEP  = ","
   DIRT = '([\n\r\t]|#.*)'
   def __init__(i,names= [],
@@ -141,8 +143,7 @@ class table:
     for row in i.rows:
       for n in lo:
         lo[n] = min(lo[n], row[n])
-        hi[n] = max(lo[n], row[n])
-    print(dict(lo=lo,hi=hi))
+        hi[n] = max(hi[n], row[n])
     return lo,hi
   def bins1(i,row):
     out = row[:]
@@ -151,8 +152,7 @@ class table:
       b      = int((x - y) / (z - y + 1e-31) * table.BINS)
       b1     = b if b < table.BINS else table.BINS - 1
       out[n] = b1
-      if n==22: print(n,x,y,z,b1)
     return i.decs(out) + i.objs(row)
 
 t = nasa93()
-#for x in t.bins: print(x)
+for x in t.bins: print(x)
