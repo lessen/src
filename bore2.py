@@ -169,9 +169,6 @@ def printm(matrix,sep=","):
     print(row)
 
 class row: 
-  def decs(i,lst): pass
-  def objs(i,lst): pass
-  def betters(i):  pass
   def __init__(i,raw):
     i.raw, i.cooked = raw, None
   def __repr__(i):
@@ -182,6 +179,9 @@ class row:
       x,med  = i.raw[n], chops[n]
       out[n] = pre+"-" if x < med else pre+"+"
     i.cooked = i.decs(out) + i.objs(i.raw)
+  def decs(i,lst): pass
+  def objs(i,lst): pass
+  def betters(i):  pass
 
 class classifier(row):
   def decs(i,lst): return lst[:-1]
@@ -244,7 +244,9 @@ class moea(table):
       for row2 in i.rows:
         if row1.cdom(row2):
             row1.score += 1
-    i.rows = sorted(i.rows, key=lambda z: z.score, reversed=True)
+    i.rows = sorted(i.rows, 
+                    key=lambda z: z.score, 
+                    reversed=True)
 
 @eg
 def eg0():
@@ -258,8 +260,6 @@ def eg1():
   t = moea(ako=coco,**nasa93())
   t.rankRows()
   printm([row.cooked for row in t.rows])
-  print(t.rows[-4].raw)
-  print(t.rows[-4].cooked)
 
 if __name__ ==  "__main__":
   if len(sys.argv) > 1 and sys.argv[1]:
