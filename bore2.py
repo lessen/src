@@ -123,6 +123,7 @@ def nasa93():
    ])
 
 def eg(f=None,want=None,all={},names=[]):
+  "Decorator for functions that can be called from command line."
   if want: # run one example
     if not want in all:
       return print("# cannot execute: missing %s" % want)
@@ -243,7 +244,7 @@ class numColumn(column):
     i.hi = max(i.hi,x)
     i.all += [x]
     return x
-  def median(i):
+  def median(i): # maintains a cache of the median value
     if i._median is None:
       i._median= median(i.all)
     return i._median
@@ -277,6 +278,7 @@ class table:
 
 class moea(table):
   def rankRows(i):
+    "score each row according to how many other rows they dominate"
     for row1 in i.rows:
       for row2 in i.rows:
         if row1.cdom(row2):
