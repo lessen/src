@@ -28,22 +28,22 @@ OTHER DEALINGS IN THE SOFTWARE.
   by recursively discarding half the bad ones.
 - Scores rows by their cdom score.
        - Do this only once then reuse the score.
-- BANDS = []
+- OUT = []
 - Repeat on training data.
      - BEFORE = cdom distribution of current rows
      - Using cdom score, divide current rows into 50% best and rest.
      - Discretize numerics above and below median using the ranges in the current rows
      - Rank ranges in descending order by b^2/(b+r) where "b" is best and "r" is rest
-          - OUT = upper half of the ranges
-          - BANDS = OUT + BANDS # i.e. prepend them in sorted order
-     - Discard rows that have none of OUT
+          - TMP = upper half of the ranges
+          - OUT = TMP + OUT # i.e. prepend them in sorted order
+     - Discard rows that have none of TMP
      - If too few remaining rows
          exit
      - AFTER = cdom distribution of surviving rows
      - If  cliffsDelta says BEFORE == AFTER
          exit
 - Report:
-     - A decision ordering diagram running BANDS over a test set
+     - A decision ordering diagram running OUT over a test set
 
 Note that the above incrementally discretizes, but only within zones of interest.
 
@@ -71,12 +71,14 @@ def NUM(x): return x in [L,F,I]
 
 def C(s,sep=SEP, dirt=DIRT):
   "Convert a string of words into a list"
-    clean = re.sub(dirt, "",s)
-    cells = re.findall(sep,clean)
-    return [ cell.strip() for cell in cells ]
+  clean = re.sub(dirt, "",s)
+  cells = re.findall(sep,clean)
+  return [ cell.strip() for cell in cells ]
 
 # ------------------------------------------------------------------------
 #### Data
+
+# todo: if they want to optimize for recent projects, need to max year... how would that change things?
 
 def nasa93():
   return dict(
