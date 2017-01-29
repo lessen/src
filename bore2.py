@@ -285,7 +285,8 @@ class numColumn(column):
 
 class table:
   """
-  Tables input raw data and cook them
+  Tables contain columns and rows.
+  Tables raw data and cook them.
   """
   def __init__(i,names= [],
                types= [],
