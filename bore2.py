@@ -163,6 +163,7 @@ def median(lst):
   return lst[p] if p==q else (lst[p]+lst[q])/2
 
 def printm(matrix,sep=","):
+  "Pretty print. Columns right justified"
   s = [[str(e) for e in row] for row in matrix]
   lens = [max(map(len, col)) for col in zip(*s)]
   sep = '%s ' % sep
@@ -171,6 +172,12 @@ def printm(matrix,sep=","):
     print(row)
 
 class basicRow:
+  """
+  Rows are pairs of raw and cooked data.
+  Rows know which cells are decisions and objectives.
+  For the objectives, rows also know which cells need
+  to minimized or maximized.
+  """
   def __init__(i,raw=None):
     i.raw, i.cooked = raw, None
   def __repr__(i):
@@ -180,11 +187,19 @@ class basicRow:
   def betters(i):  pass
 
 class classifier(basicRow):
+  """
+  Standard row for classifiers. Last cell is the 
+  klass.
+  """
   def decs(i,lst): return lst[:-1]
   def objs(i,lst): return [lst[-1]]
   def betters(i):  return [min]
 
 class nklass(basicRow):
+  """
+  Standard row for MOEA problems.
+  Rows can be compared with `cdom`.
+  """
   def __init__(i,*lst,**d):
     super().__init__(*lst,**d)
     i.score=0
