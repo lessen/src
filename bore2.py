@@ -122,24 +122,8 @@ def nasa93():
     C("100  X    Avionics             f  2  1983  embedded      h   n   vh  vh  vh  h  h   n   n   n   l   l   n   n   h  6.2    12")
    ])
 
-def median(lst):
-  n = len(lst)
-  p = q  = n//2
-  if n < 3:
-    p,q = 0, n-1
-  else:
-    lst = sorted(lst)
-    if not n % 2: q = p -1
-  return lst[p] if p==q else (lst[p]+lst[q])/2
-
-def printm(matrix,sep=","):
-  "Pretty print. Columns right justified"
-  s = [[str(e) for e in row] for row in matrix]
-  lens = [max(map(len, col)) for col in zip(*s)]
-  sep = '%s ' % sep
-  fmt = sep.join('{{:>{}}}'.format(x) for x in lens)
-  for row in [fmt.format(*row) for row in s]:
-    print(row)
+# -----------------------------------------------------------------
+#### Rows
 
 class basicRow:
   """
@@ -201,6 +185,10 @@ class coco(nklass):
   def decs(i,lst): return lst[:-2]
   def objs(i,lst): return lst[-2:]
   def betters(i):  return [max,min]
+
+
+# -----------------------------------------------------------------
+#### Columns
 
 class column:
   """
@@ -283,9 +271,29 @@ class moea(table):
                     key=lambda z: z.score,
                     reverse=True)
 
-########################################################################
-### demo stuff
-#######################################################################
+# -------------------------------------------------------------
+#### some utilities
+def median(lst):
+  n = len(lst)
+  p = q  = n//2
+  if n < 3:
+    p,q = 0, n-1
+  else:
+    lst = sorted(lst)
+    if not n % 2: q = p -1
+  return lst[p] if p==q else (lst[p]+lst[q])/2
+
+def printm(matrix,sep=","):
+  "Pretty print. Columns right justified"
+  s = [[str(e) for e in row] for row in matrix]
+  lens = [max(map(len, col)) for col in zip(*s)]
+  sep = '%s ' % sep
+  fmt = sep.join('{{:>{}}}'.format(x) for x in lens)
+  for row in [fmt.format(*row) for row in s]:
+    print(row)
+
+# -------------------------------------------------------------
+#### demo stuff
 
 def eg(f=None,want=None,all={},names=[]):
   "Decorator for functions that can be called from command line."
@@ -331,6 +339,9 @@ def eg1():
   t = moea(ako=coco,**nasa93())
   t.rankRows()
   printm([row.cooked for row in t.rows])
+
+# -------------------------------------------------------------
+#### main
 
 if __name__ ==  "__main__":
   if len(sys.argv) > 1 and sys.argv[1]:
