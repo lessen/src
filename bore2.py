@@ -22,8 +22,8 @@ def C(s,sep=SEP, dirt=DIRT):
 def nasa93():
   return dict(
   names=[
-     "recordnumber", "projectname", "cat2", "forg", "center", "year", "mode", 
-     "rely", "data", "cplx", "time", "stor", "virt", "turn", "acap", "aexp", "pcap", "vexp", "lexp", "modp", "tool", "sced", 
+     "recordnumber", "projectname", "cat2", "forg", "center", "year", "mode",
+     "rely", "data", "cplx", "time", "stor", "virt", "turn", "acap", "aexp", "pcap", "vexp", "lexp", "modp", "tool", "sced",
      "equivphyskloc", "act_effort"],
   types=[
        X,   S,   S,                   S, S, I,    S,            S,  S,  S,  S,  S,  S, S,  S,  S,  S,  S,  S,  S,  S,  S, F,    F],
@@ -211,17 +211,29 @@ class coco(nklass):
   def objs(i,lst): return lst[-2:]
   def betters(i):  return [max,min]
 
-class sym:
+class column:
+  """
+  Columns know how to compile raw values for
+  that column, and  how to cook those values.
+  They als can keep summary statistics 
+  for each column.
+  """
   def __init__(i,type):
     i.isDecision = True
     i.type = type
   def raw(i,x)  : return i.type(x)
-  def cook(i,x,pre="") : return x
+  def cook(i,x) : return x
 
-class num:
+class symColumn(column): 
+  """ Symbol columns are nothing special."""
+  pass
+
+class numColumn(column):
+  """Numeric columns know how to chop values
+  above and below the median value, and
+  how to normalize numbers 0..1 min..max"""
   def __init__(i,type):
-    i.isDecision = True
-    i.type = type
+    super().__init__(type)
     i.lo, i.hi, i.all = 1e31, -1e31, []
     i._median = None
   def raw(i,x):
@@ -252,14 +264,14 @@ class table:
     i.names = names
     i.rows  = []
     # pass0. collect meta data
-    i.cols  = [ (num if NUM(t) else sym)(t) for t in types ]
+    i.cols  = [ (numColumn if NUM(t) else symColumn)(t) for t in types ]
     for x in ako().objs(i.cols):
       x.isDecision = False
-    # pass1: collect raw numeric data 
+    # pass1: collect data about each column, create "raw" rows
     for row in data:
       row    = ako([col.raw(val) for col,val in zip(i.cols,row)])
       i.rows += [row]
-    # pass2: cook those raw values
+    # pass2: use what we know about each column to "cook" the raw values
     for row in i.rows:
       row.cooked = [col.cook(val) for col,val in zip(i.cols,row.raw)]
 
@@ -268,7 +280,7 @@ class moea(table):
     for row1 in i.rows:
       for row2 in i.rows:
         if row1.cdom(row2):
-            row1.score += 1
+          row1.score += 1
     i.rows = sorted(i.rows,
                     key=lambda z: z.score,
                     reverse=True)
@@ -284,7 +296,7 @@ def eg0():
 def eg1():
   t = moea(ako=coco,**nasa93())
   t.rankRows()
-  #printm([row.cooked for row in t.rows])
+  printm([row.cooked for row in t.rows])
 
 if __name__ ==  "__main__":
   if len(sys.argv) > 1 and sys.argv[1]:
