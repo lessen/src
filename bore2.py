@@ -21,7 +21,7 @@ OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-#--------------------------------------------------------
+#_______________________________________________________________--
 #### About
 
 - Inspired by the Hyperband optimizer: discover good ideas
@@ -54,7 +54,7 @@ come from a small region.
 
 import traceback,sys,re,math,random,time
 
-# ------------------------------------------------------------------------
+# ____________________________________________________________________________________
 #### Data definitions
 
 SEP  = r"\S+"
@@ -75,7 +75,7 @@ def C(s,sep=SEP, dirt=DIRT):
   cells = re.findall(sep,clean)
   return [ cell.strip() for cell in cells ]
 
-# ------------------------------------------------------------------------
+# ____________________________________________________________________________________
 #### Data
 
 # todo: if they want to optimize for recent projects, need to max year... how would that change things?
@@ -183,7 +183,7 @@ def nasa93():
     C("100  X    Avionics             f  2  1983  embedded      h   n   vh  vh  vh  h  h   n   n   n   l   l   n   n   h  6.2    12")
    ])
 
-# -----------------------------------------------------------------
+# ______________________________________________________________________-----
 #### Rows
 
 class Row:
@@ -249,7 +249,7 @@ class Coco(Nklass):
 
 ## todo: check: can we define the standard Moea problems (e.g. fonseca) as rows?
 
-# -----------------------------------------------------------------
+# ______________________________________________________________________-----
 #### Columns
 
 class Column:
@@ -266,13 +266,17 @@ class Column:
   def cook(i,x) : return x
 
 class SymColumn(Column):
-  """ Symbol Columns are nothing special."""
+  """ 
+  Symbol Columns are nothing special.
+  """
   pass
 
 class NumColumn(Column):
-  """Numeric Columns know how to chop values
+  """
+  Numeric Columns know how to chop values
   above and below the median value, and
-  how to normalize numbers 0..1 min..max"""
+  how to normalize numbers 0..1 min..max
+  """
   def __init__(i,type):
     super().__init__(type)
     i.lo, i.hi, i.all = 1e31, -1e31, []
@@ -298,7 +302,7 @@ class NumColumn(Column):
                    (x - i.lo)/(i.hi - i.lo + 1e-31)))
 
 
-# -----------------------------------------------------------------
+# ______________________________________________________________________-----
 #### Tables
 
 class Table:
@@ -338,7 +342,7 @@ class Moea(Table):
                     key=lambda z: z.score,
                     reverse=True)
 
-# -------------------------------------------------------------
+# ______________________________________________________________________-
 #### some utilities
 def median(lst):
   n = len(lst)
@@ -359,7 +363,7 @@ def printm(matrix,sep=","):
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
-# -------------------------------------------------------------
+# ______________________________________________________________________-
 #### demo stuff
 
 def eg(f=None,want=None,all={},names=[]):
@@ -407,7 +411,7 @@ def eg1():
   t.rankRows()
   printm([row.cooked for row in t.rows])
 
-# -------------------------------------------------------------
+# ______________________________________________________________________-
 #### main
 
 if __name__ ==  "__main__":
