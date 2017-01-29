@@ -168,31 +168,25 @@ def printm(matrix,sep=","):
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
-class row: 
-  def __init__(i,raw):
+class basicRow:
+  def __init__(i,raw=None):
     i.raw, i.cooked = raw, None
   def __repr__(i):
     return str(i.cooked if i.cooked else i.raw)
-  def chop(i,chops,pre=""):
-    out = i.raw[:]
-    for n in chops:
-      x,med  = i.raw[n], chops[n]
-      out[n] = pre+"-" if x < med else pre+"+"
-    i.cooked = i.decs(out) + i.objs(i.raw)
   def decs(i,lst): pass
   def objs(i,lst): pass
   def betters(i):  pass
 
-class classifier(row):
+class classifier(basicRow):
   def decs(i,lst): return lst[:-1]
   def objs(i,lst): return [lst[-1]]
   def betters(i):  return [min]
 
-class nklass(row):
-  def __init__(i,*lst):
-    super().__init__(*lst) 
+class nklass(basicRow):
+  def __init__(i,*lst,**d):
+    super().__init__(*lst,**d)
     i.score=0
-  def cdom(i, j):
+  def cdom(i, j): # need to normalize
     def w(better):
       return -1 if better == min else 1
     def expLoss(w,x1,y1,n):
@@ -209,12 +203,45 @@ class nklass(row):
     assert len(x) == len(y), "can't compare apples and oranges"
     l1= loss(x,y)
     l2= loss(y,x)
-    return l1 < l2 
+    return l1 < l2
 
 class coco(nklass):
   def decs(i,lst): return lst[:-2]
   def objs(i,lst): return lst[-2:]
   def betters(i):  return [max,min]
+
+class sym:
+  def __init__(i,type):
+    i.isDecision = True
+    i.type = type
+  def raw(i,x)  : return i.type(x)
+  def cook(i,x,pre="") : return x
+
+class num:
+  def __init__(i,type):
+    i.isDecision = True
+    i.type = type
+    i.lo, i.hi, i.all = 1e31, -1e31, []
+    i._median = None
+  def raw(i,x):
+    x = i.type(x)
+    i._median = None # old median now expired
+    i.lo = min(i.lo,x)
+    i.hi = max(i.hi,x)
+    i.all += [x]
+    return x
+  def median(i):
+    if i._median is None:
+      i._median= median(i.all)
+    return i._median
+  def cook(i,x):
+    return i.chop(x) if i.isDecision else i.norm(x)
+  def chop(i,x):
+    return "-" if x <= i.median() else "+"
+  def norm(i,x):
+    return max(0,
+               min(1,
+                   (x - i.lo)/(i.hi - i.lo + 1e-31)))
 
 class table:
   def __init__(i,names= [],
@@ -222,21 +249,18 @@ class table:
                data=  [],
                ako =  classifier):
     i.names = names
-    i.types = types
-    i.ako   = ako
     i.rows  = []
-    i.chops = []
-    i.nums  = [ n for n,t in enumerate(i.types) if NUM(t) ]
-    i.prep(data)
-  def prep(i,data):
-    chops0 = { n: list() for n in i.nums }
-    for row0 in data:
-      row1 = [ t(cell) for t,cell in zip(i.types, row0) ]
-      i.rows += [i.ako(row1)]
-      for n in i.nums:
-        chops0[n] += [row1[n]]
-    i.chops = { n: median( chops0[n] ) for n in i.nums }
-    [row.chop(i.chops) for row in i.rows]
+    # pass0. collect meta data
+    i.cols  = [ (num if NUM(t) else sym)(t) for t in types ]
+    for x in ako().objs(i.cols):
+      x.isDecision = False
+    # pass1: collect raw numeric data 
+    for row in data:
+      row    = ako([col.raw(val) for col,val in zip(i.cols,row)])
+      i.rows += [row]
+    # pass2: cook those raw values
+    for row in i.rows:
+      row.cooked = [col.cook(val) for col,val in zip(i.cols,row.raw)]
 
 class moea(table):
   def rankRows(i):
@@ -244,9 +268,9 @@ class moea(table):
       for row2 in i.rows:
         if row1.cdom(row2):
             row1.score += 1
-    i.rows = sorted(i.rows, 
-                    key=lambda z: z.score, 
-                    reversed=True)
+    i.rows = sorted(i.rows,
+                    key=lambda z: z.score,
+                    reverse=True)
 
 @eg
 def eg0():
@@ -259,7 +283,7 @@ def eg0():
 def eg1():
   t = moea(ako=coco,**nasa93())
   t.rankRows()
-  printm([row.cooked for row in t.rows])
+  #printm([row.cooked for row in t.rows])
 
 if __name__ ==  "__main__":
   if len(sys.argv) > 1 and sys.argv[1]:

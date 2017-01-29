@@ -28,21 +28,21 @@ ______
 ## Programmer's Guide
 
 In the following,  `klass` is some with attributes `k.v1,k.v2,..` etc
-which we want to (temporarily) set 
+which we want to (temporarily) set
 to something else (and the something else comes from
-the values in the dictionary `**d`). 
+the values in the dictionary `**d`).
 
 Note that the
 values in `d` can be lists or a single items
 
 """
 
-import itertools,sys,random,ast,tempfile,os        
+import itertools,sys,random,ast,tempfile,os
 
 def rx(klass,**d):
   lst = [[(k,v) for v in
-          # Ensure k's value is something we can iterate over. 
-          (vs if type(vs)==list else [vs])] 
+          # Ensure k's value is something we can iterate over.
+          (vs if type(vs)==list else [vs])]
            for k,vs in d.items()]
   # Generate all combinations.
   combos = list( itertools.product(*lst) )
@@ -90,7 +90,7 @@ def printm(matrix,sep=","):
 
 def say(*lst):
   print(*lst, sep=' ', end='', file=sys.stdout, flush=True)
-        
+
 
 def freshFile(dir=None,prefix=None):
   dir    = dir or os.path.expanduser("~")+"/tmp"
@@ -146,4 +146,4 @@ def cdom1(x, y, betters):
     return sum(losses) / n
   l1= loss(x,y)
   l2= loss(y,x)
-  return l1 < l2 
+  return l1 < l2
