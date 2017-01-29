@@ -1,6 +1,6 @@
 #!/home/timm//opt/pypy/bin/pypy3
 """
-bore2.py Rule learning for multi-obejctive problems.
+bore2.py Rule learning for multi-objective problems.
 Copyright (c) 2016, Tim Menzies tim@menzies.us, MIT license v2.
 
 Permission is hereby granted, free of charge, to any person obtaining a
@@ -24,16 +24,32 @@ OTHER DEALINGS IN THE SOFTWARE.
 #--------------------------------------------------------
 #### About
 
-- Inspired by the Hyperband optimizer.
-- Recursively discard 50% worst ranges for multi-objective goals.
-- Ranges scored by b^2/(b+r) where "b" is top half and "r" is bottom half.
-- At each level, discretize numerics into above/below median so recursive 
-  calls act as discretizer, but just for "interesting" regions.
-- Score each recursively level using the "george trick", i.e. #of other
-  rows dominated by cdom. Compute these scores _once_ at first
-  level of recursion then reuse for all other levels.
-- Terminate recursion when cliffsDelta says no improvement in level i+1
+- Inspired by the Hyperband optimizer: discover good ideas
+  by recursively discarding half the bad ones.
+- Scores rows by their cdom score.
+       - Do this only once then reuse the score.
+- BANDS = []
+- Repeat on training data.
+     - BEFORE = cdom distribution of current rows
+     - Using cdom score, divide current rows into 50% best and rest.
+     - Discretize numerics above and below median using the ranges in the current rows
+     - Rank ranges in descending order by b^2/(b+r) where "b" is best and "r" is rest
+          - OUT = upper half of the ranges
+          - BANDS = OUT + BANDS # i.e. prepend them in sorted order
+     - Discard rows that have none of OUT
+     - If too few remaining rows
+         exit
+     - AFTER = cdom distribution of surviving rows
+     - If  cliffsDelta says BEFORE == AFTER
+         exit
+- Report:
+     - A decision ordering diagram running BANDS over a test set
 
+Note that the above incrementally discretizes, but only within zones of interest.
+
+Todo: not linear, but clustering remaining rows and explore trees, not a line.
+But not too worried about that. The SWAY experience is that most of the solutions
+come from a small region.
 """
 
 import traceback,sys,re,math,random,time
@@ -60,7 +76,7 @@ def C(s,sep=SEP, dirt=DIRT):
     return [ cell.strip() for cell in cells ]
 
 # ------------------------------------------------------------------------
-#### Data 
+#### Data
 
 def nasa93():
   return dict(
@@ -185,7 +201,7 @@ class basicRow:
 
 class classifier(basicRow):
   """
-  Standard row for classifiers. Last cell is the 
+  Standard row for classifiers. Last cell is the
   klass.
   """
   def decs(i,lst): return lst[:-1]
@@ -238,7 +254,7 @@ class column:
   """
   Columns know how to compile raw values for
   that column, and  how to cook those values.
-  They als can keep summary statistics 
+  They als can keep summary statistics
   for each column.
   """
   def __init__(i,type):
@@ -247,7 +263,7 @@ class column:
   def raw(i,x)  : return i.type(x)
   def cook(i,x) : return x
 
-class symColumn(column): 
+class symColumn(column):
   """ Symbol columns are nothing special."""
   pass
 
@@ -286,7 +302,7 @@ class numColumn(column):
 class table:
   """
   Tables contain columns and rows.
-  Tables raw data and cook them.
+  Tables organize collecting raw data, then  cook it.
   """
   def __init__(i,names= [],
                types= [],
