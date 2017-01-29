@@ -223,6 +223,11 @@ class nklass(basicRow):
     return l1 < l2
 
 class coco(nklass):
+  """
+  My cocomo rows are an MOEA where
+  we want to max/min LOC/effort
+  (which are found in the last 2 columns.
+  """
   def decs(i,lst): return lst[:-2]
   def objs(i,lst): return lst[-2:]
   def betters(i):  return [max,min]
@@ -273,6 +278,9 @@ class numColumn(column):
                    (x - i.lo)/(i.hi - i.lo + 1e-31)))
 
 class table:
+  """
+  Tables input raw data and cook them
+  """
   def __init__(i,names= [],
                types= [],
                data=  [],
@@ -292,6 +300,9 @@ class table:
       row.cooked = [col.cook(val) for col,val in zip(i.cols,row.raw)]
 
 class moea(table):
+  """
+  MOEA tables score each row by their cdom score.
+  """
   def rankRows(i):
     "score each row according to how many other rows they dominate"
     for row1 in i.rows:
