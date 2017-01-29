@@ -1,7 +1,16 @@
 #!/home/timm//opt/pypy/bin/pypy3
 """
-bore2.py Recursively discard worst half of the ranges for mulit-objective goals
+bore2.py Recursively discard worst half of the ranges for multi-objective goals (*^$).
 Copyright (c) 2016, Tim Menzies tim@menzies.us, MIT license v2.
+
+(*) At each stage, discretize numerics into above/below median
+so recursive calls act as discretizer, but just for "interesting" regions.
+
+(^) Score each recursively level using the "george trick", i.e. #of other
+rows dominated by cdom. Compute these scores _once_ at first
+level of recursion then reuse for all other levels.
+
+($) Terminate recursion when cliffsDelta says no improvement in level i+1
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
