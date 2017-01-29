@@ -215,6 +215,8 @@ class coco(nklass):
   def objs(i,lst): return lst[-2:]
   def betters(i):  return [max,min]
 
+## todo: check: can we define the standard MOEA problems (e.g. fonseca) as rows?
+
 # -----------------------------------------------------------------
 #### Columns
 
@@ -262,6 +264,10 @@ class numColumn(column):
     return max(0,
                min(1,
                    (x - i.lo)/(i.hi - i.lo + 1e-31)))
+
+
+# -----------------------------------------------------------------
+#### Tables
 
 class table:
   """
