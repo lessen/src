@@ -186,7 +186,7 @@ def nasa93():
 # -----------------------------------------------------------------
 #### Rows
 
-class basicRow:
+class Row:
   """
   Rows are pairs of raw and cooked data.
   Rows know which cells are decisions and objectives.
@@ -201,18 +201,18 @@ class basicRow:
   def objs(i,lst): pass
   def betters(i):  pass
 
-class classifier(basicRow):
+class Classifier(Row):
   """
-  Standard row for classifiers. Last cell is the
+  Standard row for Classifiers. Last cell is the
   klass.
   """
   def decs(i,lst): return lst[:-1]
   def objs(i,lst): return [lst[-1]]
   def betters(i):  return [min]
 
-class nklass(basicRow):
+class Nklass(Row):
   """
-  Standard row for MOEA problems.
+  Standard row for Moea problems.
   Rows can be compared with `cdom`.
   """
   def __init__(i,*lst,**d):
@@ -237,27 +237,27 @@ class nklass(basicRow):
     l2= loss(y,x)
     return l1 < l2
 
-class coco(nklass):
+class Coco(Nklass):
   """
-  My cocomo rows are an MOEA where
+  My Cocomo rows are an Moea where
   we want to max/min LOC/effort
-  (which are found in the last 2 columns.
+  (which are found in the last 2 Columns.
   """
   def decs(i,lst): return lst[:-2]
   def objs(i,lst): return lst[-2:]
   def betters(i):  return [max,min]
 
-## todo: check: can we define the standard MOEA problems (e.g. fonseca) as rows?
+## todo: check: can we define the standard Moea problems (e.g. fonseca) as rows?
 
 # -----------------------------------------------------------------
 #### Columns
 
-class column:
+class Column:
   """
   Columns know how to compile raw values for
-  that column, and  how to cook those values.
+  that Column, and  how to cook those values.
   They als can keep summary statistics
-  for each column.
+  for each Column.
   """
   def __init__(i,type):
     i.isDecision = True
@@ -265,12 +265,12 @@ class column:
   def raw(i,x)  : return i.type(x)
   def cook(i,x) : return x
 
-class symColumn(column):
-  """ Symbol columns are nothing special."""
+class SymColumn(Column):
+  """ Symbol Columns are nothing special."""
   pass
 
-class numColumn(column):
-  """Numeric columns know how to chop values
+class NumColumn(Column):
+  """Numeric Columns know how to chop values
   above and below the median value, and
   how to normalize numbers 0..1 min..max"""
   def __init__(i,type):
@@ -301,32 +301,32 @@ class numColumn(column):
 # -----------------------------------------------------------------
 #### Tables
 
-class table:
+class Table:
   """
-  Tables contain columns and rows.
+  Tables contain Columns and rows.
   Tables organize collecting raw data, then  cook it.
   """
   def __init__(i,names= [],
                types= [],
                data=  [],
-               ako =  classifier):
+               ako =  Classifier):
     i.names = names
     i.rows  = []
     # pass0. collect meta data
-    i.cols  = [ (numColumn if NUM(t) else symColumn)(t) for t in types ]
+    i.cols  = [ (NumColumn if NUM(t) else SymColumn)(t) for t in types ]
     for x in ako().objs(i.cols):
       x.isDecision = False
-    # pass1: collect data about each column, create "raw" rows
+    # pass1: collect data about each Column, create "raw" rows
     for row in data:
       row    = ako([col.raw(val) for col,val in zip(i.cols,row)])
       i.rows += [row]
-    # pass2: use what we know about each column to "cook" the raw values
+    # pass2: use what we know about each Column to "cook" the raw values
     for row in i.rows:
       row.cooked = [col.cook(val) for col,val in zip(i.cols,row.raw)]
 
-class moea(table):
+class Moea(Table):
   """
-  MOEA tables score each row by their cdom score.
+  Moea Tables score each row by their cdom score.
   """
   def rankRows(i):
     "score each row according to how many other rows they dominate"
@@ -396,14 +396,14 @@ def eg(f=None,want=None,all={},names=[]):
 
 @eg
 def eg0():
-  t = table(**nasa93())
+  t = Table(**nasa93())
   printm([row.cooked for row in t.rows])
   print(t.rows[-4].raw)
   print(t.rows[-4].cooked)
 
 @eg
 def eg1():
-  t = moea(ako=coco,**nasa93())
+  t = Moea(ako=Coco,**nasa93())
   t.rankRows()
   printm([row.cooked for row in t.rows])
 
