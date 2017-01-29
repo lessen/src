@@ -122,36 +122,6 @@ def nasa93():
     C("100  X    Avionics             f  2  1983  embedded      h   n   vh  vh  vh  h  h   n   n   n   l   l   n   n   h  6.2    12")
    ])
 
-def eg(f=None,want=None,all={},names=[]):
-  "Decorator for functions that can be called from command line."
-  if want: # run one example
-    if not want in all:
-      return print("# cannot execute: missing %s" % want)
-    f=all[want]
-    hdr = "\n-----| %s |"+ ("-"*40)
-    print(hdr % f.__name__,end="\n# ")
-    if f.__doc__:
-      print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
-    print("")
-    t1=time.process_time()
-    f()
-    t2=time.process_time()
-    print("# pass","(%.4f secs)" % (t2-t1))
-  else:
-    if f: # add one example
-      all[f.__name__] = f
-      names += [f.__name__]
-    else: # run all examples, count how many do not crash
-      n=y=0
-      for name in names:
-        try:
-          eg(want=name)
-          y += 1
-        except Exception:
-          n += 1
-          print(traceback.format_exc())
-      print("# tried= ",y+n," %passed= ",100*round(y/(y+n)))
-
 def median(lst):
   n = len(lst)
   p = q  = n//2
@@ -312,6 +282,42 @@ class moea(table):
     i.rows = sorted(i.rows,
                     key=lambda z: z.score,
                     reverse=True)
+
+########################################################################
+### demo stuff
+#######################################################################
+
+def eg(f=None,want=None,all={},names=[]):
+  "Decorator for functions that can be called from command line."
+  if want: # run one example
+    if not want in all:
+      return print("# cannot execute: missing %s" % want)
+    f=all[want]
+    hdr = "\n-----| %s |"+ ("-"*40)
+    print(hdr % f.__name__,end="\n# ")
+    if f.__doc__:
+      print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
+    print("")
+    t1=time.process_time()
+    f()
+    t2=time.process_time()
+    print("# pass","(%.4f secs)" % (t2-t1))
+  else:
+    if f: # add one example
+      all[f.__name__] = f
+      names += [f.__name__]
+    else: # run all examples, count how many do not crash
+      n=y=0
+      for name in names:
+        try:
+          eg(want=name)
+          y += 1
+        except Exception:
+          n += 1
+          print(traceback.format_exc())
+      print("# tried= ",y+n," %passed= ",100*round(y/(y+n)))
+
+### and here are the demos that can be called at the command line
 
 @eg
 def eg0():
