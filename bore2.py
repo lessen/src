@@ -2,6 +2,9 @@
 
 import traceback,sys,re,math,random,time
 
+# ------------------------------------------------------------------------
+#### Data definitions
+
 SEP  = r"\S+"
 DIRT = r'([\n\r\t]|#.*)'
 
@@ -15,9 +18,13 @@ def X(_) : return "?"
 def NUM(x): return x in [L,F,I]
 
 def C(s,sep=SEP, dirt=DIRT):
+  "Convert a string of words into a list"
     clean = re.sub(dirt, "",s)
     cells = re.findall(sep,clean)
     return [ cell.strip() for cell in cells ]
+
+# ------------------------------------------------------------------------
+#### Data 
 
 def nasa93():
   return dict(
@@ -185,7 +192,6 @@ class coco(nklass):
   def decs(i,lst): return lst[:-2]
   def objs(i,lst): return lst[-2:]
   def betters(i):  return [max,min]
-
 
 # -----------------------------------------------------------------
 #### Columns
