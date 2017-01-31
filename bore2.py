@@ -363,10 +363,18 @@ def printm(matrix,sep=","):
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
+def literal(x):
+  try:
+    return int(x)
+  except Exception:
+    try:
+      return float(x)
+    except Exception:
+      return x
 # ______________________________________________________________________-
 #### demo stuff
 
-def eg(f=None,want=None,all={},names=[]):
+def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
   "Decorator for functions that can be called from command line."
   if want: # run one example
     if not want in all:
@@ -378,7 +386,7 @@ def eg(f=None,want=None,all={},names=[]):
       print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
     print("")
     t1=time.process_time()
-    f()
+    f(*lst,**dic)
     t2=time.process_time()
     print("# pass","(%.4f secs)" % (t2-t1))
   else:
@@ -410,6 +418,20 @@ def eg1():
   t = Moea(ako=Coco,**nasa93())
   t.rankRows()
   printm([row.cooked for row in t.rows])
+
+@eg
+def xx(help=None):
+  if help:
+    return print(help)
+  d,pairs={},[]
+  for x in sys.argv[2:]:
+    if   x[0] == "-": d[re.sub('^-*',"",x)] = False
+    elif x[0] == "+": d[re.sub('^\+*',"",x)] = True
+    else            : pairs += [x]
+  str= ' '.join(pairs)
+  pat= re.compile(r'(\S+)=([^ ]+)[ $]*')
+  d.update({key:literal(val) for (key,val) in re.findall(pat,str) })
+
 
 # ______________________________________________________________________-
 #### main
