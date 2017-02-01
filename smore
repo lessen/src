@@ -516,7 +516,6 @@ def new():
       "git commit -am newStuff",
       "git push origin master")
 
-
 @eg
 def eg0():
   "basic test, simple classifier"
