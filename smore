@@ -519,12 +519,12 @@ def who(email="tim@menzies.us", name="Tim Menzies"):
       "git config credential.helper 'cache --timeout=3600'")
 
 @eg
-def old():
+def hello():
   "Update local repo from web"
   cmd("git pull origin master")
 
 @eg
-def new():
+def bye():
   "Update web repo from local"
   cmd("git add .",
       "git commit -am newStuff",
