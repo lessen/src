@@ -430,16 +430,17 @@ def comLine2Dictionary():
     else            : pairs += [x]
   str= ' '.join(pairs)
   NE = r'[^=]+'
-  BS = r'\S+' 
+  BS = r'\S+'
   tokens = '(' + NE +  ')=('+ '|'.join([BS]) + ')[ \n]*'
   pat= re.compile(tokens)
-  d.update({key:re.sub("_",' ',literal(val)) 
+  d.update({key:re.sub("_",' ',literal(val))
             for (key,val) in re.findall(pat,str) })
   return d
 
 def cmd(*coms):
   for com in coms:
     try:
+       print(com)
        subprocess.check_output(com,shell=True)
     except Exception:
       pass
@@ -449,27 +450,7 @@ def cmd(*coms):
 
 def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
   "Decorator for functions that can be called from command line."
-  if want=="help":
-    helps=[]
-    for name in names:
-      name=name
-      doc=defaults = " "
-      fun = all[name]
-      if fun.__doc__:
-        doc = re.sub(r'\n[ \t]*'," ",fun.__doc__) 
-      meta= inspect.getargspec(fun)
-      kvs = [('%s=%s' % kv) for kv in 
-                          zip(meta.args or [],meta.defaults or [])]
-      if kvs:
-        defaults = ' '.join(kvs)
-      helps += [[name,doc,defaults]]
-    helps += [["help","print this help text", ""]]
-    print("")
-    printm(helps,sep="\t",align="<")
-  elif want: # run one example
-    if not want in all:
-      return print("# cannot execute: missing %s" % want)
-    f=all[want]
+  def run1(f):
     hdr = "\n-----| %s |"+ ("-"*40)
     print(hdr % f.__name__,end="\n# ")
     if f.__doc__:
@@ -479,20 +460,43 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
     f(*lst,**dic)
     t2=time.process_time()
     print("# pass","(%.4f secs)" % (t2-t1))
+  # ------------------------------------------
+  def runAll():
+    n=y=0
+    for name in names:
+      try:
+        run1(all[name])
+        y += 1
+      except Exception:
+        n += 1
+        print(traceback.format_exc())
+    print("# tried= ",y+n," %passed= ",100*round(y/(y+n)))
+  # ------------------------------------------
+  def help1(name, doc=' ',defaults=' '):
+    fun = all[name]
+    if fun.__doc__:
+      doc = re.sub(r'\n[ \t]*'," ",fun.__doc__)
+    meta= inspect.getargspec(fun)
+    if meta.args:
+      defaults = ' '.join([('%s=%s' % kv) for kv in
+                           zip(meta.args,meta.defaults)])
+    return [name,doc,defaults]
+  # ------------------------------------------
+  if want=="egs":
+    runAll()
+  elif want : # run one example
+    if want in all:
+      run1(all[want])
+    else:
+      return print("# %s unknown" % want)
+  # ------------------------------------------
+  elif f:
+    all[f.__name__] = f
+    names += [f.__name__]
+  # ------------------------------------------
   else:
-    if f: # add one example
-      all[f.__name__] = f
-      names += [f.__name__]
-    else: # run all examples, count how many do not crash
-      n=y=0
-      for name in names:
-        try:
-          eg(want=name)
-          y += 1
-        except Exception:
-          n += 1
-          print(traceback.format_exc())
-      print("# tried= ",y+n," %passed= ",100*round(y/(y+n)))
+    print("")
+    printm([help1(name) for name in names], sep="\t", align="<")
 
 ### and here are the demos that can be called at the command line
 
@@ -538,10 +542,6 @@ def eg2():
   t.score()
 
 
-@eg
-def tests():
-  "Run all the tests"
-  eg()
 # ______________________________________________________________________-
 #### main
 
@@ -550,5 +550,5 @@ if __name__ ==  "__main__":
     eg(want=sys.argv[1],
        dic=comLine2Dictionary())
   else:
-    eg(want="help")
+    eg()
 
