@@ -406,12 +406,13 @@ def median(lst):
     if not n % 2: q = p -1
   return lst[p] if p==q else (lst[p]+lst[q])/2
 
-def printm(matrix,sep=","):
+def printm(matrix,sep=",",align=">"):
   "Pretty print. Columns right justified"
   s = [[str(e) for e in row] for row in matrix]
   lens = [max(map(len, col)) for col in zip(*s)]
   sep = '%s ' % sep
-  fmt = sep.join('{{:>{}}}'.format(x) for x in lens)
+  fmt0 = '{{:%s{}}}' % align
+  fmt = sep.join(fmt0.format(x) for x in lens)
   for row in [fmt.format(*row) for row in s]:
     print(row)
 
@@ -443,12 +444,22 @@ def cmd(*coms):
 def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
   "Decorator for functions that can be called from command line."
   if want=="help":
+    helps=[]
     for name in names:
+      name=name
+      doc=defaults = " "
       fun = all[name]
       if fun.__doc__:
-        print(name, "\t: ",re.sub(r'\n[ \t]*'," ",fun.__doc__))
-    
-    print("help","\t: ","print this help text")
+        doc = re.sub(r'\n[ \t]*'," ",fun.__doc__) 
+      meta= inspect.getargspec(fun)
+      kvs = [('%s=%s' % kv) for kv in 
+                          zip(meta.args or [],meta.defaults or [])]
+      if kvs:
+        defaults = ' '.join(kvs)
+      helps += [[name,doc,defaults]]
+    helps += [["help","print this help text", ""]]
+    print(helps)
+    printm(helps,sep="\t",align="<")
   elif want: # run one example
     if not want in all:
       return print("# cannot execute: missing %s" % want)
