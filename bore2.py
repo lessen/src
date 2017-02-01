@@ -52,7 +52,7 @@ But not too worried about that. The SWAY experience is that most of the solution
 come from a small region.
 """
 
-import traceback,sys,re,math,random,time
+import traceback,sys,re,math,random,time,ast
 
 # ____________________________________________________________________________________
 #### Data definitions
@@ -79,6 +79,11 @@ def C(s,sep=SEP, dirt=DIRT):
 #### Data
 
 # todo: if they want to optimize for recent projects, need to max year... how would that change things?
+
+#tod:
+  # make class a faracde for the data
+  # add strigns as class vars
+  # add a superclass that knows how to wipe and swap
 
 def nasa93():
   return dict(
@@ -266,7 +271,7 @@ class Column:
   def cook(i,x) : return x
 
 class SymColumn(Column):
-  """ 
+  """
   Symbol Columns are nothing special.
   """
   pass
@@ -365,17 +370,33 @@ def printm(matrix,sep=","):
 
 def literal(x):
   try:
-    return int(x)
+    return ast.literal_eval(x)
   except Exception:
-    try:
-      return float(x)
-    except Exception:
-      return x
+    return x
+
+def comLine2Dictionary():
+  d,pairs={},[]
+  for x in sys.argv[2:]:
+    if   x[0] == "-": d[re.sub('^-*',"",x)] = False
+    elif x[0] == "+": d[re.sub('^\+*',"",x)] = True
+    else            : pairs += [x]
+  str= ' '.join(pairs)
+  pat= re.compile(r'(\S+)=([^ ]+)[ $]*')
+  d.update({key:literal(val) for (key,val) in re.findall(pat,str) })
+  return d
+
+
 # ______________________________________________________________________-
 #### demo stuff
 
 def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
   "Decorator for functions that can be called from command line."
+  if want=="help":
+    for name in names:
+      doc = all[name].__doc__
+      if doc:
+        print(name, "\t: ",re.sub(r'\n[ \t]*',"\n ",doc))
+    return print("help","\t: ","print this help text")
   if want: # run one example
     if not want in all:
       return print("# cannot execute: missing %s" % want)
@@ -408,6 +429,7 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
 
 @eg
 def eg0():
+  "basic test, simple classifier"
   t = Table(**nasa93())
   printm([row.cooked for row in t.rows])
   print(t.rows[-4].raw)
@@ -415,22 +437,10 @@ def eg0():
 
 @eg
 def eg1():
+  "can we handle multi-obj?"
   t = Moea(ako=Coco,**nasa93())
   t.rankRows()
   printm([row.cooked for row in t.rows])
-
-@eg
-def xx(help=None):
-  if help:
-    return print(help)
-  d,pairs={},[]
-  for x in sys.argv[2:]:
-    if   x[0] == "-": d[re.sub('^-*',"",x)] = False
-    elif x[0] == "+": d[re.sub('^\+*',"",x)] = True
-    else            : pairs += [x]
-  str= ' '.join(pairs)
-  pat= re.compile(r'(\S+)=([^ ]+)[ $]*')
-  d.update({key:literal(val) for (key,val) in re.findall(pat,str) })
 
 
 # ______________________________________________________________________-
@@ -438,7 +448,8 @@ def xx(help=None):
 
 if __name__ ==  "__main__":
   if len(sys.argv) > 1 and sys.argv[1]:
-    eg(want=sys.argv[1])
+    eg(want=sys.argv[1],
+       dic=comLine2Dictionary())
   else:
     eg()
 
