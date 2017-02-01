@@ -482,17 +482,17 @@ def eg(f=None,want=None,dic={}, all={},names=[]):
                            zip(meta.args,meta.defaults)])
     return [name,doc,defaults]
   # ------------------------------------------
-  if want=="!":
+  if f:
+    all[f.__name__] = f
+    names += [f.__name__]
+  # ------------------------------------------
+  elif want=="!":
     runAll()
   elif want : # run one example
     if want in all:
       run1(all[want])
     else:
       return print("# %s unknown" % want)
-  # ------------------------------------------
-  elif f:
-    all[f.__name__] = f
-    names += [f.__name__]
   # ------------------------------------------
   else:
     print("")
