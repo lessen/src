@@ -429,13 +429,16 @@ def comLine2Dictionary():
     elif x[0] == "+": d[re.sub('^\+*',"",x)] = True
     else            : pairs += [x]
   str= ' '.join(pairs)
-  pat= re.compile(r'(\S+)=([^ ]+)[ $]*')
-  d.update({key:literal(val) for (key,val) in re.findall(pat,str) })
+  NE = r'[^=]+'
+  BS = r'\S+' 
+  tokens = '(' + NE +  ')=('+ '|'.join([BS]) + ')[ \n]*'
+  pat= re.compile(tokens)
+  d.update({key:re.sub("_",' ',literal(val)) 
+            for (key,val) in re.findall(pat,str) })
   return d
 
 def cmd(*coms):
   for com in coms:
-    print(com)
     subprocess.check_output(com,shell=True)
 
 # ______________________________________________________________________-
@@ -458,7 +461,7 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
         defaults = ' '.join(kvs)
       helps += [[name,doc,defaults]]
     helps += [["help","print this help text", ""]]
-    print(helps)
+    print("")
     printm(helps,sep="\t",align="<")
   elif want: # run one example
     if not want in all:
@@ -533,6 +536,10 @@ def eg2():
   t.score()
 
 
+@eg
+def tests():
+  "Run all the tests"
+  eg()
 # ______________________________________________________________________-
 #### main
 
@@ -541,5 +548,5 @@ if __name__ ==  "__main__":
     eg(want=sys.argv[1],
        dic=comLine2Dictionary())
   else:
-    eg()
+    eg(want="help")
 
