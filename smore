@@ -482,7 +482,7 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
                            zip(meta.args,meta.defaults)])
     return [name,doc,defaults]
   # ------------------------------------------
-  if want=="egs":
+  if want=="!":
     runAll()
   elif want : # run one example
     if want in all:
@@ -496,7 +496,9 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
   # ------------------------------------------
   else:
     print("")
-    printm([help1(name) for name in names], sep="\t", align="<")
+    printm([[help1(name) for name in names],[
+            "!", "run all commands" " "]],
+            sep="\t", align="<")
 
 ### and here are the demos that can be called at the command line
 
