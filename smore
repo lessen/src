@@ -53,7 +53,7 @@ But not too worried about that. The SWAY experience is that most of the solution
 come from a small region.
 """
 
-import traceback,sys,re,math,random,time,ast,subprocess
+import traceback,sys,re,math,random,time,ast,subprocess,inspect
 
 # ____________________________________________________________________________________
 #### Data definitions
@@ -444,9 +444,10 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
   "Decorator for functions that can be called from command line."
   if want=="help":
     for name in names:
-      doc = all[name].__doc__
-      if doc:
-        print(name, "\t: ",re.sub(r'\n[ \t]*'," ",doc))
+      fun = all[name]
+      if fun.__doc__:
+        print(name, "\t: ",re.sub(r'\n[ \t]*'," ",fun.__doc__))
+    
     print("help","\t: ","print this help text")
   elif want: # run one example
     if not want in all:
@@ -480,6 +481,7 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
 
 @eg
 def whoami(email="tim@menzies.us", name="Tim Menzies"):
+  "indentify yourself to git"
   cmd("git config --global user.email '%s'" % email,
       "git config --global user.name  '%s'" % name)
 
