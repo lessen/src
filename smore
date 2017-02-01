@@ -450,16 +450,6 @@ def cmd(*coms):
 
 def eg(f=None,want=None,dic={}, all={},names=[]):
   "Decorator for functions that can be called from command line."
-  def run1(f):
-    hdr = "\n-----| %s |"+ ("-"*40)
-    print(hdr % f.__name__,end="\n# ")
-    if f.__doc__:
-      print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
-    print("")
-    t1=time.process_time()
-    f(**dic)
-    t2=time.process_time()
-    print("# pass","(%.4f secs)" % (t2-t1))
   # ------------------------------------------
   def runAll():
     n=y=0
@@ -471,7 +461,17 @@ def eg(f=None,want=None,dic={}, all={},names=[]):
         n += 1
         print(traceback.format_exc())
     print("# tried= ",y+n," %passed= ",100*round(y/(y+n)))
-  # ------------------------------------------
+  def run1(f):
+    hdr = "\n-----| %s |"+ ("-"*40)
+    print(hdr % f.__name__,end="\n# ")
+    if f.__doc__:
+      print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
+    print("")
+    t1=time.process_time()
+    f(**dic)
+    t2=time.process_time()
+    print("# pass","(%.4f secs)" % (t2-t1))
+    # ------------------------------------------
   def help1(name, doc=' ',defaults=' '):
     fun = all[name]
     if fun.__doc__:
