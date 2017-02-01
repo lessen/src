@@ -375,9 +375,9 @@ class Moea(Table):
                     reverse=True)
     return i.rows
   def score(i):
-    n = len(i.rows)
-    bests = n // 2
-    rests = n - bests
+    m = len(i.rows)
+    bests = m // 2
+    rests = m - bests
     for n,row in enumerate(i.rankRows()):
       for col,val in zip(i.cols,row.cooked):
         if col.isDecision:
