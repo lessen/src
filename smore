@@ -441,9 +441,13 @@ def cmd(*coms):
   for com in coms:
     try:
        print(com)
-       subprocess.check_output(com,shell=True)
+       subprocess.check_output(com,shell=True,stdin=subprocess.PIPE)
     except Exception:
       pass
+
+def less(file):
+   p=subprocess.Popen(['less','-R',file],stdin=subprocess.PIPE)
+   p.communicate()
 
 # ______________________________________________________________________-
 #### demo stuff
@@ -495,16 +499,20 @@ def eg(f=None,want=None,dic={}, all={},names=[]):
       return print("# %s unknown" % want)
   # ------------------------------------------
   else:
-    print("")
-    printm([[help1(name) for name in names],[
-            "!", "run all commands" " "]],
-            sep="\t", align="<")
+    print("\nSMORE v1: simple multi-objective rule engine")
+    print("Copyright (c) 2017, Tim Menzies, tim@menzies.us, MIT license, v2\n")
+    print("USAGE: ./smore action [arguments]\n")
+    lst= [["action", " ", "arguments"]] +[
+          ["------", " ", "--------"]] +sorted([
+          help1(name) for name in names])+[
+         ["!", "run all commands", " "]]
+    printm(lst, sep="\t", align="<")
 
 ### and here are the demos that can be called at the command line
 
 @eg
-def whoami(email="tim@menzies.us", name="Tim Menzies"):
-  "indentify yourself to git"
+def who(email="tim@menzies.us", name="Tim Menzies"):
+  "identify yourself to git"
   cmd("git config --global user.email '%s'" % email,
       "git config --global user.name  '%s'" % name,
       "git config --global credential.helper cache",
@@ -543,7 +551,12 @@ def eg2():
   t = Moea(ako=Coco,**nasa93())
   t.score()
 
-
+@eg
+def doc(module="smore"):
+  "Print code documentation"
+  cmd("(cp %s /tmp/%s.py" % (module,module),
+      "cd /tmp &&  pydoc3  %s > /tmp/%s.less)" % (module,module))
+  less("/tmp/%s.less" % module)
 # ______________________________________________________________________-
 #### main
 
