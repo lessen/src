@@ -448,7 +448,7 @@ def cmd(*coms):
 # ______________________________________________________________________-
 #### demo stuff
 
-def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
+def eg(f=None,want=None,dic={}, all={},names=[]):
   "Decorator for functions that can be called from command line."
   def run1(f):
     hdr = "\n-----| %s |"+ ("-"*40)
@@ -457,7 +457,7 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
       print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
     print("")
     t1=time.process_time()
-    f(*lst,**dic)
+    f(**dic)
     t2=time.process_time()
     print("# pass","(%.4f secs)" % (t2-t1))
   # ------------------------------------------
