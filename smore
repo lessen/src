@@ -494,7 +494,9 @@ def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
 def whoami(email="tim@menzies.us", name="Tim Menzies"):
   "indentify yourself to git"
   cmd("git config --global user.email '%s'" % email,
-      "git config --global user.name  '%s'" % name)
+      "git config --global user.name  '%s'" % name,
+      "git config --global credential.helper cache",
+      "git config credential.helper 'cache --timeout=3600'")
 
 @eg
 def old():
