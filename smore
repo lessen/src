@@ -442,7 +442,7 @@ def cmd(*coms):
     try:
        subprocess.check_output(com,shell=True)
     except Exception:
-      print(Exception)
+      pass
 
 # ______________________________________________________________________-
 #### demo stuff
