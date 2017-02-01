@@ -493,7 +493,7 @@ def new():
   "Update web repo from local"
   cmd("git add .",
       "git commit -am newStuff",
-      "git pull origin master")
+      "git push origin master")
 
 
 @eg
