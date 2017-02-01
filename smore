@@ -439,7 +439,10 @@ def comLine2Dictionary():
 
 def cmd(*coms):
   for com in coms:
-    subprocess.check_output(com,shell=True)
+    try:
+       subprocess.check_output(com,shell=True)
+    except Exception:
+      print(Exception)
 
 # ______________________________________________________________________-
 #### demo stuff
