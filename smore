@@ -346,6 +346,8 @@ class Table:
                data=  [],
                ako =  Classifier):
     i.names = names
+    i.types = types
+    i.ako   = ako
     i.rows  = []
     # pass0. collect meta data
     i.cols  = [ (NumColumn if NUM(t) else SymColumn)(n,t)
@@ -359,6 +361,13 @@ class Table:
     # pass2: use what we know about each Column to "cook" the raw values
     for row in i.rows:
       row.cooked = [col.cook(val,row) for col,val in zip(i.cols,row.raw)]
+
+  def clone(i,rows=None):
+    rows = rows or i.rows
+    return Table(names = i.names,
+                 types = i.tables, 
+                 data  = [row.raw[:] for row in rows],
+                 ako   = i.ako)
 
 class Moea(Table):
   """
@@ -385,9 +394,9 @@ class Moea(Table):
           if val != '?' and val in col.ranges:
             can= col.ranges[val]
             if n <= bests:
-              can.b += 1/bests
+              can.b += 1#/bests
             else:
-              can.r += 1/rests
+              can.r += 1#/rests
     all=[]
     for col in i.cols:
       for r in col.ranges.values():
@@ -588,5 +597,5 @@ if __name__ ==  "__main__":
     examples(want=sys.argv[1],
              dic=comLine2Dictionary())
   else:
-    examples(want="EG")
+    examples()
 
