@@ -456,7 +456,7 @@ def cmd(*coms):
 
 def show(cmds):
   for cmd in cmds:
-    run = subprocess.Popen(cmd, close_fds=True, shell=True, 
+    run = subprocess.Popen(cmd, close_fds=True, shell=True,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while True:
       out = run.stdout.read(1)
@@ -468,13 +468,14 @@ def show(cmds):
 # ______________________________________________________________________-
 #### demo stuff
 
-def eg(f=None,group=None, want=None,dic={}, groups={},all={},names=[]):
+def examples(fun=None, group=None, want=None,
+             dic={}, groups={},all={},names=[]):
   "Decorator for functions that can be called from command line."
   # ------------------------------------------
   group = group or "__all__"
-  def runAll():
+  def runAll(what):
     n=y=0
-    for name in names:
+    for name in what:
       try:
         run1(all[name])
         y += 1
@@ -482,14 +483,14 @@ def eg(f=None,group=None, want=None,dic={}, groups={},all={},names=[]):
         n += 1
         print(traceback.format_exc())
     print("# tried= ",y+n," %passed= ",100*round(y/(y+n)))
-  def run1(f):
+  def run1(fun):
     hdr = "\n-----| %s |"+ ("-"*40)
-    print(hdr % f.__name__,end="\n# ")
-    if f.__doc__:
-      print(re.sub(r'\n[ \t]*',"\n# ",f.__doc__))
+    print(hdr % fun.__name__,end="\n# ")
+    if fun.__doc__:
+      print(re.sub(r'\n[ \t]*',"\n# ",fun.__doc__))
     print("")
     t1=time.process_time()
-    f(**dic)
+    fun(**dic)
     t2=time.process_time()
     print("# pass","(%.4f secs)" % (t2-t1))
     # ------------------------------------------
@@ -503,19 +504,18 @@ def eg(f=None,group=None, want=None,dic={}, groups={},all={},names=[]):
                            zip(meta.args,meta.defaults)])
     return [name,doc,defaults]
   # ------------------------------------------
-  if f:
-    txt = f.__name__
-    all[txt] = f
+  if fun:
+    txt = fun.__name__
+    all[txt] = fun
     names += [txt]
-    groups[txt] = groups.get(txt,list()) + [txt]
+    groups[group] = groups.get(group,list()) + [txt]
   # ------------------------------------------
   elif want=="!":
-    runAll()
+    runAll(groups["!shortcut"])
   elif want : # run one example
-    if want in all:
-      run1(all[want])
-    else:
-      return print("# %s unknown" % want)
+    if   want[0] == "!" : runAll(groups[want])
+    elif want in all    : run1(all[want])
+    else                : return print("# %s unknown" % want)
   # ------------------------------------------
   else:
     print("\nSMORE v1: simple multi-objective rule engine")
@@ -526,10 +526,17 @@ def eg(f=None,group=None, want=None,dic={}, groups={},all={},names=[]):
           help1(name) for name in names])+[
          ["!", "run all commands", " "]]
     printm(lst, sep="\t", align="<")
+  return fun
+
+def eg(x):
+  return  examples(fun=x,group="!eg")
+def shortcut(x):
+  return examples(fun=x,group="!shortcut")
+
 
 ### and here are the demos that can be called at the command line
 
-@eg
+@shortcut
 def who(email="tim@menzies.us", name="Tim Menzies"):
   "identify yourself to git"
   cmd("git config --global user.email '%s'" % email,
@@ -537,12 +544,12 @@ def who(email="tim@menzies.us", name="Tim Menzies"):
       "git config --global credential.helper cache",
       "git config credential.helper 'cache --timeout=3600'")
 
-@eg
+@shortcut
 def hello():
   "Update local repo from web"
   cmd("git pull origin master")
 
-@eg
+@shortcut
 def bye():
   "Update web repo from local"
   cmd("git add .",
@@ -570,10 +577,10 @@ def eg2():
   t = Moea(ako=Coco,**nasa93())
   t.score()
 
-@eg
+@shortcut
 def _show():
   show("cat smore")
-@eg
+@shortcut
 def doc(module="smore"):
   "Print code documentation"
   cmd("cp %s /tmp/%s.py" % (module,module),
@@ -584,8 +591,8 @@ def doc(module="smore"):
 
 if __name__ ==  "__main__":
   if len(sys.argv) > 1 and sys.argv[1]:
-    eg(want=sys.argv[1],
-       dic=comLine2Dictionary())
+    examples(want=sys.argv[1],
+             dic=comLine2Dictionary())
   else:
-    eg()
+    examples()
 
