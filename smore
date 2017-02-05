@@ -468,9 +468,10 @@ def show(cmds):
 # ______________________________________________________________________-
 #### demo stuff
 
-def eg(f=None,want=None,dic={}, all={},names=[]):
+def eg(f=None,group=None, want=None,dic={}, groups={},all={},names=[]):
   "Decorator for functions that can be called from command line."
   # ------------------------------------------
+  group = group or "__all__"
   def runAll():
     n=y=0
     for name in names:
@@ -503,8 +504,10 @@ def eg(f=None,want=None,dic={}, all={},names=[]):
     return [name,doc,defaults]
   # ------------------------------------------
   if f:
-    all[f.__name__] = f
-    names += [f.__name__]
+    txt = f.__name__
+    all[txt] = f
+    names += [txt]
+    groups[txt] = groups.get(txt,list()) + [txt]
   # ------------------------------------------
   elif want=="!":
     runAll()
