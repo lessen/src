@@ -349,7 +349,8 @@ class Table:
     i.names = names
     i.rows  = []
     # pass0. collect meta data
-    i.cols  = [ (NumColumn if NUM(t) else SymColumn)(n,t) for n,t in enumerate(types) ]
+    i.cols  = [ (NumColumn if NUM(t) else SymColumn)(n,t)
+                for n,t in enumerate(types) ]
     for x in ako().objs(i.cols):
       x.isDecision = False
     # pass1: collect data about each Column, create "raw" rows
