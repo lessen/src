@@ -325,9 +325,9 @@ class Range:
     i.rows = []
     i.b, i.r = 0,0
   def score(i):
-    tmp= i.b**2/(i.b + i.r + 0.00001)
-    print(tmp)
-    return tmp
+    return i.b**2/(i.b + i.r + 0.00001)
+  def useful(i):
+    return i.b > i.r
   def __add__(i,x):
     i.rows += [x]
     return x
@@ -382,19 +382,25 @@ class Moea(Table):
     for n,row in enumerate(i.rankRows()):
       for col,val in zip(i.cols,row.cooked):
         if col.isDecision:
-          k=(col.pos,val.val)
-          if k in col.ranges:
-            can= col.ranges[k]
+          val = val.val
+          if val != '?' and val in col.ranges:
+            can= col.ranges[val]
             if n <= bests:
-              ran.b += 1/bests
+              can.b += 1/bests
             else:
-              ran.r += 1/rests
+              can.r += 1/rests
     all=[]
     for col in i.cols:
-      for rang in col.ranges.values():
-        all += [rang]
-    print(all[0].pos, all[0].val)
-    print(sorted(all,key=lambda z:z.score()))
+      for r in col.ranges.values():
+        if r.useful():
+          all += [r]
+    size   = len(all)//2
+    for r in sorted(all[:size],
+                    reverse=True,
+                    key=lambda z:z.score()):
+      if r.b > r.r:
+        print(r.pos,"=",r.val,
+            dict(b=r.b,r=r.r, s=r.score()))
 # ______________________________________________________________________-
 #### some utilities
 def median(lst):
