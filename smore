@@ -443,7 +443,7 @@ def comLine2Dictionary():
             for (key,val) in re.findall(pat,str) })
   return d
 
-def cmd(*coms):
+def cmdOLD(*coms):
   pipe=subprocess.PIPE
   run=subprocess.check_output
   for com in coms:
@@ -454,9 +454,9 @@ def cmd(*coms):
     except Exception:
       pass
 
-def show(*cmds):
-  for cmd in cmds:
-    run = subprocess.Popen(cmd, close_fds=True, shell=True,
+def cmd(*cmds):
+  for cmd1 in cmds:
+    run = subprocess.Popen(cmd1, close_fds=True, shell=True,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while True:
       out = run.stdout.read(1)
@@ -576,12 +576,9 @@ def eg2():
   t.score()
 
 @shortcut
-def _show():
-  show("cat smore")
-@shortcut
 def doc(module="smore"):
   "Print code documentation"
-  show("cp %s /tmp/%s.py" % (module,module),
+  cmd("cp %s /tmp/%s.py" % (module,module),
       "(cd /tmp &&  pydoc3  %s)" % module)
 # ______________________________________________________________________-
 #### main
