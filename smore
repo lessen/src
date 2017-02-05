@@ -199,12 +199,30 @@ class Row:
   to minimized or maximized.
   """
   def __init__(i,raw=None):
-    i.raw, i.cooked = raw, None
+    i.raw, i.cooked,i.rank, i._rowScore = raw, None,0, None
   def __repr__(i):
     return str(i.cooked if i.cooked else i.raw)
   def decs(i,lst): pass
   def objs(i,lst): pass
   def betters(i):  pass
+  def rangeScore(i,cols,bests,rests,best=True):
+    for col,rng in zip(cols,i.cooked):
+      if col.isDecision:
+        if rng.val != '?':
+          if rng.val in col.ranges:
+            if best:
+              rng.b += 1/bests
+            else:
+              rng.r += 1/rests
+  def rowScore(i,cols):
+    if i._rowScore is None:
+      i._rowScore = 0
+      for col,rng in zip(cols,i.cooked):
+        if col.isDecision:
+          if rng.val != '?':
+            if rng.val in col.ranges:
+              i._rowScore += rng.score()
+    return i._rowScore
 
 class Classifier(Row):
   """
@@ -324,7 +342,7 @@ class Range:
     i.rows = []
     i.b, i.r = 0,0
   def score(i):
-    return i.b**2/(i.b + i.r + 0.00001)
+    return i.b**2/(i.b + i.r + 1e-32)
   def useful(i):
     return i.b > i.r
   def __add__(i,x):
@@ -365,7 +383,7 @@ class Table:
   def clone(i,rows=None):
     rows = rows or i.rows
     return Table(names = i.names,
-                 types = i.tables, 
+                 types = i.tables,
                  data  = [row.raw[:] for row in rows],
                  ako   = i.ako)
 
@@ -382,34 +400,18 @@ class Moea(Table):
     i.rows = sorted(i.rows,
                     key=lambda z: z.score,
                     reverse=True)
+    for n,row in enumerate(i.rows):
+      row.rank = n
     return i.rows
   def score(i):
     m = len(i.rows)
     bests = m // 2
-    rests = m - bests
     for n,row in enumerate(i.rankRows()):
-      for col,val in zip(i.cols,row.cooked):
-        if col.isDecision:
-          val = val.val
-          if val != '?' and val in col.ranges:
-            can= col.ranges[val]
-            if n <= bests:
-              can.b += 1#/bests
-            else:
-              can.r += 1#/rests
-    all=[]
-    for col in i.cols:
-      for r in col.ranges.values():
-        if r.useful():
-          all += [r]
-    size   = len(all)//2
-    for r in sorted(all[:size],
-                    reverse=True,
-                    key=lambda z:z.score()):
-      if r.b > r.r:
-        print(r.pos,"=",r.val,
-            dict(b=r.b,r=r.r, s=r.score()))
-# ______________________________________________________________________-
+      row.rangeScore(i.cols, bests, m - bests, n<= bests)
+    order = sorted(i.rows,key=lambda z:z.rowScore(i.cols),reverse=True)
+    for row in order:
+      print(row.rank,row.rowScore(i.cols), row)
+    # ______________________________________________________________________-
 #### some utilities
 def median(lst):
   n = len(lst)
