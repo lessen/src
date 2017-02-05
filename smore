@@ -454,7 +454,7 @@ def cmd(*coms):
     except Exception:
       pass
 
-def show(cmds):
+def show(*cmds):
   for cmd in cmds:
     run = subprocess.Popen(cmd, close_fds=True, shell=True,
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -510,10 +510,8 @@ def examples(fun=None, group=None, want=None,
     names += [txt]
     groups[group] = groups.get(group,list()) + [txt]
   # ------------------------------------------
-  elif want=="!":
-    runAll(groups["!shortcut"])
   elif want : # run one example
-    if   want[0] == "!" : runAll(groups[want])
+    if   want in groups : runAll(groups[want])
     elif want in all    : run1(all[want])
     else                : return print("# %s unknown" % want)
   # ------------------------------------------
@@ -523,15 +521,15 @@ def examples(fun=None, group=None, want=None,
     print("USAGE: ./smore action [arguments]\n")
     lst= [["action", " ", "arguments"]] +[
           ["------", " ", "--------"]] +sorted([
-          help1(name) for name in names])+[
+          help1(name) for name in names]) + [
          ["!", "run all commands", " "]]
     printm(lst, sep="\t", align="<")
   return fun
 
 def eg(x):
-  return  examples(fun=x,group="!eg")
+  return  examples(fun=x,group="EG")
 def shortcut(x):
-  return examples(fun=x,group="!shortcut")
+  return examples(fun=x,group="SHORTCUT")
 
 
 ### and here are the demos that can be called at the command line
@@ -583,9 +581,8 @@ def _show():
 @shortcut
 def doc(module="smore"):
   "Print code documentation"
-  cmd("cp %s /tmp/%s.py" % (module,module),
-      "(cd /tmp &&  pydoc3  %s > /tmp/%s.less)" % (module,module))
-  cmd("cat /tmp/%s.less" % module)
+  show("cp %s /tmp/%s.py" % (module,module),
+      "(cd /tmp &&  pydoc3  %s)" % module)
 # ______________________________________________________________________-
 #### main
 
@@ -594,5 +591,5 @@ if __name__ ==  "__main__":
     examples(want=sys.argv[1],
              dic=comLine2Dictionary())
   else:
-    examples()
+    examples(want="EG")
 
