@@ -53,8 +53,7 @@ But not too worried about that. The SWAY experience is that most of the solution
 come from a small region.
 """
 
-import traceback,sys,re,math,random,time,ast,subprocess,inspect
-
+import traceback,sys,re,math,random,time,ast,inspect,subprocess
 # ____________________________________________________________________________________
 #### Data definitions
 
@@ -445,10 +444,13 @@ def comLine2Dictionary():
   return d
 
 def cmd(*coms):
+  pipe=subprocess.PIPE
+  run=subprocess.check_output
   for com in coms:
     try:
        print(com)
-       subprocess.check_output(com,shell=True,stdin=subprocess.PIPE)
+       #run(com, stdout=PIPE, stderr=PIPE, universal_newlines=True)
+       run(com,shell=True,stdin=pipe)
     except Exception:
       pass
 
@@ -561,9 +563,9 @@ def eg2():
 @eg
 def doc(module="smore"):
   "Print code documentation"
-  cmd("(cp %s /tmp/%s.py" % (module,module),
-      "cd /tmp &&  pydoc3  %s > /tmp/%s.less)" % (module,module))
-  less("/tmp/%s.less" % module)
+  cmd("cp %s /tmp/%s.py" % (module,module),
+      "(cd /tmp &&  pydoc3  %s > /tmp/%s.less)" % (module,module))
+  cmd("cat /tmp/%s.less" % module)
 # ______________________________________________________________________-
 #### main
 
