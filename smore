@@ -1,29 +1,7 @@
 #!/home/timm//opt/pypy/bin/pypy3
 #/* vim: set filetype=python ts=2 sw=2 sts=2 et : */
 """
-smore Rule learning for multi-objective problems.
-Copyright (c) 2016, Tim Menzies tim@menzies.us, MIT license v2.
-
-Permission is hereby granted, free of charge, to any person obtaining a
-copy of this software and associated documentation files (the "Software"),
-to deal in the Software without restriction, including without limitation
-the rights to use, copy, modify, merge, publish, distribute, sublicense,
-and/or sell copies of the Software, and to permit persons to whom the
-Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGESR
-OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-
-#_______________________________________________________________--
-#### About
+S.M.O.R.E. = simple multi-objective rule engine.
 
 - Inspired by the Hyperband optimizer: discover good ideas
   by recursively discarding half the bad ones.
@@ -54,11 +32,15 @@ come from a small region.
 """
 
 import traceback,sys,re,math,random,time,ast,inspect,subprocess
-# ____________________________________________________________________________________
-#### Data definitions
 
-SEP  = r"\S+"
-DIRT = r'([\n\r\t]|#.*)'
+__author__ = "Tim Menzies"
+__copyright__ = "Copyright (C) 2016 Jianfeng Chen"
+__license__ = "MIT, v2"
+__version__ = "0.1"
+__email__ = "tim@menzies.us"
+
+# Data definitions
+# ################
 
 # rule: function(function(x)) == function(x)
 def L(x) : return math.log(float(x)) if isinstance(x,str) else x
@@ -69,7 +51,8 @@ def X(_) : return "?"
 
 def NUM(x): return x in [L,F,I]
 
-def C(s,sep=SEP, dirt=DIRT):
+def C(s,sep  = r"\S+",
+        dirt = r'([\n\r\t]|#.*)'):
   "Convert a string of words into a list"
   clean = re.sub(dirt, "",s)
   cells = re.findall(sep,clean)
@@ -221,7 +204,7 @@ class Row:
         if col.isDecision:
           if rng.val != '?':
             if rng.val in col.ranges:
-              i._rowScore += rng.score()
+              i._rowScore += math.log(rng.score()+1e-32,2)
     return i._rowScore
 
 class Classifier(Row):
