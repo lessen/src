@@ -208,23 +208,24 @@ class Row:
   def decs(i,lst): pass
   def objs(i,lst): pass
   def betters(i):  pass
-  def rangeScore(i,cols,bests,rests,best=True):
+  def ranges(i,cols):
     for col,rng in zip(cols,i.cooked):
       if col.isDecision:
         if rng.val != '?':
           if rng.val in col.ranges:
-            if best:
-              rng.b += 1/bests
-            else:
-              rng.r += 1/rests
+            yield col,rng
+
+  def rangeScore(i,cols,bests,rests,best=True):
+    for rng,_ in ranges(cols):
+      if best:
+        rng.b += 1/bests
+      else:
+        rng.r += 1/rests
   def rowScore(i,cols):
     if i._rowScore is None:
       i._rowScore = 0
-      for col,rng in zip(cols,i.cooked):
-        if col.isDecision:
-          if rng.val != '?':
-            if rng.val in col.ranges:
-              i._rowScore += math.log(rng.score()+1e-32,2)
+      for rng,_ in i.ranges(cols):
+        i._rowScore += math.log(rng.score()+1e-32,2)
     return i._rowScore
 
 class Classifier(Row):
