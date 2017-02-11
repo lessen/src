@@ -1,4 +1,5 @@
-[[ ":$PATH:" != *":./:"* ]] && PATH="./:${PATH}"
+[[ ":$PATH:" != *":./:"*             ]] && PATH="./:${PATH}"
+[[ ":$PATH:" != *":/usr/local/bin:"* ]] && PATH="/usr/local/bin:${PATH}"
 
 if [ -z `which pypy3` ]; then
    if [ ! -f /usr/local/bin/pypy3 ]; then
