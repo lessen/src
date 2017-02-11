@@ -18,6 +18,6 @@ fi
 
 here() { cd $1; basename "$PWD"; }
 
-PROMPT_COMMAND='echo  -ne "\033]0; $(here ..)/$(here .)\007"
-PS1=" $(here ..)/$(here .) \!> "'
+PROMPT_COMMAND='echo  -ne "\033]0;$(here ..)/$(here .)\007"
+PS1="$(here ..)/$(here .) \!> "'
 
