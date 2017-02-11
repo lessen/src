@@ -349,6 +349,8 @@ class Range:
   def __add__(i,x):
     i.rows += [x]
     return x
+  def __lt__(i,j):
+    return i.score() < j.score()
   def __repr__(i):
     return i.val
 
@@ -383,8 +385,8 @@ class Table:
 
   def clone(i,rows=None):
     rows = rows or i.rows
-    return Table(names = i.names,
-                 types = i.tables,
+    return i.__class__(names = i.names,
+                 types = i.types,
                  data  = [row.raw[:] for row in rows],
                  ako   = i.ako)
 
@@ -392,6 +394,9 @@ class Moea(Table):
   """
   Moea Tables score each row by their cdom score.
   """
+  def __init__(i,**options):
+    super().__init__(**options)
+    i.bests, i.rests = [],[]
   def rankRows(i):
     "score each row according to how many other rows they dominate"
     for row1 in i.rows:
@@ -409,9 +414,11 @@ class Moea(Table):
     bests = m // 2
     for n,row in enumerate(i.rankRows()):
       row.rangeScore(i.cols, bests, m - bests, n<= bests)
-    order = sorted(i.rows,key=lambda z:z.rowScore(i.cols),reverse=True)
-    for row in order:
-      print(row.rank,row.rowScore(i.cols), row)
+    tmp = sorted([rng for col in i.cols for rng in col.ranges.values()],reverse=True)    
+    m = len(tmp)
+    i.bests , i.rests = tmp[:m], tmp[m:]
+    return i.clone(sorted(i.rows,key=lambda z:z.rowScore(i.cols),reverse=True)[:bests])
+
     # ______________________________________________________________________-
 #### some utilities
 def median(lst):
@@ -585,7 +592,9 @@ def eg1():
 def eg2():
   "ranking ranges"
   t = Moea(ako=Coco,**nasa93())
-  t.score()
+  while len(t.rows)  > 5:
+    print(len(t.rows))
+    t = t.score()
 
 @shortcut
 def doc(module="smore"):
