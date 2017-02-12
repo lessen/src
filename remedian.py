@@ -35,7 +35,9 @@ Assuming lists of length 64 and use of pypy3:
 - Further, remedian's computed median is within 1% (or less) of the medians found via Python's sort.
 
 _____
+
 ## Programmer's Guide
+
 """
 from median import median
 
