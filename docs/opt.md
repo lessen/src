@@ -3,7 +3,7 @@
 
 
 
-# Easier Command-Line Options
+Easier Command-Line Options
 
 Documentation for this code is available
 [on-line](http://tttv1.net/GLOBALS.py).

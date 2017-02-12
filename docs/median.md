@@ -20,7 +20,7 @@ ______
 
 ```python
 
-# If `ordered` is `False`, do not sort `lst`
+If `ordered` is `False`, do not sort `lst`
 def median(lst,ordered=False):
   assert lst,"median needs a non-empty list"
   n  = len(lst)

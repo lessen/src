@@ -60,8 +60,8 @@ Can read from strings, files, zip files.
 
 ```python
 
-# _____
-# ## Programmer's Guide
+_____
+## Programmer's Guide
 
 
 import zipfile,re

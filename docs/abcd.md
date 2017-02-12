@@ -218,7 +218,7 @@ class abcd:
                  s.acc, s.pd, s.pf, s.prec, s.f, s.g, x))
 
 
-# Tool for reading in the data from standard input.
+Tool for reading in the data from standard input.
 
 if __name__ == "__main__":
   log = None

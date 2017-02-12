@@ -36,7 +36,8 @@ doc() {
         }
         next
     }
-    1    { print }
+    1    { sub(/^# /,"")
+           print }
     END  { if (In) print "```\n" }'
 }
 

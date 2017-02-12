@@ -58,14 +58,14 @@ _____
 
 import traceback,re,random,sys,time
 
-# This code resets the random number seed to `seed` before
-# running any examples.
+This code resets the random number seed to `seed` before
+running any examples.
 #
-# Two default mutable arguments (`lst` and `runs`)
-# are used as the working memory for this test engine:
-# `lst` holds the list of example functions that might be executed;
-# `runs` holds counts of how often each example function has been run
-# (and this code ensures that function is never executed multiple times).
+Two default mutable arguments (`lst` and `runs`)
+are used as the working memory for this test engine:
+`lst` holds the list of example functions that might be executed;
+`runs` holds counts of how often each example function has been run
+(and this code ensures that function is never executed multiple times).
 #
 
 def eg(f=None, seed=1, lst=[], runs={} ):

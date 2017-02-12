@@ -57,7 +57,7 @@ def xtiles(pairs, width=40,rnd=3,sigs=4,
   return sorted(pairs,
                 key = lambda z:z[0][1][mid])
 
-# The `xtile` utility.
+The `xtile` utility.
 def xtile(lst,lo=None, up=None,rnd=3,ntiles=5,width=40,sigs=4):
   lst = sorted(lst)
   lo   = lst[0]  if lo is None else lo

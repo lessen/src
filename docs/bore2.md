@@ -57,13 +57,13 @@ come from a small region.
 
 import traceback,sys,re,math,random,time,ast
 
-# ____________________________________________________________________________________
+____________________________________________________________________________________
 #### Data definitions
 
 SEP  = r"\S+"
 DIRT = r'([\n\r\t]|#.*)'
 
-# rule: function(function(x)) == function(x)
+rule: function(function(x)) == function(x)
 def L(x) : return math.log(float(x)) if isinstance(x,str) else x
 def F(x) : return float(x)
 def S(x) : return x
@@ -78,10 +78,10 @@ def C(s,sep=SEP, dirt=DIRT):
   cells = re.findall(sep,clean)
   return [ cell.strip() for cell in cells ]
 
-# ____________________________________________________________________________________
+____________________________________________________________________________________
 #### Data
 
-# todo: if they want to optimize for recent projects, need to max year... how would that change things?
+todo: if they want to optimize for recent projects, need to max year... how would that change things?
 
 #tod:
   # make class a faracde for the data
@@ -191,7 +191,7 @@ def nasa93():
     C("100  X    Avionics             f  2  1983  embedded      h   n   vh  vh  vh  h  h   n   n   n   l   l   n   n   h  6.2    12")
    ])
 
-# ______________________________________________________________________-----
+______________________________________________________________________-----
 #### Rows
 
 class Row:
@@ -257,7 +257,7 @@ class Coco(Nklass):
 
 ## todo: check: can we define the standard Moea problems (e.g. fonseca) as rows?
 
-# ______________________________________________________________________-----
+______________________________________________________________________-----
 #### Columns
 
 class Column:
@@ -310,7 +310,7 @@ class NumColumn(Column):
                    (x - i.lo)/(i.hi - i.lo + 1e-31)))
 
 
-# ______________________________________________________________________-----
+______________________________________________________________________-----
 #### Tables
 
 class Table:
@@ -350,7 +350,7 @@ class Moea(Table):
                     key=lambda z: z.score,
                     reverse=True)
 
-# ______________________________________________________________________-
+______________________________________________________________________-
 #### some utilities
 def median(lst):
   n = len(lst)
@@ -389,7 +389,7 @@ def comLine2Dictionary():
   return d
 
 
-# ______________________________________________________________________-
+______________________________________________________________________-
 #### demo stuff
 
 def eg(f=None,want=None,dic={},lst=[], all={},names=[]):
@@ -446,7 +446,7 @@ def eg1():
   printm([row.cooked for row in t.rows])
 
 
-# ______________________________________________________________________-
+______________________________________________________________________-
 #### main
 
 if __name__ ==  "__main__":

@@ -26,7 +26,7 @@ class seens:
         return False
     return True
 
-# need a post-prune
+need a post-prune
 class seen:
   def __init__(i,pos=None,inits=[]):
     i.pos = pos

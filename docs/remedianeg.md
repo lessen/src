@@ -46,7 +46,7 @@ def _remedian2():
 if __name__ == "__main__" : eg()
 
 ----| _remedian1 |----------------------------------------
-# basic usage
+basic usage
 
 0 0
 100 31.5
@@ -58,10 +58,10 @@ if __name__ == "__main__" : eg()
 700 319.5
 800 383.5
 900 447.5
-# pass (0.0024 secs)
+pass (0.0024 secs)
 
 -----| _remedian2 |----------------------------------------
-# test2: store increasing amount of numbers with different values for k
+test2: store increasing amount of numbers with different values for k
 
 
 {'k': 8, 'n': 50, 'runtTime': 0.0002, 'medianError': 1.0115, 'timeDifference': 16.4694}

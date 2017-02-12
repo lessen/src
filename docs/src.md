@@ -2,7 +2,7 @@
 # src
 
 
-# Rules of src
+Rules of src
 
 ## Optimizations
 

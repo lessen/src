@@ -130,15 +130,15 @@ import sys,math
 from cliffsDelta import cd 
 from bootstrap   import bootstrap
 
-# ### Top-level drives
+### Top-level drives
 
-# Short-cuts, defined for standard usages.
+Short-cuts, defined for standard usages.
 
-# Standard usage #1: divide a list of numbers.
+Standard usage #1: divide a list of numbers.
 def div(lst):
   return ranges(lst)
 
-# Standard usage #2:
+Standard usage #2:
 def sdiv(lst,
          x   = lambda z:z[ 0],
          y   = lambda z:z[-1],
@@ -286,7 +286,7 @@ def ranges(lst,
     if verbose:
       score1 = round(score1,rnd) if score1 else '.'
       print(' ..'*lvl,xoverall.n,score1)
-#      [print(' ++'*lvl,s) for s in segments]
+     [print(' ++'*lvl,s) for s in segments]
     if cut:
       divide(segments[:cut], out= out, lvl= lvl+1)
       divide(segments[cut:], out= out, lvl= lvl+1)

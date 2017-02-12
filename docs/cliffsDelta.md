@@ -63,7 +63,7 @@ ______
 
 ```python
 
-# Returns `True` if two lists of numbers are similar.
+Returns `True` if two lists of numbers are similar.
 def cd(lst1,lst2, trivial=0.147, fast=True):
   """
   This file includes a simple (and slow) version of cliffsDelta plus a trickier
@@ -82,10 +82,10 @@ def cd(lst1,lst2, trivial=0.147, fast=True):
   #print("cd",lt,gt, abs(gt-lt) / (n + 1e-32))
   return (abs(gt-lt) / (n + 1e-32)) < trivial
 
-# _______
-# ### Two methods for colelcting the required stats.
+_______
+### Two methods for colelcting the required stats.
 
-# Method #1: simple, slow. Shows the basic idea.
+Method #1: simple, slow. Shows the basic idea.
 def basic(lst1,lst2):
   lt=gt=n=0
   for x in lst1:
@@ -95,9 +95,9 @@ def basic(lst1,lst2):
       if x < y: lt +=1
   return lt,gt,n
 
-# Method #2: trickier, much faster method.
-# Not novice friendly.
-# Exploits sorted lists, repeated values.
+Method #2: trickier, much faster method.
+Not novice friendly.
+Exploits sorted lists, repeated values.
 def optimized(lst1,lst2):  
   m, n = len(lst1), len(lst2)
   lst2 = sorted(lst2)
@@ -112,8 +112,8 @@ def optimized(lst1,lst2):
   return lt,gt,m*n
 
 #_____
-# ### Helper function
-# Generator.  Yields runs of repeated items as  count,item.
+### Helper function
+Generator.  Yields runs of repeated items as  count,item.
 def runs(lst): 
     for j,two in enumerate(lst):
       if j == 0:
