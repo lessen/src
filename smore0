@@ -49,6 +49,7 @@ docs() {
     #  doc $p > $m
     #fi
   done
+  echo "" >> docs/toc.md
   git add docs docs/*
  
 }
