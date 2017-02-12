@@ -1,5 +1,5 @@
 #!/usr/bin/env pypy3
-#/* vim: set filetype=python ts=2 sw=2 sts=2 et : */
+# /* vim: set filetype=python ts=2 sw=2 sts=2 et : */
 """
 S.M.O.R.E. = simple multi-objective rule engine.
 
@@ -436,15 +436,51 @@ def median(lst):
     if not n % 2: q = p -1
   return lst[p] if p==q else (lst[p]+lst[q])/2
 
-def changes(befores, afters,
-            #trivial= [0.147,0.33,0.474][0]):
-            trivial= [1/7,1/3, 1/2][0]):
-  for before,after in zip(befores, afters):
-    if change(before, after, trivial):
-      return True
-  return False
+#[["n","a","b"]
+# [44,[1,2,2,1,3],[2,2,2]]]
 
-def change(lst1,lst2,trivial):
+def timeline(lsts):
+  def norm(x,n):
+    return round(100* (x - lo[n])/(hi[n] - lo[n] + 1e-32)) 
+  def medianIQRs(lst):
+    lst = sorted(lst)
+    q   = len(lst) //4
+    return lst[2*q], lst[3*q] - lst[q]
+  def norms(lsts):
+    lo,hi,out= {},{},[]
+    for row in lsts[1:]:
+      for n,vals in enumerate(row[1:]):
+        lo0   = lo.get(n, 1e32)
+        hi0   = hi.get(n,-1e32)
+        lo[n] = min(lo0, *vals)
+        hi[n] = max(hi0, *vals)
+    for row in lsts[1:]:
+      for n,vals in enumerate(row[1:]):
+        row[n] = [norm(val,n) for val in vals]
+    return lsts
+  tmp=["#"]
+  for x in lsts[0]: 
+    tmp += [x,"q","r"]
+  out += [tmp]
+  befores={}
+  ranks={}
+  lsts = norms(lst)
+  for row in lsts[1:]:
+    tmp = [row[0]]
+    for n,after in enumerate(row[1:]):
+      before= befores.get(n,list())
+      if changed(after,before):
+        ranks[n] = ranks.get(n,0) + 1
+        befores[n] = after
+      else:
+        before += after
+        befores[n] = before
+    med,iqr = medianIQR(after)
+    tmp += [[med,iqr,ranks.get(n,0)]]
+    out += [tmp]
+  printm(out)
+
+def changed(lst1,lst2,trivial= [0.147,0.33,0.474][0]):
   "Tests for non-trivial changes between 2 lists."
   lt=gt=n=0
   for x in lst1:
