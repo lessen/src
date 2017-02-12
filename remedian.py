@@ -39,6 +39,7 @@ _____
 ## Programmer's Guide
 
 """
+
 from median import median
 
 class remedian:
