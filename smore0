@@ -46,7 +46,7 @@ docs() {
   for p in *.py; do
     stem="${p%.*}"    
     m="docs/${stem}.md"    
-    echo "- [${stem}]($m) : [code](../$p)" >> docs/toc.md
+    echo "- [${stem}](${stem}.md) : [code](../$p)" >> docs/toc.md
     if [ "$p" -nt "$m" ]; then
       echo "# $p to $m"
       (echo ""; echo "# ${stem}"; echo "") > $m
