@@ -112,21 +112,19 @@ _____
 
 
 ```python
-import sys,re
 
+import sys,re
 
 class abcd:
 
-Initialize
-
   def __init__(i,db="all",rx="all"):
+    "Initialize"
     i.db = str(db); i.rx=str(rx);
     i.yes = i.no = 0
     i.known = {}; i.a= {}; i.b= {}; i.c= {}; i.d={}
 
-Incrementally update
-
   def __call__(i,actual=None,predict=None):
+    "Incrementally update"
     i.knowns(actual)
     i.knowns(predict)
     if actual == predict: i.yes += 1 
@@ -139,19 +137,21 @@ Incrementally update
         if  predict == x     : i.c[x] += 1 
         else                 : i.a[x] += 1
 
-Ensure we know class `x`. If `x` is new, then we have to back date
-the "a" value (true negatives).
 
   def knowns(i,x):
+    """
+    Ensure we know class `x`. If `x` is new, 
+    then we have to back date  the "a" value 
+    (true negatives).
+    """
     if not x in i.known:
       i.known[x]= i.a[x]= i.b[x]= i.c[x]=i.d[x]=0.0
     i.known[x] += 1
     if (i.known[x] == 1):
       i.a[x] = i.yes + i.no
 
-Pretty print header
-
   def header(i):
+    "Pretty print header"
     print("#",
         ('{0:20s} {1:11s}   {2:4s} {3:4s} {4:4s}'+\
         '{5:4s}{6:4s} {7:3s} {8:3s} {9:3s} '+ \
@@ -160,9 +160,9 @@ Pretty print header
         "pf","prec","f","g","class"))
     print('-'*100)
 
-Computer the performance scores  
 
   def scores(i):
+    "Computer the performance scores"
     # Convenience class. Can acces fields as x.f not x["f"].
     class oo:
       def __init__(i, **adds): i.__dict__.update(adds)
@@ -203,10 +203,11 @@ Computer the performance scores
       pf=p(pfs), prec=p(precs), f=p(fs), g=p(gs),x="__all__")
     return out
 
-Write the performance scores for each class, then the
-weighted sum of those scores across all classes.
-
   def report(i,brief=False):
+    """
+    Write the performance scores for each class, then the
+    weighted sum of those scores across all classes.
+    """
     i.header()
     for x,s in sorted(i.scores().items()):
       if not brief:
@@ -219,7 +220,6 @@ weighted sum of those scores across all classes.
 
 
 Tool for reading in the data from standard input.
-
 if __name__ == "__main__":
   log = None
   for line in sys.stdin:
