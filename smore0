@@ -39,7 +39,7 @@ doc() {
 
 docs() {
   mkdir -p docs
-  echo "\n# Table of contents\n" > docs/toc.md
+  (echo ""; echo "# Table of contents" ; echo"" ) > docs/toc.md
   for p in *.py; do
     stem="${p%.*}"    
     m="docs/${stem}.md"    

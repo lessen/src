@@ -1,4 +1,6 @@
-\n# Table of contents\n
+
+# Table of contents
+
 - [__init__](docs/__init__.md) : [code](../__init__.py)
 - [__main__](docs/__main__.md) : [code](../__main__.py)
 - [abcd](docs/abcd.md) : [code](../abcd.py)
