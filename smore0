@@ -52,6 +52,8 @@ docs() {
   echo "" >> docs/toc.md
   git add docs/toc.md 
   git add docs/*
+  git commit -am newStuff
+  git push origin master
 }
 
 docs
