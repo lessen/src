@@ -117,14 +117,14 @@ import sys,re
 
 class abcd:
 
-  # Initialize
+Initialize
 
   def __init__(i,db="all",rx="all"):
     i.db = str(db); i.rx=str(rx);
     i.yes = i.no = 0
     i.known = {}; i.a= {}; i.b= {}; i.c= {}; i.d={}
 
-  # Incrementally update
+Incrementally update
 
   def __call__(i,actual=None,predict=None):
     i.knowns(actual)
@@ -139,8 +139,8 @@ class abcd:
         if  predict == x     : i.c[x] += 1 
         else                 : i.a[x] += 1
 
-  # Ensure we know class `x`. If `x` is new, then we have to back date
-  # the "a" value (true negatives).
+Ensure we know class `x`. If `x` is new, then we have to back date
+the "a" value (true negatives).
 
   def knowns(i,x):
     if not x in i.known:
@@ -149,7 +149,7 @@ class abcd:
     if (i.known[x] == 1):
       i.a[x] = i.yes + i.no
 
-  # Pretty print header
+Pretty print header
 
   def header(i):
     print("#",
@@ -160,7 +160,7 @@ class abcd:
         "pf","prec","f","g","class"))
     print('-'*100)
 
-  # Computer the performance scores  
+Computer the performance scores  
 
   def scores(i):
     # Convenience class. Can acces fields as x.f not x["f"].
@@ -203,8 +203,8 @@ class abcd:
       pf=p(pfs), prec=p(precs), f=p(fs), g=p(gs),x="__all__")
     return out
 
-  # Write the performance scores for each class, then the
-  # weighted sum of those scores across all classes.
+Write the performance scores for each class, then the
+weighted sum of those scores across all classes.
 
   def report(i,brief=False):
     i.header()
