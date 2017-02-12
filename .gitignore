@@ -11,7 +11,6 @@ Session.vim
 # auto-generated tag files
 tags
 
-docs/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

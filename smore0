@@ -17,8 +17,44 @@ if [ ! -d "$HOME/.vim/bundle/Vundle.vim" ]; then
     vim +PluginInstall +qall      # install vim plugins
 fi
 
+doc() { 
+    cat $1 |
+    awk '
+    BEGIN {In = 1; Pre=1}
+    gsub(/^"""/,"") {
+        In =  1 - In
+        if (Pre) 
+            Pre=0
+        else {
+            if (In) 
+                print "```python" $0
+            else 
+                print "```" $0
+        }
+        next
+    }
+    1    { print }
+    END  { if (In) print "```\n" }'
+}
+
+docs() {
+  mkdir -p docs
+  for p in *.py; do
+    m="docs/${p%.*}.md"    
+    if [ "$p" -nt "$m" ]; then
+      echo "# $p to $m"
+      doc $p > $m
+    fi
+  done
+  git add docs docs/*
+ 
+}
+
+docs
+
 here() { cd $1; basename "$PWD"; }
 
 PROMPT_COMMAND='echo  -ne "\033]0;$(here ..)/$(here .)\007"
 PS1="$(here ..)/$(here .) \!> "'
+
 

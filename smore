@@ -72,9 +72,9 @@ def C(s,sep  = r"\S+",
 def CC(s,
        sep  = r"\S+",
        dirt = r'([\n\r\t]|#.*)'):
-  return [ C(y) for y in 
-           [x.strip() for x in 
-             s.splitlines()] 
+  return [ C(y) for y in
+           [x.strip() for x in
+             s.splitlines()]
              if y]
 
 # ____________________________________________________________________________________
@@ -91,7 +91,7 @@ def nasa93():
   return dict(
   names=[
      "recordnumber", "projectname", "cat2", "forg", "center", "year", "mode",
-     "rely", "data", "cplx", "time", "stor", "virt", "turn", "acap", "aexp", 
+     "rely", "data", "cplx", "time", "stor", "virt", "turn", "acap", "aexp",
      "pcap", "vexp", "lexp", "modp", "tool", "sced",
      "equivphyskloc", "act_effort"],
   types=[
@@ -390,6 +390,11 @@ class Table:
                  data  = [row.raw[:] for row in rows],
                  ako   = i.ako)
 
+  def scores(i):
+    return [x for x in  
+            zip(*[row.objs(row.raw) 
+                  for row in i.rows])]
+
 class Moea(Table):
   """
   Moea Tables score each row by their cdom score.
@@ -414,7 +419,7 @@ class Moea(Table):
     bests = m // 2
     for n,row in enumerate(i.rankRows()):
       row.rangeScore(i.cols, bests, m - bests, n<= bests)
-    tmp = sorted([rng for col in i.cols for rng in col.ranges.values()],reverse=True)    
+    tmp = sorted([rng for col in i.cols for rng in col.ranges.values()],reverse=True)
     m = len(tmp)
     i.bests , i.rests = tmp[:m], tmp[m:]
     return i.clone(sorted(i.rows,key=lambda z:z.rowScore(i.cols),reverse=True)[:bests])
@@ -430,6 +435,24 @@ def median(lst):
     lst = sorted(lst)
     if not n % 2: q = p -1
   return lst[p] if p==q else (lst[p]+lst[q])/2
+
+def changes(befores, afters,
+            #trivial= [0.147,0.33,0.474][0]):
+            trivial= [1/7,1/3, 1/2][0]):
+  for before,after in zip(befores, afters):
+    if change(before, after, trivial):
+      return True
+  return False
+
+def change(lst1,lst2,trivial):
+  "Tests for non-trivial changes between 2 lists."
+  lt=gt=n=0
+  for x in lst1:
+    for y in lst2:
+      n += 1
+      if x > y: gt +=1
+      if x < y: lt +=1
+  return (abs(gt-lt) / (n + 1e-32)) > trivial
 
 def printm(matrix,sep=",",align=">"):
   "Pretty print. Columns right justified"
@@ -588,13 +611,22 @@ def eg1():
   t.rankRows()
   printm([row.cooked for row in t.rows])
 
+def half(lst):
+  n = len(lst)//2
+  return median(lst[:n]), median(lst[n:])
+
+def havler(t):
+  out  = t.ako().objs(i.names)
+  out += [t.scores()]
+  while len(t.rows) > 5:
+    t = t.score()
+    out += [t.scores()]
+  return out
+
+
 @eg
 def eg2():
-  "ranking ranges"
-  t = Moea(ako=Coco,**nasa93())
-  while len(t.rows)  > 5:
-    print(len(t.rows))
-    t = t.score()
+  out= halver(Moea(ako=Coco,**nasa93()))
 
 @shortcut
 def doc(module="smore"):
