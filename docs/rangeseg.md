@@ -1,3 +1,6 @@
+
+# rangeseg
+
 from ranges import div,ediv,sdiv,ddiv,scottknot
 from random import random as r
 from random import seed

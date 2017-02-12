@@ -1,4 +1,7 @@
 
+# bootstrap
+
+
 Returns true if two lists are not statistically significantly different.
 
 Based on [An introduction to the
@@ -22,6 +25,7 @@ distribution (e.g. the normal distribution).
 ____
 
 ## Programmer's Guide
+
 
 ```python
 import random
@@ -95,6 +99,7 @@ def bootstrap(y0,z0, b = 256, conf= 95):
 
 ```
 
+
 ___ 
 
 ## FAQ
@@ -108,6 +113,7 @@ are different). Chapter 16 of his text explains that in more detail.
 (Aside: since I am not a very trusting soul, I have coded this up reversing
  &gt; with &lt;. When I did, `bootstrap` produced the reverse
 of the expected results.)
+
 
 ```python
 ```

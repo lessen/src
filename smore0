@@ -26,10 +26,13 @@ doc() {
         if (Pre) 
             Pre=0
         else {
-            if (In) 
-                print "```python" $0
-            else 
+            if (In)  {
+                print ""
+		print "```python" $0
+            } else { 
                 print "```" $0
+		print ""
+	    }
         }
         next
     }

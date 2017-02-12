@@ -1,3 +1,6 @@
+
+# bore2
+
 #!/home/timm//opt/pypy/bin/pypy3
 bore2.py Rule learning for multi-objective problems.
 Copyright (c) 2016, Tim Menzies tim@menzies.us, MIT license v2.
@@ -49,6 +52,7 @@ Note that the above incrementally discretizes, but only within zones of interest
 Todo: not linear, but clustering remaining rows and explore trees, not a line.
 But not too worried about that. The SWAY experience is that most of the solutions
 come from a small region.
+
 ```python
 
 import traceback,sys,re,math,random,time,ast

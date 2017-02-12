@@ -1,3 +1,6 @@
+
+# tableeg
+
 from eg    import eg
 from rx    import rx,showrx,say,watch,dominates,watched,printm,freshFile
 from table import table

@@ -1,3 +1,6 @@
+
+# bootstrapeg
+
 from eg        import eg
 from random    import random as r
 from bootstrap import bootstrap as bst

@@ -1,3 +1,6 @@
+
+# symeg
+
 from sym import sym
 from  eg  import eg
 import re

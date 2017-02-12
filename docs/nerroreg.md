@@ -1,3 +1,6 @@
+
+# nerroreg
+
 from nerror import nerror
 from eg import eg
 from random import random as r

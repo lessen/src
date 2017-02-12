@@ -1,4 +1,7 @@
 
+# ranges
+
+
 _Ranges_ implements discretization; i.e.  transform quantitative 
 data into qualitative data.  Even for algorithms that can directly 
 deal with quantitative data, dscretization can led to faster, 
@@ -119,6 +122,7 @@ However it runs, this ranges returns a list of dictionaries:
 ____ 
 
 ## Programmer's Guide
+
 
 ```python
 

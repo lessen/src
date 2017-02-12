@@ -1,3 +1,6 @@
+
+# statseg
+
 from num import *
 from eg import eg
 from numbers import *
@@ -86,6 +89,7 @@ likely that all the values are the same.
  *   *   *   *   *   *   *   *   *   *   :  hedgesTest
          *   *   *   *   *               :  ttest
          *   *   *   *   *               :  same
+
 ```python
 
 if __name__ == "__main__": eg()

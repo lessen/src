@@ -1,3 +1,6 @@
+
+# rx
+
 Run some some experiments, setting some globals,
 the un-doing those changes once the experiment fails.
 
@@ -33,6 +36,7 @@ the values in the dictionary `**d`).
 
 Note that the
 values in `d` can be lists or a single items
+
 
 ```python
 

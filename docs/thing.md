@@ -1,4 +1,7 @@
 
+# thing
+
+
 - In use, values are just thrown at a `thing` and, internally, this code works
   out if we are talking about `num`s or `sym`s.
      - Internally, `thing`s have a variable `thing.my`s containing either a `num` or a `sym`.
@@ -42,6 +45,7 @@ Can be used incrementally, or in batch.
 
 ______
 ## Programmer's Guide
+
 
 ```python
 from num     import num

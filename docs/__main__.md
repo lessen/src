@@ -1,3 +1,6 @@
+
+# __main__
+
 # import os
 
 # def ttv1egs(l,g):

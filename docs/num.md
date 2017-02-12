@@ -1,3 +1,6 @@
+
+# num
+
 Maintains summaries of numbers. Can be used incrementally, or in batch.
 
 Example of incremental usage:
@@ -35,6 +38,7 @@ Also, can be used to:
 
 _____
 ## Programmer's Guide          
+
 
 ```python
 

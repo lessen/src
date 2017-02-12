@@ -1,3 +1,6 @@
+
+# sample
+
 Maintains a random sample
 of items.  Can be used incrementally, or in batch.
 
@@ -35,6 +38,7 @@ Also, can be used to:
 
 _____
 ## Programmer's Guide    
+
 ```python
 
 from random import random as r

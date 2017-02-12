@@ -1,4 +1,7 @@
 
+# abcd
+
+
 Watch over a classifier making predictions. As each prediction (and actual)
 classification becomes available, send them to a logger class that incrementally
 calculates accuracy, recall, false alarm rate, precision, f, g etc.
@@ -105,6 +108,7 @@ Note that:
 
 _____
 ## Programmer's guide
+
 
 ```python
 import sys,re

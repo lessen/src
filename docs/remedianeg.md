@@ -1,3 +1,6 @@
+
+# remedianeg
+
 from remedian import remedian
 from eg       import eg
 from random import random as r
@@ -85,6 +88,7 @@ if __name__ == "__main__" : eg()
 {'k': 128, 'n': 500, 'runtTime': 0.0, 'medianError': 0.9897, 'timeDifference': 0.776}
 {'k': 128, 'n': 5000, 'runtTime': 0.0005, 'medianError': 0.9969, 'timeDifference': 0.8013}
 {'k': 128, 'n': 50000, 'runtTime': 0.0046, 'medianError': 0.9999, 'timeDifference': 0.6258}
+
 ```python
 ```
 

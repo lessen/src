@@ -1,4 +1,7 @@
 
+# table
+
+
 Given a source of csv data, `table` reads and stores the rows while at the same
 time keeping statistics on what was seen in each row.
 
@@ -31,6 +34,7 @@ tableg.py -- _table3`.
 
 _____
 ## Programmer's Guide
+
 
 ```python
 from thing import thing

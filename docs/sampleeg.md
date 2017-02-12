@@ -1,3 +1,6 @@
+
+# sampleeg
+
 from eg     import eg
 from sample import sample
 from random import seed

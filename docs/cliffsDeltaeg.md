@@ -1,3 +1,6 @@
+
+# cliffsDeltaeg
+
 from eg import eg
 from cliffsDelta import cd,basic,optimized
 from random import random as r
@@ -57,6 +60,7 @@ repeats: 20 listSize:  512 slow:  0.8030092716217041   fast: 0.01227259635925293
 repeats: 20 listSize: 1024 slow:  3.2127115726470947   fast: 0.02505207061767578   slow/fast: 128
 repeats: 20 listSize: 2048 slow: 12.957298517227173    fast: 0.05299973487854004   slow/fast: 244
 repeats: 20 listSize: 4096 slow: 52.087289333343506    fast: 0.10979938507080078   slow/fast: 474
+
 
 ```python
 ```

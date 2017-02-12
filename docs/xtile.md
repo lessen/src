@@ -1,3 +1,6 @@
+
+# xtile
+
 `xtile` summarizes a list of numbers as a list of percentiles,
 then a little horizontal tile chart. Can show 1,000,000s of numbers in a single line.
  For example:
@@ -37,6 +40,7 @@ scale for all numbers. For example:
         | --  *-|                                0.104, 0.181, 0.234, 0.276, 0.313 : s4
         |-    *      --------     |              0.010, 0.090, 0.251, 0.492, 0.811 : s2
         |           ---------       *    ----  | 0.474, 0.819, 1.061, 1.256, 1.422 : s3
+
 
 ```python
 

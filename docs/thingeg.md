@@ -1,3 +1,6 @@
+
+# thingeg
+
 from eg     import eg
 from thing  import thing
 from random import seed

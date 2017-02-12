@@ -1,3 +1,6 @@
+
+# sym
+
 Maintains summaries of symbols. Can be used incrementally, or in batch.
 
 Example of incremental usage:
@@ -37,6 +40,7 @@ Also, can be used to:
 ____
 
 ## Programmer's Guide
+
 ```python
 
 from math import log

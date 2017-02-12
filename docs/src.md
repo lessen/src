@@ -1,4 +1,7 @@
 
+# src
+
+
 # Rules of src
 
 ## Optimizations
@@ -29,6 +32,7 @@ Todo
 - slit numeg over into thing
 
 - redp div knowing abut thing.n()
+
 
 ```python
 from GLOBALS import *

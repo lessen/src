@@ -1,3 +1,6 @@
+
+# median
+
 Return the median of a list of numbers.
 By default, assumes the list  is unordered
 and needs sorting (and this default can be over-loaded
@@ -13,6 +16,7 @@ of numbers in ten-thousands of a second).
 
 ______
 ## Programmer's Guide
+
 
 ```python
 

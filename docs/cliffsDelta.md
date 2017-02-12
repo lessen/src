@@ -1,4 +1,7 @@
 
+# cliffsDelta
+
+
 Returns True if two lists of numbers are different by only a trivially small amount.
 
 This is a non-parametric effect size test. Computes the probability that list2 has smaller
@@ -57,6 +60,7 @@ lists are deemed to be the same.
 
 ______
 ## Programmer's guide
+
 ```python
 
 # Returns `True` if two lists of numbers are similar.
