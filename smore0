@@ -46,7 +46,7 @@ docs() {
     echo "- [${stem}]($m) : [code](../$p)" >> docs/toc.md
     if [ "$p" -nt "$m" ]; then
       echo "# $p to $m"
-      (echo ""; echo "# ${stem}"; echo "") > docs/toc.md
+      (echo ""; echo "# ${stem}"; echo "") > $m
       doc $p >> $m
     fi
   done
