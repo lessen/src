@@ -50,8 +50,8 @@ docs() {
     #fi
   done
   echo "" >> docs/toc.md
-  git add docs docs/*
- 
+  git add docs/toc.md 
+  git add docs/*
 }
 
 docs
