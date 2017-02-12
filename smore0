@@ -44,10 +44,11 @@ docs() {
     stem="${p%.*}"    
     m="docs/${stem}.md"    
     echo "- [${stem}]($m) : [code](../$p)" >> docs/toc.md
-    #if [ "$p" -nt "$m" ]; then
-    #  echo "# $p to $m"
-    #  doc $p > $m
-    #fi
+    if [ "$p" -nt "$m" ]; then
+      echo "# $p to $m"
+      (echo ""; echo "# ${stem}"; echo "") > docs/toc.md
+      doc $p >> $m
+    fi
   done
   echo "" >> docs/toc.md
   git add docs/toc.md 
