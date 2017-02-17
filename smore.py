@@ -3,6 +3,8 @@
 """
 S.M.O.R.E. = simple multi-objective rule engine.
 
+hello
+
 - Inspired by the Hyperband optimizer: discover good ideas
   by recursively discarding half the bad ones.
 - Scores rows by their cdom score.
