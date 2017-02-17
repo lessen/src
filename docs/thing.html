@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>thing.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/thing.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;thing.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+<ul>
+<li>
+<p>In use, values are just thrown at a <code>thing</code> and, internally, this code works
+ out if we are talking about <code>num</code>s or <code>sym</code>s.</p>
+<ul>
+<li>Internally, <code>thing</code>s have a variable <code>thing.my</code>s containing either a <code>num</code> or a <code>sym</code>.</li>
+</ul>
+</li>
+<li>
+<p>Apart from sumamries, <code>thing</code>s also keep a random <code>sample</code> of the values seen
+ so far.</p>
+<ul>
+<li>This variable is kept in <code>thing.samples</code>.</li>
+</ul>
+</li>
+</ul>
+<h3>Usage</h3>
+<p>Can be used incrementally, or in batch.</p>
+<h4>Example of incremental usage:</h4>
+<pre><code>  t=thing()
+  for i in range(1000):#
+    t + i
+    if i % 100 == 0: print(t,t.samples.stats())
+
+   # output:
+   {:txt 0 :pos 0 :n 1} (0, 0)
+   {:txt 0 :pos 0 :n 101} (50, 50)
+   {:txt 0 :pos 0 :n 201} (100, 100)
+   {:txt 0 :pos 0 :n 301} (149.5, 154)
+   {:txt 0 :pos 0 :n 401} (197.5, 205)
+   {:txt 0 :pos 0 :n 501} (251.5, 249)
+   {:txt 0 :pos 0 :n 601} (311.0, 287)
+   {:txt 0 :pos 0 :n 701} (353.5, 362)
+   {:txt 0 :pos 0 :n 801} (413.5, 415)
+   {:txt 0 :pos 0 :n 901} (462.5, 450)
+   {:txt 0 :pos 0 :n 901} (480.5, 443)
+</code></pre>
+<h4>Example of batch usage:</h4>
+<pre><code>   t= thing(i for i in range(901))
+   print(t,t.samples.stats())
+
+   # output
+   {:txt 0 :pos 0 :n 69}
+</code></pre>
+<hr />
+<h2>Programmer's Guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">num</span>     <span class="kn">import</span> <span class="n">num</span>
+<span class="kn">from</span> <span class="nn">sym</span>     <span class="kn">import</span> <span class="n">sym</span>
+<span class="kn">from</span> <span class="nn">sample</span>  <span class="kn">import</span> <span class="n">sample</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">thing</span><span class="p">:</span>
+  <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="s">&quot;?&quot;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Initialization</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[],</span><span class="n">pos</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">txt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">samples</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">pos</span> <span class="ow">or</span> <span class="mi">0</span>
+    <span class="n">txt</span> <span class="o">=</span> <span class="n">txt</span> <span class="ow">or</span> <span class="n">pos</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">txt</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">pos</span><span class="o">=</span><span class="n">pos</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">=</span><span class="bp">None</span> <span class="c"># will contain a `num` or a `sym`, depending on what data arrives</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">samples</span><span class="o">=</span><span class="bp">None</span>
+    <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Pretty print</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">{:txt </span><span class="si">%s</span><span class="s"> :pos </span><span class="si">%s</span><span class="s"> :n </span><span class="si">%s</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span>
+              <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="p">),</span>
+              <span class="n">i</span><span class="o">.</span><span class="n">txt</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">pos</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">n</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Updating. If this our first item, then work out the type
+and initialize the internal summary variable.
+Also, ensure we have a pace to store the random <code>samples</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">xs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> 
+        <span class="n">what</span> <span class="o">=</span> <span class="n">num</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">))</span> <span class="k">else</span> <span class="n">sym</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">my</span>  <span class="o">=</span> <span class="n">what</span><span class="p">()</span>
+      <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">samples</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">sample</span><span class="p">()</span>   
+      <span class="n">i</span><span class="o">.</span><span class="n">my</span> <span class="o">+</span> <span class="n">x</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">samples</span> <span class="o">+</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">xs</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Iterating over items. If passed a list then yield each item.
+Otherwise, just yield the passed in argument.
+But do not yield anything that is an <code>UNKNOWN</code> value.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">xs</span><span class="p">):</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">xs</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xs</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">))</span> <span class="k">else</span> <span class="p">[</span><span class="n">xs</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">thing</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">x</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <hr />
+<h3>Deferred services</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Much of <code>thing</code>'s services are defined in terms of the nested
+internal summary variables.
+For example, here's how we compute 
+the number of items seen by this <code>thing</code>. </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">n</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span>     <span class="p">:</span> <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">cliffsDelta</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span> <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">cliffsDelta</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">ranges</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>       <span class="p">:</span> <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">ranges</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>  <span class="p">:</span> <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">same_CD</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>    <span class="p">:</span> <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">cliffsDelta</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>  <span class="ow">and</span> <span class="n">i</span><span class="o">.</span><span class="n">bootstrap</span><span class="p">(</span><span class="n">j</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Parametric. assumes gaussians</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">same_HT</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>    <span class="p">:</span> <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">hedges</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="ow">and</span> <span class="n">i</span><span class="o">.</span><span class="n">ttest</span><span class="p">(</span><span class="n">j</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">ttest</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span>      <span class="p">:</span> <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">my</span><span class="o">.</span><span class="n">ttest</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">my</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+
+<hr>
+<a name="discussion"><h2>Discussion</h2></a>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+ var disqus_config = function () {
+this.page.url = 'https://ttv1.github.ip/thing.html'
+this.page.identifier = 'thing';
+ };
+ */
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//ttv1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  <div class='code'>
+    <div class="highlight"><pre></pre></div>
+  </div>
+</div>
+<div class='clearall'></div>
+</div>
+<script id="dsq-count-scr" src="//ttv1.disqus.com/count.js" async></script>
+</body>
+</html>

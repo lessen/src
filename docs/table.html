@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>table.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/table.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;table.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+<p>Given a source of csv data, <code>table</code> reads and stores the rows while at the same
+time keeping statistics on what was seen in each row.</p>
+<p>Column statistics are kept as <code>thing</code>s which are instances of a class that
+watches a stream of data and works out if that column is a numeric or symbolic.
+All these <code>things</code> are stored in <code>table.all</code> as well as in the <em>column groups</em>
+defined in <code>table.COLS</code>.</p>
+<pre><code>  DEFAULT= "x"
+  COLS   = dict(less = "&lt;",   # numeric goals to minimize
+                more = "&gt;",   # numeric goals to maximize
+                klass= ":",   # symbolic goal (for classification) 
+                y    = ":&lt;&gt;"):# all symbols denoting goals
+</code></pre>
+<p>Any column with a header that starts with something else, get stored in the
+group table.DEFAULT.</p>
+<p>By default, <code>table</code> reads all its data at once from a <code>inits</code> list passes to its
+constructor. But <code>table</code> can also read table rows incrementally from strings, a
+file, or a file inside a zip file.</p>
+<p>For very fast csv reads, use <code>csv</code> not <code>table</code>.  <code>Table</code> uses <code>csv</code> as a
+primitive but also keeps extensive statistics on each column.  If those
+statistics are not required, then use <code>csv</code> for (much) faster loads.  For
+example, on one machine, with pypy3, <code>csv</code> can load nearly two million records
+in under six seconds while in the same time <code>table</code> can only load 10,000.</p>
+<p>For clues on how to optimize <code>table</code>, see the profiler output of <code>pypy3
+tableg.py -- _table3</code>.</p>
+<hr />
+<h2>Programmer's Guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">thing</span> <span class="kn">import</span> <span class="n">thing</span>
+<span class="kn">from</span> <span class="nn">csv</span>   <span class="kn">import</span> <span class="n">csv</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">table</span><span class="p">:</span>
+  <span class="n">K</span>        <span class="o">=</span> <span class="mi">3</span>
+  <span class="n">W</span>        <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span><span class="n">x</span>
+  <span class="n">DEFAULT</span>    <span class="o">=</span> <span class="s">&quot;x&quot;</span>
+  <span class="n">COLS</span>       <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">less</span> <span class="o">=</span> <span class="s">&quot;&lt;&quot;</span><span class="p">,</span>   <span class="c"># numeric goals to be minimized</span>
+                    <span class="n">more</span> <span class="o">=</span> <span class="s">&quot;&gt;&quot;</span><span class="p">,</span>   <span class="c"># numeric goals to be maximized</span>
+                    <span class="n">klass</span><span class="o">=</span> <span class="s">&quot;:&quot;</span><span class="p">,</span>   <span class="c"># symbolic goal (used for classification) </span>
+                    <span class="n">y</span>    <span class="o">=</span> <span class="s">&quot;:&lt;&gt;&quot;</span>  <span class="c"># all symbols denoting goals</span>
+                    <span class="p">)</span>             <span class="c"># (any any other thing goes into table.DEFAULT)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Read table either from a <code>str</code>, a <code>file</code>, a <code>file</code> in a <code>zip</code>
+or from some <code>inits</code> list.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[],</span><span class="nb">str</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="nb">file</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="nb">zip</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span> <span class="o">=</span> <span class="p">[],{},[]</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">COLS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="nb">file</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">csv</span><span class="p">(</span><span class="nb">str</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="nb">file</span><span class="p">,</span><span class="nb">zip</span><span class="o">=</span><span class="nb">zip</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">+</span> <span class="n">row</span>
+    <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;{:rows </span><span class="si">%s</span><span class="s"> :less </span><span class="si">%s</span><span class="s"> :more </span><span class="si">%s</span><span class="s"> :klass </span><span class="si">%s</span><span class="s"> :x </span><span class="si">%s</span><span class="s"> :y </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">),</span>           <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="s">&quot;less&quot;</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="s">&quot;more&quot;</span><span class="p">]),</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="s">&quot;klass&quot;</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="s">&quot;x&quot;</span><span class="p">]),</span>    <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="s">&quot;y&quot;</span><span class="p">]))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>If <code>all</code> is defined, we are beyong the first header row.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="n">row</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Create one <code>thing</code> for each column.
+Store that <code>thing</code> in <code>all</code> as well as 
+in its associated <code>COLS</code> group.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">,</span><span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+      <span class="n">t</span>      <span class="o">=</span> <span class="n">thing</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">txt</span><span class="o">=</span><span class="n">cell</span><span class="p">)</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">all</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span>
+      <span class="n">placed</span> <span class="o">=</span> <span class="bp">False</span>
+      <span class="k">for</span> <span class="n">key</span><span class="p">,</span><span class="n">chars</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">COLS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">char</span> <span class="ow">in</span> <span class="n">chars</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">char</span><span class="p">:</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span>
+            <span class="n">placed</span> <span class="o">=</span> <span class="bp">True</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>If we can't place it anywhere else, place it in <code>table.DEFAULT</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>      <span class="k">if</span> <span class="ow">not</span> <span class="n">placed</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[</span><span class="n">t</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Update the statistics held in each thing for each column.
+Keep the data in <code>rows</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+    <span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">pos</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">]</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">rows</span> <span class="o">+=</span> <span class="p">[</span> <span class="n">row</span> <span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <h3>Misc utilities</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Return a table just like this one,
+but withtout the row data</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">twin</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">table</span><span class="p">([[</span><span class="n">t</span><span class="o">.</span><span class="n">txt</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">]])</span>
+    <span class="p">[</span><span class="n">t</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">t</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>Return the first klass value of a row </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">klass</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="s">&quot;klass&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>Return the first goal value of a row </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">goal</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">row</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="s">&quot;y&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pos</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Compute Euclidean distance between two rows.
+Makes use of sevices defined in each thing in <code>all</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span><span class="n">k</span><span class="p">,</span> <span class="n">what</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">ds</span><span class="p">,</span><span class="n">ns</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mf">1e-32</span>
+    <span class="n">what</span> <span class="o">=</span> <span class="n">what</span> <span class="ow">or</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">what</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">group</span><span class="p">[</span><span class="n">grp</span><span class="p">]:</span>
+        <span class="n">d</span>    <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">pos</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">pos</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+          <span class="n">ds</span>  <span class="o">+=</span> <span class="n">d</span>
+          <span class="n">ns</span>  <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">ds</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">/</span> <span class="n">ns</span><span class="o">**</span><span class="mf">0.5</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">nearest</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">row</span><span class="p">,</span><span class="n">rows</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">what</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">details</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+              <span class="n">bt</span>   <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">&lt;</span> <span class="n">y</span><span class="p">,</span>
+              <span class="n">zero</span> <span class="o">=</span> <span class="mf">1e32</span><span class="p">):</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">zero</span>
+    <span class="n">out</span>  <span class="o">=</span> <span class="n">row</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="ow">or</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span>
+    <span class="k">for</span> <span class="n">otherRow</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+      <span class="k">if</span> <span class="nb">id</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">id</span><span class="p">(</span><span class="n">otherRow</span><span class="p">):</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">otherRow</span><span class="p">,</span>
+                     <span class="n">what</span><span class="o">=</span><span class="n">what</span> <span class="ow">or</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">bt</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span><span class="n">best</span><span class="p">):</span>
+          <span class="n">out</span><span class="p">,</span><span class="n">best</span> <span class="o">=</span> <span class="n">otherRow</span><span class="p">,</span><span class="n">tmp</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span><span class="n">best</span> <span class="k">if</span> <span class="n">details</span> <span class="k">else</span> <span class="n">out</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">furthest</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">row</span><span class="p">,</span><span class="n">rows</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">what</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">details</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">nearest</span><span class="p">(</span><span class="n">row</span><span class="p">,</span>
+                   <span class="n">what</span> <span class="o">=</span> <span class="n">what</span> <span class="ow">or</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">],</span>
+                   <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="ow">or</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span><span class="p">,</span>
+                   <span class="n">bt</span>   <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span><span class="p">,</span>
+                   <span class="n">zero</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                   <span class="n">details</span><span class="o">=</span><span class="n">details</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">distances</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">rows</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">what</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">out</span><span class="p">,</span><span class="n">index</span> <span class="o">=</span> <span class="p">{},{}</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="n">rows</span> <span class="ow">or</span> <span class="n">i</span><span class="o">.</span><span class="n">rows</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+      <span class="n">out</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="n">index</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span>
+    <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">row1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+      <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">row2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="n">k</span><span class="p">:</span>
+          <span class="n">d</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">row1</span><span class="p">,</span><span class="n">row2</span><span class="p">,</span>
+                     <span class="n">what</span> <span class="o">=</span> <span class="n">what</span> <span class="ow">or</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">DEFAULT</span><span class="p">])</span>
+          <span class="n">out</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">d</span><span class="p">,</span><span class="n">k</span><span class="p">)]</span>
+          <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">d</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+      <span class="n">out</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span><span class="n">index</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+
+<hr>
+<a name="discussion"><h2>Discussion</h2></a>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+ var disqus_config = function () {
+this.page.url = 'https://ttv1.github.ip/table.html'
+this.page.identifier = 'table';
+ };
+ */
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//ttv1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  <div class='code'>
+    <div class="highlight"><pre></pre></div>
+  </div>
+</div>
+<div class='clearall'></div>
+</div>
+<script id="dsq-count-scr" src="//ttv1.disqus.com/count.js" async></script>
+</body>
+</html>

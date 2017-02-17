@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>sym.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/sym.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sym.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+<p>Maintains summaries of symbols. Can be used incrementally, or in batch.</p>
+<p>Example of incremental usage:</p>
+<pre><code>   words = # some long list of quotes
+   words = re.sub(r'[-,\.\n]'," ",words).split()
+
+   s=sym()
+   for i,x in enumerate(words):
+       s + x
+       if i % 25 == 0: print(s) 
+   print(s)
+
+   # output:
+   {:n   1 :most  1 :mode You :ent 0}
+   {:n  26 :most  3 :mode is  :ent 4.1329}
+   {:n  51 :most  4 :mode is  :ent 5.0546}
+   {:n  76 :most  5 :mode is  :ent 5.495}
+   {:n 101 :most  7 :mode the :ent 5.8595}
+   {:n 126 :most  7 :mode the :ent 6.2548}
+   {:n 151 :most 10 :mode is  :ent 6.2816}
+   {:n 176 :most 12 :mode is  :ent 6.3449}
+   {:n 199 :most 13 :mode is  :ent 6.5374}
+</code></pre>
+<p>Example of batch usage:</p>
+<pre><code>  print( sym( x for x in words ))
+
+  # output:
+  {:n 199 :most 13 :mode is :ent 6.5374}
+</code></pre>
+<p>Also, can be used to:</p>
+<ul>
+<li>compute distance between symbols (used in nearest-neighbor calculations);</li>
+<li>compute likelihood a symbol belongs to a sample (used in Bayes classifiers).</li>
+</ul>
+<hr />
+<h2>Programmer's Guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">log</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">sym</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Initialization</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">most</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">counts</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">None</span><span class="p">,{}</span>
+    <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Reporting</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;{:n </span><span class="si">%s</span><span class="s"> :most </span><span class="si">%s</span><span class="s"> :mode </span><span class="si">%s</span><span class="s"> :ent </span><span class="si">%.5g</span><span class="s">}&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">most</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">mode</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">ent</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Updating. If we find a new most frequent symbol, update <code>mode</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">count</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">i</span><span class="o">.</span><span class="n">most</span><span class="p">:</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">most</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">mode</span><span class="o">=</span><span class="n">count</span><span class="p">,</span><span class="n">x</span>
+    <span class="k">return</span> <span class="n">x</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Entropy calculation (guesstimate of the number of bits required to encode this distribution).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">ent</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+      <span class="n">p</span>  <span class="o">=</span> <span class="n">v</span><span class="o">/</span><span class="n">i</span><span class="o">.</span><span class="n">n</span>
+      <span class="n">e</span> <span class="o">-=</span> <span class="n">p</span><span class="o">*</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">e</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <hr />
+<h3>Distance calculations</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Distance between two symbols, defined as per p42 of <a href="https://goo.gl/2722eJ">Aha et al., 1991</a>
+(when faced with unknown values, assume maximal distance).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">miss</span><span class="o">=</span><span class="s">&quot;?&quot;</span><span class="p">):</span>
+    <span class="k">if</span>   <span class="n">x</span> <span class="o">==</span> <span class="n">miss</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">==</span> <span class="n">miss</span> <span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">elif</span> <span class="n">x</span> <span class="o">==</span> <span class="n">miss</span> <span class="ow">or</span>  <span class="n">y</span> <span class="o">==</span> <span class="n">miss</span> <span class="p">:</span> <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">x</span><span class="o">==</span><span class="n">y</span> <span class="k">else</span> <span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Calculates how likely is it that symbol <code>x</code> belongs to this distribution (used in Bayes classifiers).
+Adds certain magic factors to the numerator and denominator to handle low frequency events.
+From Section 3 of <a href="http://i.giwebb.com/wp-content/papercite-data/pdf/YangWebb02b.pdf">Yang and Webb,2002</a>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">like</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">prior</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">m</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+     <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">counts</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="o">*</span><span class="n">prior</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">m</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+
+<hr>
+<a name="discussion"><h2>Discussion</h2></a>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+ var disqus_config = function () {
+this.page.url = 'https://ttv1.github.ip/sym.html'
+this.page.identifier = 'sym';
+ };
+ */
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//ttv1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  <div class='code'>
+    <div class="highlight"><pre></pre></div>
+  </div>
+</div>
+<div class='clearall'></div>
+</div>
+<script id="dsq-count-scr" src="//ttv1.disqus.com/count.js" async></script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>abcd.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/abcd.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abcd.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+<p>Watch over a classifier making predictions. As each prediction (and actual)
+classification becomes available, send them to a logger class that incrementally
+calculates accuracy, recall, false alarm rate, precision, f, g etc.</p>
+<p>For example:</p>
+<pre><code>   a,b,c,d=list("abcd")
+   log = abcd("data","rx")
+   for want,got in [(a,b), (a,a), (a,c), (a,d), (b,a)]:
+     log(want, got)
+   log.report()
+</code></pre>
+<p>This prints</p>
+<pre><code>   # db                   rx            n    a    b   c   d    acc pd  pf  prec f  g  class
+   ----------------------------------------------------------------------------------------------------
+   # data                 rx            4    0    3   1    1   20  25 100  50  33   0 a
+   # data                 rx            1    3    1   1    0   20   0  25   0  33   0 b
+   # data                 rx            0    4    0   1    0   20   0  20   0  33   0 c
+   # data                 rx            0    4    0   1    0   20   0  20   0  33   0 d
+   ----------------------------------------------------------------------------------------------------
+   # data                 rx            2    2    1   1    0   20  10  53  20  33   0
+</code></pre>
+<p>(The last line is the weighted sum of the column above it.)</p>
+<p>If called from the command line, this code expects to read two words per line, for multiple lines.</p>
+<ul>
+<li>Line1 mentions the data and treatment applied.</li>
+<li>On all other lines, the words are first and section the actual and predicted values (respectively).</li>
+</ul>
+<p>E.g.</p>
+<pre><code>   cat &lt;&lt;EOF | python3 abcd.py
+   data rx
+   a b
+   a a
+   a c
+   a d
+   b a
+   EOF
+</code></pre>
+<p>This prints out the same report as above.</p>
+<h3>Notes on Performance Measures</h3>
+<p>Classifiers can be assessed according to the following measures:</p>
+<pre><code>                                  Example has class X
+                                  +-------+-----+
+                                  | not X |  X  |
+                            +-----+-------+-----+
+  classifier predicts not X |  no |     a |  b  |
+                            +-----+-------+-----+
+  classifier predicts X     | yes |     c |  d  |
+                            +-----+-------+-----+
+
+   accuracy         = acc          = (a+d)/(a+b+c+d
+   prob detection   = pd  = recall = d/(b+d)
+   prob false alarm = pf           = c/(a+c)
+   precision        = prec         = d/(c+d)
+</code></pre>
+<p>Ideally, detectors have high PDs, low PFs, and low
+effort. This ideal state rarely happens:</p>
+<ul>
+<li>
+<p>PD and effort are linked. The more modules that trigger
+the detector, the higher the PD. However, effort also gets
+increases</p>
+</li>
+<li>
+<p>High PD or low PF comes at the cost of high PF or low PD
+(respectively). This linkage can be seen in a standard
+receiver operator curve (ROC).  Suppose, for example, LOC&gt; x
+is used as the detector (i.e. we assume large modules have
+more errors). LOC &gt; x represents a family of detectors. At
+x=0, EVERY module is predicted to have errors. This detector
+has a high PD but also a high false alarm rate. At x=0, NO
+module is predicted to have errors. This detector has a low
+false alarm rate but won't detect anything at all. At 0&lt;x&lt;1,
+a set of detectors are generated as shown below:</p>
+<pre><code> pd
+1 |           x  x  x   KEY:
+  |        x     .      "."  denotes the line PD=PF
+  |     x      .        "x"  denotes the roc curve 
+  |   x      .               for a set of detectors
+  |  x     .
+  | x    . 
+  | x  .
+  |x .
+  |x
+  x------------------ pf    
+  0                   1
+</code></pre>
+</li>
+</ul>
+<p>Note that:</p>
+<ul>
+<li>The only way to make no mistakes (PF=0) is to do nothing
+(PD=0)</li>
+<li>The only way to catch more detects is to make more
+mistakes (increasing PD means increasing PF).</li>
+<li>Our detector bends towards the "sweet spot" of
+<PD=1,PF=0> but does not reach it.</li>
+<li>The line pf=pd on the above graph represents the "no information"
+line. If pf=pd then the detector is pretty useless. The better
+the detector, the more it rises above PF=PD towards the "sweet spot".</li>
+</ul>
+<hr />
+<h2>Programmer's guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span><span class="nn">re</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">abcd</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Initialize</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">db</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">,</span><span class="n">rx</span><span class="o">=</span><span class="s">&quot;all&quot;</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">db</span><span class="p">);</span> <span class="n">i</span><span class="o">.</span><span class="n">rx</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">rx</span><span class="p">);</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">yes</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">no</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">known</span> <span class="o">=</span> <span class="p">{};</span> <span class="n">i</span><span class="o">.</span><span class="n">a</span><span class="o">=</span> <span class="p">{};</span> <span class="n">i</span><span class="o">.</span><span class="n">b</span><span class="o">=</span> <span class="p">{};</span> <span class="n">i</span><span class="o">.</span><span class="n">c</span><span class="o">=</span> <span class="p">{};</span> <span class="n">i</span><span class="o">.</span><span class="n">d</span><span class="o">=</span><span class="p">{}</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Incrementally update</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">actual</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">predict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">knowns</span><span class="p">(</span><span class="n">actual</span><span class="p">)</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">knowns</span><span class="p">(</span><span class="n">predict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">predict</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">yes</span> <span class="o">+=</span> <span class="mi">1</span> 
+    <span class="k">else</span>                <span class="p">:</span>  <span class="n">i</span><span class="o">.</span><span class="n">no</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span>  <span class="n">i</span><span class="o">.</span><span class="n">known</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">actual</span> <span class="o">==</span> <span class="n">x</span><span class="p">:</span>
+        <span class="k">if</span>  <span class="n">predict</span> <span class="o">==</span> <span class="n">actual</span><span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> 
+        <span class="k">else</span>                 <span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span>  <span class="n">predict</span> <span class="o">==</span> <span class="n">x</span>     <span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span> 
+        <span class="k">else</span>                 <span class="p">:</span> <span class="n">i</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Ensure we know class <code>x</code>. If <code>x</code> is new, then we have to back date
+the "a" value (true negatives).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">knowns</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">known</span><span class="p">:</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">known</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">=</span><span class="mf">0.0</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">known</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">known</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">yes</span> <span class="o">+</span> <span class="n">i</span><span class="o">.</span><span class="n">no</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Pretty print header</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&quot;#&quot;</span><span class="p">,</span>
+        <span class="p">(</span><span class="s">&#39;{0:20s} {1:11s}   {2:4s} {3:4s} {4:4s}&#39;</span><span class="o">+</span>\
+        <span class="s">&#39;{5:4s}{6:4s} {7:3s} {8:3s} {9:3s} &#39;</span><span class="o">+</span> \
+        <span class="s">&#39;{10:3s} {11:3s}{12:3s}{13:10s}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span> 
+        <span class="s">&quot;db&quot;</span><span class="p">,</span><span class="s">&quot;rx&quot;</span><span class="p">,</span><span class="s">&quot;n&quot;</span><span class="p">,</span><span class="s">&quot;a&quot;</span><span class="p">,</span><span class="s">&quot;b&quot;</span><span class="p">,</span><span class="s">&quot;c&quot;</span><span class="p">,</span><span class="s">&quot;d&quot;</span><span class="p">,</span><span class="s">&quot;acc&quot;</span><span class="p">,</span><span class="s">&quot;pd&quot;</span><span class="p">,</span>
+        <span class="s">&quot;pf&quot;</span><span class="p">,</span><span class="s">&quot;prec&quot;</span><span class="p">,</span><span class="s">&quot;f&quot;</span><span class="p">,</span><span class="s">&quot;g&quot;</span><span class="p">,</span><span class="s">&quot;class&quot;</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>Computer the performance scores  </p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">scores</span><span class="p">(</span><span class="n">i</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Convenience class. Can acces fields as x.f not x["f"].</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">class</span> <span class="nc">oo</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>      <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="o">**</span><span class="n">adds</span><span class="p">):</span> <span class="n">i</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">adds</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">p</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">:</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">y</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">n</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="p">:</span> <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ass</span><span class="o">=</span><span class="n">bs</span><span class="o">=</span><span class="n">cs</span><span class="o">=</span><span class="n">ds</span><span class="o">=</span><span class="n">accs</span><span class="o">=</span><span class="n">pds</span><span class="o">=</span><span class="n">pfs</span><span class="o">=</span><span class="n">precs</span><span class="o">=</span><span class="n">fs</span><span class="o">=</span><span class="n">gs</span><span class="o">=</span><span class="n">yess</span><span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">i</span><span class="o">.</span><span class="n">known</span><span class="p">:</span>
+      <span class="n">pd</span>  <span class="o">=</span> <span class="n">pf</span> <span class="o">=</span> <span class="n">pn</span> <span class="o">=</span> <span class="n">prec</span> <span class="o">=</span> <span class="n">g</span> <span class="o">=</span> <span class="n">f</span> <span class="o">=</span> <span class="n">acc</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">a</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">a</span><span class="p">[</span><span class="n">x</span><span class="p">];</span> <span class="n">b</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">b</span><span class="p">[</span><span class="n">x</span><span class="p">];</span> <span class="n">c</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">c</span><span class="p">[</span><span class="n">x</span><span class="p">];</span> <span class="n">d</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">d</span><span class="p">[</span><span class="n">x</span><span class="p">]</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">b</span><span class="o">+</span><span class="n">d</span><span class="p">)</span>    <span class="p">:</span> <span class="n">pd</span>   <span class="o">=</span> <span class="n">d</span>     <span class="o">/</span> <span class="p">(</span><span class="n">b</span><span class="o">+</span><span class="n">d</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">c</span><span class="p">)</span>    <span class="p">:</span> <span class="n">pf</span>   <span class="o">=</span> <span class="n">c</span>     <span class="o">/</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">c</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">c</span><span class="p">)</span>    <span class="p">:</span> <span class="n">pn</span>   <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">+</span><span class="n">d</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">c</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="o">+</span><span class="n">d</span><span class="p">)</span>    <span class="p">:</span> <span class="n">prec</span> <span class="o">=</span> <span class="n">d</span>     <span class="o">/</span> <span class="p">(</span><span class="n">c</span><span class="o">+</span><span class="n">d</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">pf</span><span class="o">+</span><span class="n">pd</span><span class="p">):</span> <span class="n">g</span>    <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">pf</span><span class="p">)</span><span class="o">*</span><span class="n">pd</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">pf</span><span class="o">+</span><span class="n">pd</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">prec</span><span class="o">+</span><span class="n">pd</span><span class="p">):</span> <span class="n">f</span>    <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">prec</span><span class="o">*</span><span class="n">pd</span><span class="o">/</span><span class="p">(</span><span class="n">prec</span><span class="o">+</span><span class="n">pd</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">yes</span> <span class="o">+</span> <span class="n">i</span><span class="o">.</span><span class="n">no</span><span class="p">):</span> <span class="n">acc</span><span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">yes</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">yes</span><span class="o">+</span><span class="n">i</span><span class="o">.</span><span class="n">no</span><span class="p">)</span>
+      <span class="n">out</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">oo</span><span class="p">(</span><span class="n">db</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">rx</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">rx</span><span class="p">,</span> <span class="n">yes</span><span class="o">=</span> <span class="n">n</span><span class="p">(</span><span class="n">b</span><span class="o">+</span><span class="n">d</span><span class="p">),</span>
+                 <span class="nb">all</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="o">+</span><span class="n">c</span><span class="o">+</span><span class="n">d</span><span class="p">),</span> <span class="n">a</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">a</span><span class="p">),</span>
+                 <span class="n">b</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">d</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">acc</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">acc</span><span class="p">),</span> <span class="n">pd</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">pd</span><span class="p">),</span>
+                 <span class="n">pf</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">pf</span><span class="p">),</span> <span class="n">prec</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">prec</span><span class="p">),</span> <span class="n">f</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">f</span><span class="p">),</span> <span class="n">g</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">g</span><span class="p">),</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>computer weighted sums</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>      <span class="n">ratio</span>  <span class="o">=</span> <span class="p">(</span><span class="n">c</span> <span class="o">+</span> <span class="n">d</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">yes</span> <span class="o">+</span> <span class="n">i</span><span class="o">.</span><span class="n">no</span><span class="p">)</span>
+      <span class="n">ass</span>   <span class="o">+=</span> <span class="n">a</span>    <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">bs</span>    <span class="o">+=</span> <span class="n">b</span>    <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">cs</span>    <span class="o">+=</span> <span class="n">c</span>    <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">ds</span>    <span class="o">+=</span> <span class="n">d</span>    <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">accs</span>  <span class="o">+=</span> <span class="n">acc</span>  <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">pds</span>   <span class="o">+=</span> <span class="n">pd</span>   <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">pfs</span>   <span class="o">+=</span> <span class="n">pf</span>   <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">precs</span> <span class="o">+=</span> <span class="n">prec</span> <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">fs</span>    <span class="o">+=</span> <span class="n">f</span>    <span class="o">*</span> <span class="n">ratio</span>
+      <span class="n">gs</span>    <span class="o">+=</span> <span class="n">g</span>    <span class="o">*</span> <span class="n">ratio</span>
+    <span class="n">out</span><span class="p">[</span><span class="s">&quot;__all__&quot;</span><span class="p">]</span> <span class="o">=</span>  <span class="n">oo</span><span class="p">(</span>
+      <span class="n">db</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">rx</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">rx</span><span class="p">,</span> <span class="n">yes</span><span class="o">=</span> <span class="n">n</span><span class="p">(</span><span class="n">yess</span><span class="p">),</span>
+      <span class="nb">all</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">ass</span><span class="o">+</span><span class="n">bs</span><span class="o">+</span><span class="n">cs</span><span class="o">+</span><span class="n">ds</span><span class="p">),</span> <span class="n">a</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">ass</span><span class="p">),</span>
+      <span class="n">b</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">bs</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">cs</span><span class="p">),</span> <span class="n">d</span><span class="o">=</span><span class="n">n</span><span class="p">(</span><span class="n">ds</span><span class="p">),</span> <span class="n">acc</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">accs</span><span class="p">),</span> <span class="n">pd</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">pds</span><span class="p">),</span>
+      <span class="n">pf</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">pfs</span><span class="p">),</span> <span class="n">prec</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">precs</span><span class="p">),</span> <span class="n">f</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">fs</span><span class="p">),</span> <span class="n">g</span><span class="o">=</span><span class="n">p</span><span class="p">(</span><span class="n">gs</span><span class="p">),</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;__all__&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Write the performance scores for each class, then the
+weighted sum of those scores across all classes.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">report</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">brief</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">header</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">x</span><span class="p">,</span><span class="n">s</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">scores</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">()):</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">brief</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;#&quot;</span><span class="p">,</span>
+              <span class="p">(</span><span class="s">&#39;{0:20s} {1:10s} {2:4d} {3:4d} {4:4d}&#39;</span><span class="o">+</span>\
+               <span class="s">&#39;{5:4d} {6:4d} {7:4d} {8:3d} {9:3d} &#39;</span><span class="o">+</span> \
+               <span class="s">&#39;{10:3d} {11:3d} {12:3d} {13:10s}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">s</span><span class="o">.</span><span class="n">db</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">rx</span><span class="p">,</span>  <span class="n">s</span><span class="o">.</span><span class="n">yes</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">c</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">d</span><span class="p">,</span> 
+                 <span class="n">s</span><span class="o">.</span><span class="n">acc</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">pd</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">pf</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">prec</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">g</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Tool for reading in the data from standard input.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+  <span class="n">log</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="p">:</span>
+    <span class="n">words</span><span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&quot;[\n\r]&quot;</span><span class="p">,</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="n">line</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+    <span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">words</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">log</span><span class="p">:</span>
+      <span class="n">log</span><span class="p">(</span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="n">log</span><span class="o">=</span><span class="n">abcd</span><span class="p">(</span><span class="n">one</span><span class="p">,</span><span class="n">two</span><span class="p">)</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">report</span><span class="p">()</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+
+<hr>
+<a name="discussion"><h2>Discussion</h2></a>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+ var disqus_config = function () {
+this.page.url = 'https://ttv1.github.ip/abcd.html'
+this.page.identifier = 'abcd';
+ };
+ */
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//ttv1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  <div class='code'>
+    <div class="highlight"><pre></pre></div>
+  </div>
+</div>
+<div class='clearall'></div>
+</div>
+<script id="dsq-count-scr" src="//ttv1.disqus.com/count.js" async></script>
+</body>
+</html>

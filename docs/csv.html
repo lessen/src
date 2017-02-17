@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>csv.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/csv.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;csv.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+<ul>
+<li>Can read from ascii files, zip files, or strings.</li>
+<li>Rows are <code>yield</code>ed one a time, so it is possible to
+ use this code to incremental process very large files
+ without first loading all file contents into ram.</li>
+<li>Knows to delete comments and whitespace.</li>
+<li>Allows rows on one line to the continued
+ to the next line (which is done if the first line ends in <code>,</code>).</li>
+<li>Columns can contain missing  values (marked with a <code>?</code>).</li>
+<li>Column contents are converted into <code>int</code>s or <code>float</code>s or
+ left as strings, as appropriate.</li>
+<li>If called with the default <code>header=True</code> flag, then the
+ first row is returned verbatim.</li>
+</ul>
+<p><code>csv</code> is not slow.  For example, on one machine, with pypy3, <code>csv</code> can load
+nearly two million records in under six seconds-- and even faster if that data
+is read from a zip file.</p>
+<h3>Examples</h3>
+<h4>Template for standard usage</h4>
+<pre><code>   from csv import csv
+   #
+   for row in csv(...):
+      doSomething(row)
+</code></pre>
+<p>Can read from strings, files, zip files.</p>
+<h4>Example #1: from string</h4>
+<pre><code>   from csv import csv
+   #
+   stringOfData="a,b,
+   c,d
+   1,2.0,3,x
+   10,20,30,y"
+   for row in csv(stringOfData, header=True):
+      print(row)
+</code></pre>
+<h4>Example #2: read from ascii file.</h4>
+<pre><code>   from csv import csv
+   #
+   for row in csv(file="data/weather.csv"):
+     print(row)
+</code></pre>
+<h4>Example #3: read from zip file</h4>
+<pre><code>   from csv import csv
+   #
+   for row in csv(file = "weatherLarge.csv",
+                   zip  = "data/data.zip"):
+     print(row)
+</code></pre>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <hr />
+<h2>Programmer's Guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">zipfile</span><span class="o">,</span><span class="nn">re</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">csv</span><span class="p">(</span><span class="nb">str</span><span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="nb">zip</span><span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span> <span class="bp">True</span><span class="p">,</span>
+         <span class="n">SEPERATOR</span> <span class="o">=</span> <span class="s">&quot;,&quot;</span><span class="p">,</span>
+         <span class="n">MISSING</span>   <span class="o">=</span> <span class="s">&quot;?&quot;</span><span class="p">,</span>
+         <span class="n">DOOMED</span>     <span class="o">=</span> <span class="s">&#39;([</span><span class="se">\n\r\t</span><span class="s">]|#.*)&#39;</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <hr />
+<h3>Misc helpers</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Convert strings to strings</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">string</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">:</span> <span class="k">return</span> <span class="n">x</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Needed when reading zip files.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">utf8</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">:</span> <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <hr />
+<h3>Generator: <code>yieldAllRow</code></h3>
+<p>The <code>rows</code> function kills whitespace and comments (i.e. all the
+things defined in <code>DOOMED</code>).  </p>
+<p>Also, it combines lines that end in <code>,</code> with the
+next line.  </p>
+<p>Further, it breaks up the lines into cells (dividing at the
+<code>SEPERATOR</code>).  </p>
+<p>After that, strings within cells are converted to their
+appropriate type (using <code>compileRow</code>).  </p>
+<p>Finally, the function complains if any
+row is a diofferent size to the first row.</p>
+<p>Todo: when there are headers, don't compile on cols that are marked as missing.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">rows</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">rules</span><span class="o">=</span><span class="p">[],</span> <span class="n">lines</span><span class="o">=</span><span class="p">[],</span> <span class="nb">filter</span><span class="o">=</span><span class="n">string</span><span class="p">):</span>
+   <span class="k">for</span> <span class="n">line0</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
+     <span class="n">line1</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="n">line0</span><span class="p">)</span>
+     <span class="n">line2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">DOOMED</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">line1</span><span class="p">)</span>
+     <span class="k">if</span> <span class="n">line2</span><span class="p">:</span>
+       <span class="n">lines</span> <span class="o">+=</span> <span class="p">[</span><span class="n">line2</span><span class="p">]</span>
+       <span class="k">if</span> <span class="n">line2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">SEPERATOR</span><span class="p">:</span>
+         <span class="n">tmp</span>   <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+         <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+         <span class="n">row</span>   <span class="o">=</span> <span class="p">[</span><span class="n">z</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">tmp</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">)]</span>
+         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+           <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+           <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
+             <span class="n">rules</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+           <span class="k">else</span><span class="p">:</span>
+             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">),(</span><span class="s">&quot;expected </span><span class="si">%s</span><span class="s"> cells in this row&quot;</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">rules</span><span class="p">))</span>
+           <span class="k">yield</span> <span class="n">row</span> <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">header</span> <span class="k">else</span> <span class="n">compileRow</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">rules</span><span class="p">)</span> <span class="c">#... 7</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <hr />
+<h3>Compile one row</h3>
+<p>To <code>compileRow</code> we call <code>compileCell</code> on each item in the row.</p>
+<p>To <code>compileCell</code>, we need some <code>rules</code> that know how to convert strings into
+<code>int</code>s, <code>float</code>s, or just leave as <code>string</code>s.</p>
+<p>In <code>compileCell</code>, the first time we see something in a column that is not a MISSING value,
+we  ask <code>what2do</code> to work   out how to convert that thing into its proper type
+(this is done using some calls to <code>try:except:</code>).</p>
+<p>The results of  <code>what2do</code> are cached in <code>rules</code> so that,  after that first value,
+we know how to compile things in this column. Important note: without 
+that cache, this code is five to ten times slower to execute.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">compileRow</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span><span class="n">rules</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">what2do</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+      <span class="k">try</span><span class="p">:</span>  <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="k">return</span> <span class="nb">int</span>
+      <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>  <span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">);</span> <span class="k">return</span> <span class="nb">float</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+          <span class="k">return</span> <span class="n">string</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">compileCell</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+      <span class="k">if</span> <span class="n">x</span> <span class="o">!=</span> <span class="n">MISSING</span><span class="p">:</span>
+        <span class="n">rule</span> <span class="o">=</span> <span class="n">rules</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rules</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">or</span> <span class="n">what2do</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rule</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+      <span class="k">return</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">compileCell</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">cell</span><span class="p">)</span>
+             <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lst</span><span class="p">)]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <p>If the csv has headers, and if those headers
+start with the <code>MISSING</code> marker, then just yield
+the columns that are not <code>MISSING</code>. Otherwise,
+just yield all rows.
+Yields just the columns not marked as missing.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">cols</span><span class="p">(</span><span class="n">src</span><span class="p">):</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <hr />
+<h3>Main</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+      <span class="n">use</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
+        <span class="n">use</span> <span class="o">=</span> <span class="n">use</span> <span class="ow">or</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span><span class="n">cell</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                      <span class="k">if</span>  <span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">MISSING</span> <span class="p">]</span>
+        <span class="k">yield</span> <span class="p">[</span><span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">use</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">src</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">row</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Read from zip</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">if</span> <span class="nb">zip</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">(</span><span class="nb">zip</span><span class="p">,</span> <span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">myzip</span><span class="p">:</span>
+      <span class="k">with</span> <span class="n">myzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">(</span><span class="n">rows</span><span class="p">(</span> <span class="n">src</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="n">utf8</span> <span class="p">)):</span>
+          <span class="k">yield</span> <span class="n">row</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Read from file</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">elif</span> <span class="nb">file</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="nb">file</span><span class="p">)</span> <span class="k">as</span> <span class="n">src</span><span class="p">:</span>
+      <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">(</span><span class="n">rows</span><span class="p">(</span> <span class="n">src</span> <span class="p">)):</span>
+        <span class="k">yield</span> <span class="n">row</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Read from string</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">elif</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">(</span><span class="n">rows</span><span class="p">(</span> <span class="nb">str</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span> <span class="p">)):</span>
+      <span class="k">yield</span> <span class="n">row</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+
+<hr>
+<a name="discussion"><h2>Discussion</h2></a>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+ var disqus_config = function () {
+this.page.url = 'https://ttv1.github.ip/csv.html'
+this.page.identifier = 'csv';
+ };
+ */
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//ttv1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  <div class='code'>
+    <div class="highlight"><pre></pre></div>
+  </div>
+</div>
+<div class='clearall'></div>
+</div>
+<script id="dsq-count-scr" src="//ttv1.disqus.com/count.js" async></script>
+</body>
+</html>

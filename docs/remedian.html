@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>remedian.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+<meta name="thumbnail" content="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200" />
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+<meta name="thumbnail" content="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200" />
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/remedian.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+<a href="https://github.com/ttv1/src/blob/master/remedian.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+<a href="https://github.com/ttv1/src/blob/master/remedian.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;remedian.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is ttv1 code (Timm tools, version 1).</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This is ttv1 code (Timm tools, version 1).</p><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+<p>Watch over a stream of numbers, incrementally learning their median.</p>
+<p>Implemented via nested lists. New numbers are added to <code>lst[i]</code> and
+when it fills up, it posts its median to <code>lst[i+1]</code>. Wen <code>lst[i+1]</code>
+fills up, it posts the medians of its medians to <code>lst[i+2]</code>. Etc.
+When a remedian is queried for the current median, it returns the
+median of the last list with any numbers.</p>
+<p>This approach is quite space efficient . E.g. four nested lists,
+each with 64 items, require memory for 4*64 items yet can hold the
+median of the median of the median of the median of over 17 million
+numbers.</p>
+<p>Example usage:</p>
+<pre><code>   z=remedian()
+   for i in range(1000):
+     z + i
+     if not i % 100:
+       print(i, z.median())
+</code></pre>
+<p>Based on  <a href="http://web.ipac.caltech.edu/staff/fmasci/home/astro_refs/Remedian.pdf">The Remedian:A Robust Averaging Method for Large Data
+Sets</a>.
+by Peter J. Rousseeuw and Gilbert W. Bassett Jr.  Journal of the
+American Statistical Association March 1990, Vol. 85, No. 409,
+Theory and Methods</p>
+<p>The code <a href="remedianeg.py">remedianeg.py</a> compares this rig to just
+using Python's built-in sort then reporing the middle number.
+Assuming lists of length 64 and use of pypy3:</p>
+<ul>
+<li>Remedian is getting nearly as fast (within 20%) as raw sort after 500 items;</li>
+<li>While at the same time, avoids having to store all the numbers in RAM;</li>
+<li>Further, remedian's computed median is within 1% (or less) of the medians found via Python's sort.</li>
+</ul>
+<hr />
+<h2>Programmer's Guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">remedian</span><span class="p">:</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Initialization</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[],</span> <span class="n">k</span><span class="o">=</span><span class="mi">64</span><span class="p">):</span>  <span class="c"># after some experimentation, 64 works ok</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="p">[],</span><span class="n">k</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">more</span><span class="p">,</span><span class="n">i</span><span class="o">.</span><span class="n">_median</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="bp">None</span>
+    <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>When full, push the median of current values to next list, then reset.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">_median</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span><span class="o">.</span><span class="n">k</span><span class="p">:</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">more</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">more</span> <span class="ow">or</span> <span class="n">remedian</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="n">i</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">more</span> <span class="o">+</span> <span class="n">i</span><span class="o">.</span><span class="n">_medianPrim</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">all</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c"># reset</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>If there is a next list, ask its median. Else, work it out locally.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">median</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">more</span><span class="o">.</span><span class="n">median</span><span class="p">()</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">more</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">_medianPrim</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Primitive: return the median of a list of numbers. Cache this
+calculation to avoid repeating a needless call to <code>sort</code>.
+Note that <code>__add__</code> zaps that cache if ever a new number is added.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">_medianPrim</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">lst</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">_median</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="c"># _median is the cache of the prior computation</span>
+      <span class="n">n</span>  <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span>
+      <span class="n">p</span>  <span class="o">=</span> <span class="n">q</span>  <span class="o">=</span> <span class="n">n</span><span class="o">//</span><span class="mi">2</span>
+      <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="n">p</span><span class="p">,</span><span class="n">q</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="n">lst</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">2</span><span class="p">:</span>
+          <span class="n">q</span> <span class="o">=</span> <span class="n">p</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">_median</span> <span class="o">=</span> <span class="n">lst</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">if</span> <span class="n">p</span><span class="o">==</span><span class="n">q</span> <span class="k">else</span> <span class="p">(</span><span class="n">lst</span><span class="p">[</span><span class="n">p</span><span class="p">]</span><span class="o">+</span><span class="n">lst</span><span class="p">[</span><span class="n">q</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">i</span><span class="o">.</span><span class="n">_median</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+
+<hr>
+<a name="discussion"><h2>Discussion</h2></a>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+ var disqus_config = function () {
+this.page.url = 'https://ttv1.github.ip/remedian.html'
+this.page.identifier = 'remedian';
+ };
+ */
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//ttv1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  <div class='code'>
+    <div class="highlight"><pre></pre></div>
+  </div>
+</div>
+<div class='clearall'></div>
+</div>
+<script id="dsq-count-scr" src="//ttv1.disqus.com/count.js" async></script>
+</body>
+</html>

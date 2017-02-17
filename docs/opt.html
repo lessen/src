@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>opt.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/opt.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;opt.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      <p>Easier Command-Line Options</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">Documentation</span> <span class="k">for</span> <span class="n">this</span> <span class="n">code</span> <span class="ow">is</span> <span class="n">available</span>
+<span class="p">[</span><span class="n">on</span><span class="o">-</span><span class="n">line</span><span class="p">](</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">tttv1</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">GLOBALS</span><span class="o">.</span><span class="n">py</span><span class="p">)</span><span class="o">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Synopsis</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">Install</span> <span class="n">via</span> <span class="sb">`wget -O options.py http://ttvi1.net/GLOBALS.py`</span><span class="o">.</span> <span class="n">Then</span> <span class="n">use</span> <span class="k">as</span> <span class="n">follows</span><span class="p">:</span>
+
+     <span class="kn">from</span> <span class="nn">opt</span> <span class="kn">import</span> <span class="o">*</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>     <span class="n">our</span> <span class="o">=</span> <span class="n">options</span><span class="p">(</span> 
+       <span class="s">&quot;1 line header&quot;</span><span class="p">,</span>
+       <span class="s">&quot;Preamble text (multi-line).&quot;</span><span class="p">,</span>
+       <span class="s">&quot;End text (multi-line).&quot;</span><span class="p">,</span>
+       <span class="n">group1</span> <span class="o">=</span> <span class="p">[</span>
+         <span class="s">&quot;1 line group description&quot;</span><span class="p">,</span>
+          <span class="p">,</span><span class="n">h</span><span class="p">(</span><span class="s">&quot;1 line help&quot;</span><span class="p">,</span><span class="n">keyword1</span> <span class="o">=</span> <span class="n">num</span><span class="s">&quot;)       # &quot;</span><span class="o">--</span><span class="n">keyword1</span> <span class="n">X</span><span class="s">&quot; expects any float</span>
+          <span class="p">,</span><span class="n">h</span><span class="p">(</span><span class="s">&quot;1 line help&quot;</span><span class="p">,</span><span class="n">keyword2</span> <span class="o">=</span> <span class="bp">False</span><span class="s">&quot;)     # &quot;</span><span class="o">--</span><span class="n">keyword2</span><span class="s">&quot; will set keyword=True</span>
+          <span class="p">,</span><span class="n">h</span><span class="p">(</span><span class="s">&quot;1 line help&quot;</span><span class="p">,</span><span class="n">keyword3</span> <span class="o">=</span> <span class="nb">str</span><span class="p">)</span>        <span class="c"># &quot;--keyword3 X&quot; expects any string</span>
+          <span class="p">,</span><span class="n">h</span><span class="p">(</span><span class="s">&quot;1 line help&quot;</span><span class="p">,</span><span class="n">keyword4</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="o">..</span><span class="p">]</span><span class="s">&quot;) # &quot;</span><span class="o">--</span><span class="n">keyword4</span> <span class="n">X</span><span class="s">&quot; expects one of x,y,z...</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>where the type of "X" is set from "x"</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>       <span class="p">],</span>
+       <span class="n">group2</span> <span class="o">=</span> <span class="p">[</span>
+         <span class="o">...</span>
+       <span class="p">])</span>
+
+<span class="n">After</span> <span class="n">that</span><span class="p">,</span> <span class="n">data</span> <span class="n">on</span> <span class="n">the</span> <span class="n">above</span> <span class="n">groups</span> <span class="ow">is</span> <span class="n">stored</span> <span class="ow">in</span> <span class="sb">`our`</span><span class="p">;</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="sb">`our.group1.keyword1`</span><span class="o">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Description</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">The</span> <span class="n">above</span> <span class="n">call</span> <span class="n">defines</span> <span class="n">a</span> <span class="n">variable</span> <span class="sb">`our`</span> <span class="k">with</span> <span class="n">fields</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="p">)</span> 
+
+     <span class="n">our</span><span class="o">.</span><span class="n">group1</span><span class="o">.</span><span class="n">keyword1</span>
+
+<span class="n">etc</span><span class="o">.</span> <span class="n">Also</span><span class="p">,</span> <span class="n">on</span> <span class="n">the</span> <span class="n">command</span> <span class="n">line</span><span class="p">,</span> 
+
+     <span class="n">python</span> <span class="n">codeThatUsesOptions</span><span class="o">.</span><span class="n">py</span><span class="o">--</span><span class="n">keyword1</span> <span class="n">X</span> <span class="o">--</span><span class="n">keyword2</span> <span class="n">Y</span>
+     
+<span class="n">will</span> <span class="n">override</span> <span class="n">the</span> <span class="n">defaults</span> <span class="n">shown</span> <span class="n">below</span><span class="o">.</span> <span class="n">Further</span><span class="p">,</span> 
+
+     <span class="n">python</span> <span class="o">--</span><span class="n">help</span>
+     
+<span class="n">will</span> <span class="k">print</span> <span class="n">help</span> <span class="n">text</span><span class="p">,</span> <span class="n">divided</span> <span class="n">into</span> <span class="n">the</span> <span class="n">groups</span><span class="o">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Installation</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="n">wget</span> <span class="o">-</span><span class="n">O</span> <span class="n">options</span><span class="o">.</span><span class="n">py</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">tiny</span><span class="o">.</span><span class="n">cc</span><span class="o">/</span><span class="n">ttv1options</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How it Works</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">The</span> <span class="n">standard</span> <span class="n">way</span> <span class="n">to</span> <span class="n">process</span> <span class="n">options</span> <span class="ow">in</span> <span class="n">Python</span> <span class="ow">is</span> <span class="n">the</span> <span class="sb">`argparse`</span>
+<span class="n">library</span> <span class="n">which</span> <span class="n">can</span> <span class="n">be</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">to</span> <span class="n">say</span> <span class="n">the</span> <span class="n">least</span><span class="o">.</span>  <span class="n">So</span> <span class="n">this</span> <span class="n">code</span> <span class="ow">is</span>
+<span class="n">an</span> <span class="n">expansion</span> <span class="n">function</span> <span class="n">that</span> <span class="n">takes</span> <span class="n">a</span> <span class="n">simple</span> <span class="n">declarative</span> <span class="n">syntax</span> <span class="n">of</span> <span class="n">the</span>
+<span class="n">optopms</span><span class="p">,</span> <span class="n">then</span> <span class="n">expands</span> <span class="n">it</span> <span class="n">into</span> <span class="n">the</span> <span class="n">argparse</span> <span class="n">commands</span><span class="o">.</span>
+
+<span class="n">There</span><span class="s">&#39;s two functions that handle this process:</span>
+
+<span class="o">-</span> <span class="sb">`our=options(about,header,footer, groups)`</span> <span class="n">writes</span> <span class="n">a</span> <span class="n">dictionary</span> <span class="n">of</span> <span class="n">options</span> <span class="n">to</span> <span class="sb">`our`</span><span class="p">,</span>
+  <span class="k">while</span> <span class="n">first</span> <span class="n">checking</span> <span class="k">if</span> <span class="nb">any</span> <span class="n">command</span><span class="o">-</span><span class="n">line</span> <span class="n">options</span> <span class="n">overrides</span> <span class="n">the</span> <span class="n">defaults</span><span class="o">.</span>
+<span class="o">-</span> <span class="sb">`h(help,key=default)`</span> <span class="ow">is</span> <span class="k">for</span> <span class="n">one</span> <span class="n">item</span><span class="o">.</span> <span class="n">It</span> <span class="n">exapnds</span> <span class="n">into</span> <span class="n">a</span> <span class="n">whole</span>
+  <span class="n">dictionary</span> <span class="n">of</span> <span class="n">options</span> <span class="k">for</span> <span class="n">argparse</span><span class="o">.</span>
+
+<span class="n">Here</span> <span class="n">are</span> <span class="n">some</span> <span class="n">examples</span> <span class="n">of</span> <span class="n">this</span> <span class="n">expansions</span><span class="o">.</span> <span class="n">For</span> <span class="n">example</span><span class="p">,</span>
+
+       <span class="n">h</span><span class="p">(</span><span class="s">&quot;disable all tests&quot;</span><span class="p">,</span> <span class="n">brave</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+
+<span class="n">expands</span> <span class="n">into</span>
+
+      <span class="nb">dict</span><span class="p">(</span><span class="n">help</span>    <span class="o">=</span> <span class="s">&quot;disable all test&quot;</span><span class="p">,</span>
+           <span class="n">key</span>     <span class="o">=</span> <span class="s">&quot;--brave&quot;</span><span class="p">,</span>
+           <span class="n">default</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+           <span class="n">action</span>  <span class="o">=</span> <span class="s">&quot;store_true&quot;</span><span class="p">)</span>
+
+<span class="ow">and</span>
+
+      <span class="n">h</span><span class="p">(</span><span class="s">&quot;split redos&quot;</span><span class="p">,</span> <span class="n">splitRedo</span>  <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
+
+<span class="n">exapnds</span> <span class="n">into</span>
+
+     <span class="nb">dict</span><span class="p">(</span><span class="n">metavar</span> <span class="o">=</span> <span class="s">&quot;S&quot;</span><span class="p">,</span>
+          <span class="n">key</span>     <span class="o">=</span> <span class="s">&quot;--when&quot;</span><span class="p">,</span>
+          <span class="nb">type</span>    <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+          <span class="n">choices</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;mon&quot;</span><span class="p">,</span><span class="s">&quot;tues&quot;</span><span class="p">,</span><span class="s">&quot;wed&quot;</span><span class="p">],</span>
+          <span class="n">help</span>    <span class="o">=</span> <span class="s">&quot;day of week&quot;</span><span class="p">,</span>
+          <span class="n">default</span> <span class="o">=</span> <span class="s">&quot;mon&quot;</span>
+         <span class="p">)</span>
+
+<span class="ow">and</span> 
+
+      <span class="n">h</span><span class="p">(</span><span class="s">&quot;day of week&quot;</span><span class="p">,</span> <span class="n">when</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;mon&quot;</span><span class="p">,</span><span class="s">&quot;tues&quot;</span><span class="p">,</span><span class="s">&quot;wed&quot;</span><span class="p">])</span>
+
+<span class="n">expands</span> <span class="n">into</span>
+
+     <span class="nb">dict</span><span class="p">(</span><span class="n">metavar</span> <span class="o">=</span> <span class="s">&quot;S&quot;</span><span class="p">,</span>
+          <span class="n">key</span>     <span class="o">=</span> <span class="s">&quot;--when&quot;</span><span class="p">,</span>
+          <span class="nb">type</span>    <span class="o">=</span> <span class="nb">str</span><span class="p">,</span>
+          <span class="n">choices</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;mon&quot;</span><span class="p">,</span><span class="s">&quot;tues&quot;</span><span class="p">,</span><span class="s">&quot;wed&quot;</span><span class="p">],</span>
+          <span class="n">help</span>    <span class="o">=</span> <span class="s">&quot;day of week&quot;</span><span class="p">,</span>
+          <span class="n">default</span> <span class="o">=</span> <span class="s">&quot;mon&quot;</span>
+         <span class="p">)</span>
+
+<span class="n">In</span> <span class="n">the</span> <span class="n">above</span> <span class="sb">`&quot;mon&quot;`</span> <span class="n">was</span> <span class="n">used</span> <span class="k">as</span> <span class="n">the</span> <span class="n">default</span> <span class="n">since</span> <span class="n">it</span> <span class="n">was</span>
+<span class="n">the</span> <span class="n">first</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">when</span> <span class="nb">list</span><span class="o">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>import sys,argparse</p>
+<p>def h(help,<strong>d):
+  key,val = next(iter(d.items()))
+  default = val[0] if isinstance(val,list) else val
+  # step0: remember defaults
+  out = dict(default=default)
+  add = lambda </strong>d : out.update(d) # convenience function for adding args
+  # step1: Set type and meta var
+  if   val is  not False:
+    if   isinstance(default,int  ): add(metavar= "I", type= int)
+    elif isinstance(default,float): add(metavar= "F", type= float)
+    else                          : add(metavar= "S", type= str)
+  # step2: add help and type-specific misc flags
+  if   val is False :        add(help=help, action="store_true")
+  elif isinstance(val,list): add(help=help, choices=val)
+  else:                      add(help=help + ("; e.g. %s" % str(val)))
+  # --------------
+  return key, out</p>
+<p>def options(prog, before, after, <strong>d):
+  class o:
+    def __init__(i, </strong>d)   : i.<strong>dict</strong>.update(d)
+    def <strong>repr</strong>(i)        : return i.<strong>dict</strong>.<strong>repr</strong>()
+    def <strong>getitem</strong>(i, k)  : return i.<strong>dict</strong>[k]
+    def <strong>setitem</strong>(i,k,v) : i.<strong>dict</strong>[k] = v
+  # -------------------------------
+  parser = argparse.ArgumentParser(
+               prog        = prog,
+               description = before,
+               epilog      = after,
+               formatter_class=argparse.RawTextHelpFormatter)
+  inside,out = {}, o()
+  for context in sorted(d.keys()):
+    out[context] = o()
+    description = d[context][0]
+    group = parser.add_argument_group(context, description)
+    for key,rest in d[context][1:]:
+      group.add_argument("--" + key,**rest)
+      assert key not in inside, 'keys cannot repeat'
+      inside[key] = context
+  parsed = vars(parser.parse_args())
+  for key,val in parsed.items():
+    out[inside[key]][key]= val
+  return out</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">____</span>
+
+
+<span class="o">&lt;</span><span class="n">img</span> <span class="n">align</span><span class="o">=</span><span class="n">right</span> 
+<span class="n">src</span><span class="o">=</span><span class="s">&quot;https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png&quot;</span>
+<span class="n">width</span><span class="o">=</span><span class="mi">170</span><span class="o">&gt;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copyleft</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="n">Copyright</span> <span class="o">&amp;</span><span class="n">copy</span><span class="p">;</span> <span class="mi">2016</span> <span class="n">Tim</span> <span class="n">Menzies</span> <span class="o">&lt;</span><span class="n">tim</span><span class="nd">@menzies.us</span><span class="o">&gt;</span>
+
+<span class="n">This</span> <span class="n">program</span> <span class="ow">is</span> <span class="n">free</span> <span class="n">software</span><span class="o">.</span> <span class="n">It</span> <span class="n">comes</span> <span class="n">without</span> <span class="nb">any</span> <span class="n">warranty</span><span class="p">,</span> <span class="n">to</span>
+<span class="n">the</span> <span class="n">extent</span> <span class="n">permitted</span> <span class="n">by</span> <span class="n">applicable</span> <span class="n">law</span><span class="o">.</span> <span class="n">You</span> <span class="n">can</span> <span class="n">redistribute</span> <span class="n">it</span>
+<span class="ow">and</span><span class="o">/</span><span class="ow">or</span> <span class="n">modify</span> <span class="n">it</span> <span class="n">under</span> <span class="n">the</span> <span class="n">terms</span> <span class="n">of</span> <span class="n">the</span> <span class="n">Do</span> <span class="n">What</span> <span class="n">The</span> <span class="n">F</span><span class="o">*</span><span class="n">ck</span> <span class="n">You</span> <span class="n">Want</span>
+<span class="n">To</span> <span class="n">Public</span> <span class="n">License</span><span class="p">,</span> <span class="n">Version</span> <span class="mi">2</span><span class="p">,</span> <span class="k">as</span> <span class="n">published</span> <span class="n">by</span> <span class="n">Sam</span> <span class="n">Hocevar</span><span class="o">.</span> <span class="n">See</span>
+<span class="p">[</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">wtfpl</span><span class="o">.</span><span class="n">net</span><span class="p">](</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">wtfpl</span><span class="o">.</span><span class="n">net</span><span class="p">)</span> <span class="k">for</span> <span class="n">more</span> <span class="n">details</span><span class="o">.</span>
+
+<span class="n">Share</span> <span class="ow">and</span> <span class="n">enjoy</span><span class="o">.</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

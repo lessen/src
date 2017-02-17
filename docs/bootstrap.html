@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>bootstrap.py</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/bootstrap.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bootstrap.py</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+<em>Just another <a href="http://ttv1.github.com">Timm Tool</a>.<br> Discuss this file <a href="https://github.com/ttv1/src/issues">on Github</a>. <img  align=middle src="https://github.com/favicon.ico"></em>
+<br clear=all></p>
+<hr />
+<p>Returns true if two lists are not statistically significantly different.</p>
+<p>Based on <a href="https://github.com/timm/timm.github.io/blob/master/pdf/93bootstrap.pdf">An introduction to the
+bootstrap</a>
+by Bradley Efron, 1993, Chapman and Hall, page 220 to 223.</p>
+<p>Works via <code>bootstrap sampling</code> which Effron describes as a variant of the Fisher
+permutation test:</p>
+<ul>
+<li>A magic number, the achieved significance level (ASL) is caluclated 
+ from numerous random samples of the original lists (and,
+ by sample, Effron means "sample with replacement").</li>
+<li>The <em>larger</em> the ASL, the weaker the evidence <em>against</em> the null
+ hypothesis (that the two lists belong to the same distribution);</li>
+<li>I.e. the larger the ASL, we more we can believe in the lists are the same.</li>
+</ul>
+<p>The importance of this method is that, unlike standard statistical hypothesis
+tests, there is no assumption here that the distributions come from some known
+distribution (e.g. the normal distribution).</p>
+<hr />
+<h2>Programmer's Guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">import</span> <span class="nn">random</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">def</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="n">y0</span><span class="p">,</span><span class="n">z0</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">256</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span> <span class="mi">95</span><span class="p">):</span>
+  <span class="n">tiny</span><span class="o">=</span><span class="mf">1e-32</span> <span class="c"># added to some divisions to stop div zero errors</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <h3>Helpers</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Return any number 0 to n</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">any</span><span class="p">(</span><span class="n">n</span><span class="p">):</span> <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Return any list item (uses <code>any</code>).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">one</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span> <span class="k">return</span> <span class="n">lst</span><span class="p">[</span> <span class="nb">int</span><span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)))</span> <span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Return any sample from <code>lst</code> (uses <code>one</code>).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">sampleWithReplacement</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">one</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p>The test statistic: comments on the difference between two lists</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">testStatistic</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">):</span> 
+    <span class="n">tmp1</span> <span class="o">=</span> <span class="n">tmp2</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">y1</span> <span class="ow">in</span> <span class="n">y</span><span class="o">.</span><span class="n">all</span><span class="p">:</span> <span class="n">tmp1</span> <span class="o">+=</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> 
+    <span class="k">for</span> <span class="n">z1</span> <span class="ow">in</span> <span class="n">z</span><span class="o">.</span><span class="n">all</span><span class="p">:</span> <span class="n">tmp2</span> <span class="o">+=</span> <span class="p">(</span><span class="n">z1</span> <span class="o">-</span> <span class="n">z</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">s1</span>    <span class="o">=</span> <span class="p">(</span><span class="n">tmp1</span> <span class="o">/</span> <span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">tiny</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">s2</span>    <span class="o">=</span> <span class="p">(</span><span class="n">tmp2</span> <span class="o">/</span> <span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">tiny</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">s1</span><span class="o">+</span><span class="n">s2</span><span class="p">:</span>
+      <span class="n">delta</span> <span class="o">=</span>  <span class="n">delta</span><span class="o">/</span><span class="p">((</span><span class="n">s1</span><span class="o">/</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">tiny</span><span class="p">)</span> <span class="o">+</span> <span class="n">s2</span><span class="o">/</span><span class="p">(</span><span class="n">z</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">tiny</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">delta</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <hr />
+<h3>Num class</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>A counter class to simplify reasoning about sets of numbers</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">class</span> <span class="nc">num</span><span class="p">():</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">some</span><span class="o">=</span><span class="p">[]):</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">sum</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">;</span> <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="o">=</span><span class="p">[]</span>
+      <span class="k">for</span> <span class="n">one</span> <span class="ow">in</span> <span class="n">some</span><span class="p">:</span>
+        <span class="n">i</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">one</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">put</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">sum</span> <span class="o">+=</span><span class="n">x</span><span class="p">;</span> <span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="n">i</span><span class="o">.</span><span class="n">mu</span>   <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">sum</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">tiny</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>    <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="n">i1</span><span class="p">,</span><span class="n">i2</span><span class="p">):</span>
+      <span class="k">return</span> <span class="n">num</span><span class="p">(</span><span class="n">i1</span><span class="o">.</span><span class="n">all</span> <span class="o">+</span> <span class="n">i2</span><span class="o">.</span><span class="n">all</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <hr />
+<h3>Run this script</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Some set up</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="n">y</span><span class="p">,</span> <span class="n">z</span>   <span class="o">=</span> <span class="n">num</span><span class="p">(</span><span class="n">y0</span><span class="p">),</span> <span class="n">num</span><span class="p">(</span><span class="n">z0</span><span class="p">)</span>
+  <span class="n">x</span>      <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span>
+  <span class="n">tobs</span>   <span class="o">=</span> <span class="n">testStatistic</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <p>Effron recommends adjusting all the populations so they have the same mean</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="n">yhat</span>   <span class="o">=</span> <span class="p">[</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">mu</span> <span class="k">for</span> <span class="n">y1</span> <span class="ow">in</span> <span class="n">y</span><span class="o">.</span><span class="n">all</span><span class="p">]</span>
+  <span class="n">zhat</span>   <span class="o">=</span> <span class="p">[</span><span class="n">z1</span> <span class="o">-</span> <span class="n">z</span><span class="o">.</span><span class="n">mu</span> <span class="o">+</span> <span class="n">x</span><span class="o">.</span><span class="n">mu</span> <span class="k">for</span> <span class="n">z1</span> <span class="ow">in</span> <span class="n">z</span><span class="o">.</span><span class="n">all</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-15'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-15'>#</a>
+      </div>
+      <p>Compute the achieved significance level.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="n">asl</span> <span class="o">=</span> <span class="n">tiny</span>
+  <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">testStatistic</span><span class="p">(</span><span class="n">num</span><span class="p">(</span><span class="n">sampleWithReplacement</span><span class="p">(</span><span class="n">yhat</span><span class="p">)),</span>
+                     <span class="n">num</span><span class="p">(</span><span class="n">sampleWithReplacement</span><span class="p">(</span><span class="n">zhat</span><span class="p">)))</span> <span class="o">&gt;</span> <span class="n">tobs</span><span class="p">:</span>
+      <span class="n">asl</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">/</span><span class="n">b</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-16'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-16'>#</a>
+      </div>
+      <p>The larger the <code>asl</code> value, the more likely it
+is <code>True</code> that the lsts are the same.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">return</span> <span class="n">asl</span> <span class="o">&gt;</span> <span class="n">conf</span><span class="o">/</span><span class="mi">100</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-17'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-17'>#</a>
+      </div>
+      <hr />
+<h2>FAQ</h2>
+<p>Why is the last line above  <code>asl &gt; conf/100</code> and not <code>asl &lt; conf/100</code>?</p>
+<p>This is because of the way Efrom defines <code>asl</code> 
+(the <em>larger</em> the ASL, the weaker the evidence that the lists
+are different). Chapter 16 of his text explains that in more detail.</p>
+<p>(Aside: since I am not a very trusting soul, I have coded this up reversing
+ &gt; with &lt;. When I did, <code>bootstrap</code> produced the reverse
+of the expected results.)</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-18'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-18'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>

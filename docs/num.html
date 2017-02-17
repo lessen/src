@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>num.py</title>
+  <link rel="stylesheet" href="pycco.css">
+	<link rel="shortcut icon" href="favicon.png" type="image/png">
+</head>
+<body>
+<div id='container'>
+<a href="https://github.com/ttv1/src/blob/master/num.py"><img style="z-index: 10; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/567c3a48d796e2fc06ea80409cc9dd82bf714434/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_darkblue_121621.png"></a> 
+  <div id="background"></div>
+  <div class='section'>
+    <div class='docs'><h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;num.py</h1><p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(just another timm tool)</p></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <script>
+ (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+ (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+ m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+ })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ ga('create', 'UA-55634425-2', 'auto');
+ ga('send', 'pageview');
+
+</script>
+
+<p><img 
+src="https://avatars0.githubusercontent.com/u/23156192?v=3&s=200"
+align=left
+width=120>
+&nbsp;<br>&nbsp;<br>
+&nbsp;&nbsp; <a href="http://ttv1.github.io">home</a> | <a href="#discussion">discuss</a> | <a href="https://github.com/ttv1/src/issues">report bug</a> </p>
+<p><br clear=all></p>
+<hr />
+<p>Maintains summaries of numbers. Can be used incrementally, or in batch.</p>
+<p>Example of incremental usage:</p>
+<pre><code>   n=num()
+   for i in range(1000):
+     n + i
+     if i % 100 == 0: print(n)
+
+   # output:
+   {:n 1 :lo 0 :hi 0 :mu 0 :sd 0}
+   {:n 101 :lo 0 :hi 100 :mu 50 :sd 29.3}
+   {:n 201 :lo 0 :hi 200 :mu 100 :sd 58.17}
+   {:n 301 :lo 0 :hi 300 :mu 150 :sd 87.04}
+   {:n 401 :lo 0 :hi 400 :mu 200 :sd 115.9}
+   {:n 501 :lo 0 :hi 500 :mu 250 :sd 144.8}  
+   {:n 601 :lo 0 :hi 600 :mu 300 :sd 173.6}
+   {:n 701 :lo 0 :hi 700 :mu 350 :sd 202.5}
+   {:n 801 :lo 0 :hi 800 :mu 400 :sd 231.4}
+   {:n 901 :lo 0 :hi 900 :mu 450 :sd 260.2}
+</code></pre>
+<p>Example of batch usage (where, at initialization, 100s
+of numbers are thrown in at once):</p>
+<pre><code> print(num(i for i in range(901)))
+
+ # output:
+ {:n 901 :lo 0 :hi 900 :mu 450 :sd 260.2}
+</code></pre>
+<p>Also, can be used to:</p>
+<ul>
+<li>compute distance between numbers (used in nearest-neighbor calculations);</li>
+<li>compute likelihood a number belongs to a sample (used in Bayes classifiers);</li>
+<li>compute parametric tests for effect size and statistical hypothesis checking</li>
+</ul>
+<hr />
+<h2>Programmer's Guide</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span><span class="n">e</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="k">class</span> <span class="nc">num</span><span class="p">:</span>
+  <span class="n">NORMALIZE</span><span class="o">=</span><span class="bp">True</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <p>Initialization</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">inits</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="o">=</span> <span class="mf">1e32</span><span class="p">,</span><span class="o">-</span><span class="mf">1e32</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">m2</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span>
+    <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">inits</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <p>Reporting</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&quot;{:n </span><span class="si">%s</span><span class="s"> :lo </span><span class="si">%s</span><span class="s"> :hi </span><span class="si">%s</span><span class="s"> :mu </span><span class="si">%g</span><span class="s"> :sd </span><span class="si">%.4g</span><span class="s">}&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">hi</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">sd</span><span class="p">())</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p>Updating (uses Knuth's method to also update <code>sd</code>-related info).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">__add__</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">lo</span>  <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">hi</span>  <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">i</span><span class="o">.</span><span class="n">hi</span><span class="p">)</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">n</span>  <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">mu</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">mu</span> <span class="o">+=</span> <span class="n">delta</span><span class="o">/</span><span class="n">i</span><span class="o">.</span><span class="n">n</span>
+    <span class="n">i</span><span class="o">.</span><span class="n">m2</span> <span class="o">+=</span> <span class="n">delta</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <p>Calculate sd using Knuth's method.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">sd</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="k">else</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">m2</span><span class="o">/</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <hr />
+<h3>Distance calculations</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p>Distance between two numbers, defined as per p42 of <a href="https://goo.gl/2722eJ">Aha et al., 1991</a>:</p>
+<ul>
+<li>numerics are normalized zero to one</li>
+<li>when faced with unknown values, assume maximal distance.</li>
+</ul>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">dist</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">miss</span><span class="o">=</span><span class="s">&quot;?&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">miss</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">==</span> <span class="n">miss</span><span class="p">:</span> <span class="k">return</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">miss</span><span class="p">:</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="k">if</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">hi</span><span class="o">+</span><span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span>
+    <span class="k">elif</span> <span class="n">y</span> <span class="o">==</span> <span class="n">miss</span><span class="p">:</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">hi</span><span class="o">+</span><span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="k">else</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span>
+    <span class="k">elif</span> <span class="n">num</span><span class="o">.</span><span class="n">NORMALIZE</span><span class="p">:</span>
+      <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">i</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p>Normalization. Adds a tiny amount to the denominator to stop divide by zero errors.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">norm</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span><span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">hi</span> <span class="o">-</span> <span class="n">i</span><span class="o">.</span><span class="n">lo</span> <span class="o">+</span> <span class="mf">1e-32</span><span class="p">)))</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <p>Calculates how likely is it that number <code>x</code> belongs to this distribution (used in Bayes classifiers).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">like</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="o">*</span><span class="n">_</span><span class="p">):</span> <span class="c"># ignored third argument is needed to match usage of `like` in `sym`.</span>
+    <span class="n">var</span>   <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">sd</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">*</span><span class="n">var</span><span class="p">)</span><span class="o">**.</span><span class="mi">5</span>
+    <span class="n">num</span>   <span class="o">=</span> <span class="n">e</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">i</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">var</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">denom</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <hr />
+<h3>Statistics</h3>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-11'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-11'>#</a>
+      </div>
+      <p>Two distributions are different if they are not statistically
+significantly similar and if they are not different by just a small
+effect size.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">):</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">hedges</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">ttest</span><span class="p">(</span><span class="n">j</span><span class="p">)</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-12'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-12'>#</a>
+      </div>
+      <p>Parametric effect size test (uses eqns 1,2,3,4 and Table9 from 
+<a href="https://goo.gl/WBDWm3">Kampenes et al., 2007</a>).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">hedges</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">enough</span> <span class="o">=</span> <span class="mf">0.38</span><span class="p">):</span>
+    <span class="n">x</span>     <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">i</span><span class="o">.</span><span class="n">sd</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">j</span><span class="o">.</span><span class="n">sd</span><span class="p">()</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">y</span>     <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">sp</span>    <span class="o">=</span> <span class="p">(</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span> <span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mf">1e-32</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">j</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="n">sp</span>  
+    <span class="n">c</span>     <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">3.0</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">j</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">delta</span> <span class="o">*</span> <span class="n">c</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">enough</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-13'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-13'>#</a>
+      </div>
+      <p>Parametric statistical signifance test (the standard t-test).</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre>  <span class="k">def</span> <span class="nf">ttest</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mi">95</span><span class="p">,</span>
+            <span class="n">criticals</span><span class="o">=</span> <span class="p">{</span> <span class="c"># approximations to the table of critical values</span>
+                   <span class="mi">95</span><span class="p">:</span> <span class="p">{</span>  <span class="mi">5</span><span class="p">:</span><span class="mf">2.015</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="mf">1.812</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span><span class="mf">1.753</span><span class="p">,</span>
+                         <span class="mi">20</span><span class="p">:</span><span class="mf">1.725</span><span class="p">,</span> <span class="mi">25</span><span class="p">:</span><span class="mf">1.708</span><span class="p">,</span> <span class="mi">30</span><span class="p">:</span><span class="mf">1.697</span><span class="p">},</span>
+                   <span class="mi">99</span><span class="p">:</span> <span class="p">{</span>  <span class="mi">5</span><span class="p">:</span><span class="mf">3.365</span><span class="p">,</span> <span class="mi">10</span><span class="p">:</span><span class="mf">2.764</span><span class="p">,</span> <span class="mi">15</span><span class="p">:</span><span class="mf">2.602</span><span class="p">,</span>
+                         <span class="mi">20</span><span class="p">:</span><span class="mf">2.528</span><span class="p">,</span> <span class="mi">25</span><span class="p">:</span><span class="mf">2.485</span><span class="p">,</span> <span class="mi">30</span><span class="p">:</span><span class="mf">2.457</span><span class="p">}}):</span>   
+     <span class="n">df</span>     <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+     <span class="n">delta</span>  <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">i</span><span class="o">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">j</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+     <span class="n">si</span><span class="p">,</span> <span class="n">sj</span> <span class="o">=</span> <span class="n">i</span><span class="o">.</span><span class="n">sd</span><span class="p">(),</span> <span class="n">j</span><span class="o">.</span><span class="n">sd</span><span class="p">()</span>
+     <span class="n">tmp</span>    <span class="o">=</span> <span class="n">delta</span><span class="o">/</span><span class="p">((</span><span class="n">si</span><span class="o">/</span><span class="n">i</span><span class="o">.</span><span class="n">n</span> <span class="o">+</span> <span class="n">sj</span><span class="o">/</span><span class="n">j</span><span class="o">.</span><span class="n">n</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span> <span class="k">if</span> <span class="n">si</span><span class="o">+</span><span class="n">sj</span> <span class="k">else</span> <span class="mi">1</span>
+     <span class="n">n1</span>     <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">df</span><span class="o">/</span><span class="mi">5</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span> <span class="c"># to fit into criticals</span>
+     <span class="k">return</span>  <span class="n">tmp</span> <span class="o">&lt;</span> <span class="n">criticals</span><span class="p">[</span><span class="n">conf</span><span class="p">][</span><span class="n">n1</span><span class="p">]</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-14'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-14'>#</a>
+      </div>
+      <hr />
+<p><img align=right 
+src="https://raw.githubusercontent.com/timm/timm.github.io/master/timm.png"
+width=170></p>
+<h2>Copyleft</h2>
+<p>Copyright &copy; 2016 Tim Menzies <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;">&#116;&#105;&#109;&#64;&#109;&#101;&#110;&#122;&#105;&#101;&#115;&#46;&#117;&#115;</a></p>
+<p>This program is free software. It comes without any warranty, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The F*ck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<a href="http://www.wtfpl.net">http://www.wtfpl.net</a> for more details.</p>
+<p>Share and enjoy.</p>
+
+<hr>
+<a name="discussion"><h2>Discussion</h2></a>
+<div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+ var disqus_config = function () {
+this.page.url = 'https://ttv1.github.ip/num.html'
+this.page.identifier = 'num';
+ };
+ */
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = '//ttv1.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  </div>
+  <div class='code'>
+    <div class="highlight"><pre></pre></div>
+  </div>
+</div>
+<div class='clearall'></div>
+</div>
+<script id="dsq-count-scr" src="//ttv1.disqus.com/count.js" async></script>
+</body>
+</html>
