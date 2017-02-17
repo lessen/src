@@ -4,7 +4,7 @@
 if [ -z `which pypy3` ]; then
    if [ ! -f /usr/local/bin/pypy3 ]; then
        sudo cp mypypy.sh /usr/local/bin/pypy3
-       sudo chmod +x /usr/local/bin/pypy3
+       sudo chmod a+rx /usr/local/bin/pypy3
    fi
 fi
 
